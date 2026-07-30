@@ -1,0 +1,22 @@
+{
+  "name": "[FinOps][Advisory] Anomalous Azure spend detected (ML)",
+  "rule_type_id": "xpack.ml.anomaly_detection_alert",
+  "consumer": "alerts",
+  "enabled": true,
+  "schedule": { "interval": "1h" },
+  "tags": ["finops", "azure", "ml", "anomaly"],
+  "notify_when": "onActiveAlert",
+  "throttle": "12h",
+  "params": {
+    "jobSelection": {
+      "jobIds": ["azure_cost_daily_spend"],
+      "groupIds": []
+    },
+    "severity": 75,
+    "resultType": "bucket",
+    "includeInterim": false,
+    "lookbackInterval": null,
+    "topNBuckets": null
+  },
+  "actions": []
+}

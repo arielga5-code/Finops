@@ -1,0 +1,14 @@
+{
+  "job_id": "azure_openai_token_volume",
+  "indices": ["metrics-azure_openai.metrics-*"],
+  "query": {
+    "bool": {
+      "filter": [
+        { "exists": { "field": "azure.resource.name" } }
+      ]
+    }
+  },
+  "scroll_size": 1000,
+  "query_delay": "120s",
+  "frequency": "300s"
+}

@@ -1,0 +1,22 @@
+// Unit economics: cost per million tokens.
+//
+// The most important AI FinOps metric and the one no vendor dashboard provides,
+// because it spans two data streams with different latencies.
+//
+// This query reads the summary index described in docs/04-dashboards.md, which a
+// pair of pivot transforms populates with daily cost and daily tokens keyed by
+// (usage_date, resource_id). Build that index first — see the assets README.
+//
+// Read the TREND, not the absolute value. Rising absolute AI spend can simply
+// mean the product is succeeding. Rising cost per million tokens always means a
+// regression: model mix drifted expensive, caching broke, or context bloated.
+
+FROM finops-ai-unit-economics-*
+| WHERE daily_tokens > 0
+| STATS cost   = SUM(daily_cost),
+        tokens = SUM(daily_tokens)
+    BY day = BUCKET(usage_date, 1 day),
+       resource_name
+| EVAL cost_per_million_tokens = cost / (TO_DOUBLE(tokens) / 1000000.0)
+| SORT day DESC, cost_per_million_tokens DESC
+| LIMIT 200

@@ -1,0 +1,21 @@
+// PTU utilization per provisioned deployment, with a verdict column.
+//
+// Read both ends of the range:
+//   > 90%  approaching throttling, 429s incoming
+//   < 50%  sustained  paying for reserved capacity you are not using
+// The band between them is where PTU is doing its job.
+
+FROM metrics-azure_openai.metrics-*
+| WHERE azure.open_ai.provisioned_managed_utilization_v2.avg IS NOT NULL
+| STATS avg_util = AVG(azure.open_ai.provisioned_managed_utilization_v2.avg),
+        max_util = MAX(azure.open_ai.provisioned_managed_utilization_v2.avg),
+        min_util = MIN(azure.open_ai.provisioned_managed_utilization_v2.avg)
+    BY hour = BUCKET(@timestamp, 1 hour),
+       azure.resource.name
+| EVAL verdict = CASE(
+        max_util >= 100, "throttling",
+        avg_util >  90,  "saturated",
+        avg_util <  50,  "over-provisioned",
+        "healthy")
+| SORT hour DESC, avg_util DESC
+| LIMIT 500

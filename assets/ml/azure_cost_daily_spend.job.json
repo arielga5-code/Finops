@@ -1,0 +1,28 @@
+{
+  "description": "FinOps: anomalous daily Azure spend, per service type",
+  "groups": ["finops", "azure", "cost"],
+  "analysis_config": {
+    "bucket_span": "1d",
+    "detectors": [
+      {
+        "detector_description": "high_sum(actual_cost) partitioned by resource type",
+        "function": "high_sum",
+        "field_name": "azure.billing.actual_cost",
+        "partition_field_name": "azure.resource.type"
+      }
+    ],
+    "influencers": [
+      "azure.resource.type",
+      "azure.resource.group",
+      "azure.resource.name",
+      "azure.subscription_id"
+    ]
+  },
+  "data_description": {
+    "time_field": "azure.billing.usage_date"
+  },
+  "analysis_limits": {
+    "model_memory_limit": "128mb"
+  },
+  "results_index_name": "shared"
+}

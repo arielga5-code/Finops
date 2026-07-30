@@ -1,0 +1,15 @@
+// Azure AI spend only (Cognitive Services / Azure OpenAI / AI Foundry),
+// broken out by individual resource. Use for the "AI spend as % of total"
+// executive metric and for per-deployment cost attribution.
+
+FROM metrics-azure.billing-*
+| WHERE azure.billing.actual_cost IS NOT NULL
+| WHERE TO_LOWER(azure.resource.type) LIKE "*cognitiveservices*"
+     OR TO_LOWER(azure.resource.type) LIKE "*machinelearningservices*"
+     OR TO_LOWER(azure.billing.product) LIKE "*openai*"
+| STATS cost = SUM(azure.billing.actual_cost)
+    BY day = BUCKET(azure.billing.usage_date, 1 day),
+       azure.resource.name,
+       azure.resource.group
+| SORT day DESC, cost DESC
+| LIMIT 200

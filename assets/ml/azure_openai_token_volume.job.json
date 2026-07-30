@@ -1,0 +1,33 @@
+{
+  "description": "FinOps: anomalous Azure OpenAI token consumption, per deployment",
+  "groups": ["finops", "azure", "ai"],
+  "analysis_config": {
+    "bucket_span": "15m",
+    "detectors": [
+      {
+        "detector_description": "high_sum(token_transaction) partitioned by deployment",
+        "function": "high_sum",
+        "field_name": "azure.open_ai.token_transaction.total",
+        "partition_field_name": "azure.resource.name"
+      },
+      {
+        "detector_description": "high_sum(generated_tokens) partitioned by deployment",
+        "function": "high_sum",
+        "field_name": "azure.open_ai.generated_tokens.total",
+        "partition_field_name": "azure.resource.name"
+      }
+    ],
+    "influencers": [
+      "azure.resource.name",
+      "azure.resource.group",
+      "azure.subscription_id"
+    ]
+  },
+  "data_description": {
+    "time_field": "@timestamp"
+  },
+  "analysis_limits": {
+    "model_memory_limit": "256mb"
+  },
+  "results_index_name": "shared"
+}

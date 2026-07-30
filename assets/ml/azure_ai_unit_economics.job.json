@@ -1,0 +1,23 @@
+{
+  "description": "FinOps: anomalous cost per million tokens (efficiency regression)",
+  "groups": ["finops", "azure", "ai", "cost"],
+  "analysis_config": {
+    "bucket_span": "1d",
+    "detectors": [
+      {
+        "detector_description": "high_mean(cost_per_million_tokens) partitioned by deployment",
+        "function": "high_mean",
+        "field_name": "cost_per_million_tokens",
+        "partition_field_name": "resource_name"
+      }
+    ],
+    "influencers": ["resource_name"]
+  },
+  "data_description": {
+    "time_field": "usage_date"
+  },
+  "analysis_limits": {
+    "model_memory_limit": "64mb"
+  },
+  "results_index_name": "shared"
+}

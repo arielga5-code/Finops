@@ -1,0 +1,26 @@
+{
+  "name": "[FinOps][Budget] Azure forecast projects month-end budget overrun",
+  "rule_type_id": ".es-query",
+  "consumer": "alerts",
+  "enabled": true,
+  "schedule": { "interval": "12h" },
+  "tags": ["finops", "azure", "budget", "forecast"],
+  "notify_when": "onActiveAlert",
+  "throttle": "24h",
+  "params": {
+    "searchType": "esqlQuery",
+    "esqlQuery": {
+      "esql": "FROM metrics-azure.billing-* | WHERE azure.billing.usage_date >= DATE_TRUNC(1 month, NOW()) | STATS mtd_actual = SUM(azure.billing.actual_cost), mtd_forecast = SUM(azure.billing.forecast_cost) BY azure.subscription_id | EVAL monthly_budget = 50000.0, projected_total = mtd_actual + mtd_forecast | WHERE projected_total > monthly_budget | SORT projected_total DESC"
+    },
+    "timeField": "@timestamp",
+    "timeWindowSize": 7,
+    "timeWindowUnit": "d",
+    "size": 0,
+    "thresholdComparator": ">",
+    "threshold": [0],
+    "excludeHitsFromPreviousRun": false,
+    "aggType": "count",
+    "groupBy": "all"
+  },
+  "actions": []
+}

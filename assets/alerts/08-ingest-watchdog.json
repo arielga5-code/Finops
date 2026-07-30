@@ -1,0 +1,26 @@
+{
+  "name": "[FinOps][Watchdog] No Azure billing data ingested in 48h",
+  "rule_type_id": ".es-query",
+  "consumer": "alerts",
+  "enabled": true,
+  "schedule": { "interval": "6h" },
+  "tags": ["finops", "azure", "watchdog"],
+  "notify_when": "onActiveAlert",
+  "throttle": "12h",
+  "params": {
+    "searchType": "esqlQuery",
+    "esqlQuery": {
+      "esql": "FROM metrics-azure.billing-* | STATS doc_count = COUNT(*) | WHERE doc_count == 0"
+    },
+    "timeField": "@timestamp",
+    "timeWindowSize": 48,
+    "timeWindowUnit": "h",
+    "size": 0,
+    "thresholdComparator": ">",
+    "threshold": [0],
+    "excludeHitsFromPreviousRun": false,
+    "aggType": "count",
+    "groupBy": "all"
+  },
+  "actions": []
+}

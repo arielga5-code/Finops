@@ -1,0 +1,15 @@
+// Allocation coverage: how much spend cannot be attributed to a cost center.
+//
+// Requires the tag-promotion ingest pipeline from docs/02-cost-ingestion.md,
+// which writes finops.cost_center and defaults it to "unallocated".
+//
+// Target: under 5% unallocated. This is the KPI that makes tagging hygiene
+// visible to the people who can mandate it, so put it on the executive
+// dashboard rather than burying it in an engineering view.
+
+FROM metrics-azure.billing-*
+| WHERE azure.billing.actual_cost IS NOT NULL
+| WHERE azure.billing.usage_date >= DATE_TRUNC(1 month, NOW())
+| EVAL allocated = CASE(finops.cost_center == "unallocated", "unallocated", "allocated")
+| STATS cost = SUM(azure.billing.actual_cost) BY allocated
+| SORT cost DESC

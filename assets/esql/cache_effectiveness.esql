@@ -1,0 +1,22 @@
+// Prompt cache effectiveness per deployment.
+//
+// Two independent views of the same thing:
+//   - reported_cache_rate: Azure's own match rate (PTU-managed only)
+//   - derived_cache_rate:  (total - active) / total, works wherever both exist
+//
+// A step change downward is a cost regression, and it is nearly always a deploy
+// that put variable content (timestamp, session id, user name) near the START of
+// a system prompt, invalidating the cacheable prefix.
+
+FROM metrics-azure_openai.metrics-*
+| WHERE azure.open_ai.token_transaction.total IS NOT NULL
+     OR azure.open_ai.context_tokens_cache_match_rate.avg IS NOT NULL
+| STATS total_tokens       = SUM(azure.open_ai.token_transaction.total),
+        active_tokens      = SUM(azure.open_ai.active_tokens.total),
+        reported_cache_rate = AVG(azure.open_ai.context_tokens_cache_match_rate.avg)
+    BY hour = BUCKET(@timestamp, 1 hour),
+       azure.resource.name
+| EVAL cached_tokens     = total_tokens - active_tokens,
+       derived_cache_rate = TO_DOUBLE(total_tokens - active_tokens) / TO_DOUBLE(total_tokens) * 100
+| SORT hour DESC
+| LIMIT 500

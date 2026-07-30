@@ -1,0 +1,22 @@
+// Month-to-date actual spend against Azure's own forecast.
+//
+// forecast_cost and actual_cost live in the same data stream but in different
+// documents, so each side needs its own null filter. Adjust the budget EVAL to
+// your figure, or move budgets into a lookup index and LOOKUP JOIN them so
+// finance can maintain them without editing queries.
+
+FROM metrics-azure.billing-*
+| WHERE azure.billing.usage_date >= DATE_TRUNC(1 month, NOW())
+| STATS mtd_actual   = SUM(azure.billing.actual_cost),
+        mtd_forecast = SUM(azure.billing.forecast_cost)
+    BY azure.subscription_id,
+       azure.billing.currency
+| EVAL monthly_budget    = 50000.0,
+       projected_total   = mtd_actual + mtd_forecast,
+       budget_used_pct   = mtd_actual / monthly_budget * 100,
+       projected_pct     = (mtd_actual + mtd_forecast) / monthly_budget * 100,
+       overrun_risk      = CASE(
+            (mtd_actual + mtd_forecast) > monthly_budget, "over budget",
+            (mtd_actual + mtd_forecast) > monthly_budget * 0.9, "at risk",
+            "on track")
+| SORT projected_pct DESC
