@@ -1,0 +1,26 @@
+{
+  "name": "[FinOps][Advisory] Azure OpenAI prompt cache match rate regression",
+  "rule_type_id": ".es-query",
+  "consumer": "alerts",
+  "enabled": true,
+  "schedule": { "interval": "1h" },
+  "tags": ["finops", "azure", "ai", "advisory", "efficiency"],
+  "notify_when": "onActiveAlert",
+  "throttle": "24h",
+  "params": {
+    "searchType": "esqlQuery",
+    "esqlQuery": {
+      "esql": "FROM metrics-azure_openai.metrics-* | WHERE azure.open_ai.context_tokens_cache_match_rate.avg IS NOT NULL | STATS cache_rate = AVG(azure.open_ai.context_tokens_cache_match_rate.avg), samples = COUNT(*) BY azure.resource.name | WHERE samples > 20 AND cache_rate < 30 | SORT cache_rate ASC"
+    },
+    "timeField": "@timestamp",
+    "timeWindowSize": 6,
+    "timeWindowUnit": "h",
+    "size": 0,
+    "thresholdComparator": ">",
+    "threshold": [0],
+    "excludeHitsFromPreviousRun": false,
+    "aggType": "count",
+    "groupBy": "all"
+  },
+  "actions": []
+}

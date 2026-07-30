@@ -1,0 +1,37 @@
+{
+  "name": "[FinOps][Budget] Daily Azure spend above threshold by resource group",
+  "rule_type_id": "observability.rules.custom_threshold",
+  "consumer": "logs",
+  "enabled": true,
+  "schedule": { "interval": "1h" },
+  "tags": ["finops", "azure", "budget"],
+  "notify_when": "onActionGroupChange",
+  "params": {
+    "criteria": [
+      {
+        "comparator": ">",
+        "threshold": [1000],
+        "timeSize": 1,
+        "timeUnit": "d",
+        "metrics": [
+          {
+            "name": "A",
+            "aggType": "sum",
+            "field": "azure.billing.actual_cost"
+          }
+        ]
+      }
+    ],
+    "groupBy": ["azure.resource.group"],
+    "alertOnNoData": false,
+    "alertOnGroupDisappear": false,
+    "searchConfiguration": {
+      "index": "REPLACE_WITH_DATA_VIEW_ID",
+      "query": {
+        "query": "azure.billing.actual_cost: *",
+        "language": "kuery"
+      }
+    }
+  },
+  "actions": []
+}

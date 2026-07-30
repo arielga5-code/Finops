@@ -1,0 +1,26 @@
+{
+  "name": "[FinOps][Protective] Azure OpenAI PTU saturation > 90%",
+  "rule_type_id": ".es-query",
+  "consumer": "alerts",
+  "enabled": true,
+  "schedule": { "interval": "5m" },
+  "tags": ["finops", "azure", "ai", "protective", "ptu"],
+  "notify_when": "onActiveAlert",
+  "throttle": "1h",
+  "params": {
+    "searchType": "esqlQuery",
+    "esqlQuery": {
+      "esql": "FROM metrics-azure_openai.metrics-* | WHERE azure.open_ai.provisioned_managed_utilization_v2.avg IS NOT NULL | STATS avg_util = AVG(azure.open_ai.provisioned_managed_utilization_v2.avg), max_util = MAX(azure.open_ai.provisioned_managed_utilization_v2.avg) BY azure.resource.name | WHERE avg_util > 90 | SORT avg_util DESC"
+    },
+    "timeField": "@timestamp",
+    "timeWindowSize": 15,
+    "timeWindowUnit": "m",
+    "size": 0,
+    "thresholdComparator": ">",
+    "threshold": [0],
+    "excludeHitsFromPreviousRun": false,
+    "aggType": "count",
+    "groupBy": "all"
+  },
+  "actions": []
+}

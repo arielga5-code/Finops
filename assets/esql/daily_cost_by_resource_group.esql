@@ -1,0 +1,13 @@
+// Daily Azure spend by resource group.
+// Buckets on usage_date (when cost was incurred), NOT @timestamp (when we polled).
+// The IS NOT NULL filter is mandatory: forecast and actual documents share this
+// data stream, and summing without it double-counts.
+
+FROM metrics-azure.billing-*
+| WHERE azure.billing.actual_cost IS NOT NULL
+| STATS cost = SUM(azure.billing.actual_cost)
+    BY day = BUCKET(azure.billing.usage_date, 1 day),
+       azure.resource.group,
+       azure.billing.currency
+| SORT day DESC, cost DESC
+| LIMIT 500

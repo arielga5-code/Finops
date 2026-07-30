@@ -1,0 +1,26 @@
+{
+  "name": "[FinOps][Protective] Azure OpenAI token burn rate spike",
+  "rule_type_id": ".es-query",
+  "consumer": "alerts",
+  "enabled": true,
+  "schedule": { "interval": "5m" },
+  "tags": ["finops", "azure", "ai", "protective"],
+  "notify_when": "onActiveAlert",
+  "throttle": "30m",
+  "params": {
+    "searchType": "esqlQuery",
+    "esqlQuery": {
+      "esql": "FROM metrics-azure_openai.metrics-* | WHERE azure.open_ai.token_transaction.total IS NOT NULL | STATS tokens_15m = SUM(azure.open_ai.token_transaction.total) BY azure.resource.name | WHERE tokens_15m > 5000000 | SORT tokens_15m DESC"
+    },
+    "timeField": "@timestamp",
+    "timeWindowSize": 15,
+    "timeWindowUnit": "m",
+    "size": 0,
+    "thresholdComparator": ">",
+    "threshold": [0],
+    "excludeHitsFromPreviousRun": false,
+    "aggType": "count",
+    "groupBy": "all"
+  },
+  "actions": []
+}

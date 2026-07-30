@@ -1,0 +1,22 @@
+{
+  "name": "[FinOps][Protective] Anomalous Azure OpenAI token volume (ML)",
+  "rule_type_id": "xpack.ml.anomaly_detection_alert",
+  "consumer": "alerts",
+  "enabled": true,
+  "schedule": { "interval": "15m" },
+  "tags": ["finops", "azure", "ai", "ml", "anomaly", "protective"],
+  "notify_when": "onActiveAlert",
+  "throttle": "1h",
+  "params": {
+    "jobSelection": {
+      "jobIds": ["azure_openai_token_volume"],
+      "groupIds": []
+    },
+    "severity": 75,
+    "resultType": "record",
+    "includeInterim": false,
+    "lookbackInterval": null,
+    "topNBuckets": null
+  },
+  "actions": []
+}

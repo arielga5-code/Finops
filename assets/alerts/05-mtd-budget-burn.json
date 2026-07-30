@@ -1,0 +1,26 @@
+{
+  "name": "[FinOps][Budget] Month-to-date burn ahead of schedule",
+  "rule_type_id": ".es-query",
+  "consumer": "alerts",
+  "enabled": true,
+  "schedule": { "interval": "6h" },
+  "tags": ["finops", "azure", "budget"],
+  "notify_when": "onActiveAlert",
+  "throttle": "24h",
+  "params": {
+    "searchType": "esqlQuery",
+    "esqlQuery": {
+      "esql": "FROM metrics-azure.billing-* | WHERE azure.billing.actual_cost IS NOT NULL | WHERE azure.billing.usage_date >= DATE_TRUNC(1 month, NOW()) | STATS mtd_actual = SUM(azure.billing.actual_cost) BY azure.subscription_id | EVAL monthly_budget = 50000.0, month_elapsed_pct = TO_DOUBLE(DATE_EXTRACT(\"DAY_OF_MONTH\", NOW())) / 30.0 * 100, budget_used_pct = mtd_actual / monthly_budget * 100 | WHERE budget_used_pct > month_elapsed_pct * 1.25 | SORT budget_used_pct DESC"
+    },
+    "timeField": "@timestamp",
+    "timeWindowSize": 7,
+    "timeWindowUnit": "d",
+    "size": 0,
+    "thresholdComparator": ">",
+    "threshold": [0],
+    "excludeHitsFromPreviousRun": false,
+    "aggType": "count",
+    "groupBy": "all"
+  },
+  "actions": []
+}

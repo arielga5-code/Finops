@@ -1,0 +1,14 @@
+{
+  "job_id": "azure_cost_daily_spend",
+  "indices": ["metrics-azure.billing-*"],
+  "query": {
+    "bool": {
+      "filter": [
+        { "exists": { "field": "azure.billing.actual_cost" } }
+      ]
+    }
+  },
+  "scroll_size": 1000,
+  "query_delay": "172800s",
+  "frequency": "3600s"
+}

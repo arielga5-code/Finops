@@ -1,0 +1,14 @@
+{
+  "job_id": "azure_ai_unit_economics",
+  "indices": ["finops-ai-unit-economics-*"],
+  "query": {
+    "bool": {
+      "filter": [
+        { "exists": { "field": "cost_per_million_tokens" } }
+      ]
+    }
+  },
+  "scroll_size": 1000,
+  "query_delay": "172800s",
+  "frequency": "3600s"
+}

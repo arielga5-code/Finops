@@ -1,0 +1,19 @@
+// Input vs output tokens per Azure OpenAI deployment, hourly.
+//
+// Always split input from output. Output tokens bill at several times the input
+// rate on most models, so a flat "total tokens" chart can hide a real cost
+// increase. The ratio column makes a shift in completion length obvious.
+
+FROM metrics-azure_openai.metrics-*
+| WHERE azure.open_ai.processed_prompt_tokens.total IS NOT NULL
+     OR azure.open_ai.generated_tokens.total IS NOT NULL
+| STATS input_tokens  = SUM(azure.open_ai.processed_prompt_tokens.total),
+        output_tokens = SUM(azure.open_ai.generated_tokens.total),
+        requests      = SUM(azure.open_ai.requests.total)
+    BY hour = BUCKET(@timestamp, 1 hour),
+       azure.resource.name
+| EVAL total_tokens    = input_tokens + output_tokens,
+       output_ratio    = TO_DOUBLE(output_tokens) / TO_DOUBLE(input_tokens + output_tokens),
+       tokens_per_call = TO_DOUBLE(input_tokens + output_tokens) / TO_DOUBLE(requests)
+| SORT hour DESC, total_tokens DESC
+| LIMIT 500
