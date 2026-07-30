@@ -26,6 +26,7 @@ which app, made yesterday's bill jump 40%, and was it worth it?"
 
 Ready to apply, not pseudocode:
 
+- `assets/kibana/` — importable dashboard NDJSON (8 Lens panels) + its generator
 - `assets/esql/` — ES|QL queries for dashboards and alert rules
 - `assets/alerts/` — Kibana alerting API payloads (`POST kbn:/api/alerting/rule`)
 - `assets/ml/` — anomaly detection job + datafeed configs
