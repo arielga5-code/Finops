@@ -21,6 +21,7 @@ which app, made yesterday's bill jump 40%, and was it worth it?"
 | [05-alerting.md](docs/05-alerting.md) | Budget, spike, forecast, PTU and token-burn rules — with API payloads |
 | [06-ai-anomaly-and-assistant.md](docs/06-ai-anomaly-and-assistant.md) | ML anomaly detection jobs, AI Assistant, agentic investigation |
 | [07-finops-operating-model.md](docs/07-finops-operating-model.md) | Tagging, showback, review cadence, what to do when an alert fires |
+| [08-shared-platform-chargeback.md](docs/08-shared-platform-chargeback.md) | Per-team attribution for a shared AI platform, via APIM |
 
 ## Assets
 

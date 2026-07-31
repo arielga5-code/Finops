@@ -1,0 +1,58 @@
+// Chargeback allocation for a shared Azure OpenAI platform.
+//
+// PREREQUISITE: APIM in front of the shared resource, emitting gateway LLM logs
+// to Elastic. See docs/08-shared-platform-chargeback.md.
+//
+// FIELD PATHS ARE A PLACEHOLDER. Where APIM properties land in Elastic depends
+// on the integration version and ingest pipeline. Ingest one real request, open
+// the document in Discover, and correct these paths before trusting the output.
+//
+// Two things this query gets right that a naive token share does not:
+//
+//   1. It filters to sequence 0. With streaming responses one request emits
+//      several records, and only sequence 0 carries the token counts; the rest
+//      report zero.
+//
+//   2. It weights completion tokens by the model's output/input price ratio.
+//      Output tokens bill several times higher than input. A straight token
+//      share overcharges summarization teams and subsidizes generation teams.
+//      Replace the ratios below with your contracted rates.
+
+FROM logs-azure*
+| WHERE azure.apimanagement.operation_name IS NOT NULL
+| WHERE azure.apimanagement.sequence_number == 0
+| WHERE azure.apimanagement.prompt_tokens IS NOT NULL
+
+// Output/input price ratio per model family. Keep real values here, or move them
+// to a lookup index and LOOKUP JOIN so finance can maintain them.
+| EVAL output_weight = CASE(
+      azure.apimanagement.model_name LIKE "gpt-4o-mini*", 4.0,
+      azure.apimanagement.model_name LIKE "gpt-4o*",      4.0,
+      azure.apimanagement.model_name LIKE "gpt-4*",       3.0,
+      azure.apimanagement.model_name LIKE "o1*",          4.0,
+      3.0)
+
+| EVAL weighted_tokens =
+      azure.apimanagement.prompt_tokens
+    + (azure.apimanagement.completion_tokens * output_weight)
+
+| STATS prompt_tokens     = SUM(azure.apimanagement.prompt_tokens),
+        completion_tokens = SUM(azure.apimanagement.completion_tokens),
+        weighted          = SUM(weighted_tokens),
+        requests          = COUNT(*)
+    BY team  = azure.apimanagement.subscription_id,
+       model = azure.apimanagement.model_name
+
+// Replace with the shared resource's actual cost for the period, from
+// assets/esql/ai_spend_by_service.esql. A lookup index is the durable answer.
+| EVAL shared_resource_cost = 68240.0
+
+| SORT weighted DESC
+| LIMIT 100
+
+// Then: team_share = weighted / SUM(weighted) across all rows, and
+//       team_cost  = shared_resource_cost * team_share
+//
+// ES|QL has no window function for the grand total in one pass. Either compute
+// the share client-side in the dashboard, or materialize the period total into
+// the same lookup index that holds the cost figure.
