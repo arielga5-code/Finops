@@ -703,23 +703,23 @@ async function slide13() {
   const steps = [
     ["01", "Set the tagging standard", "Agree a consistent taxonomy before investing in dashboards."],
     ["02", "Start with the biggest spend", "Attack the largest categories first. Don't chase perfect granularity everywhere."],
-    ["03", "Get finance and engineering talking", "Bring both into the same conversation early, not as an afterthought."],
+    ["03", "Get finance and engineering talking", "Bring both into the conversation early, not as an afterthought."],
     ["04", "Choose tools that fit the footprint", "Native tooling for single-cloud; specialized platforms only for genuine multi-cloud."],
   ];
   const xs = [0.6, 3.70, 6.80, 9.90];
   for (let i = 0; i < steps.length; i++) {
     const [num, name, desc] = steps[i];
-    card(s, { x: xs[i], y: 1.95, w: 2.83, h: 2.6, fill: i === 0 ? DARK_CARD : TINT, shadow: false });
+    card(s, { x: xs[i], y: 1.95, w: 2.83, h: 2.65, fill: i === 0 ? DARK_CARD : TINT, shadow: false });
     s.addText(num, {
       x: xs[i] + 0.28, y: 2.15, w: 1.2, h: 0.55, fontFace: HEAD, fontSize: 28, bold: true,
       color: i === 0 ? AMBER : "B9C2CD", margin: 0, valign: "middle",
     });
     s.addText(name, {
-      x: xs[i] + 0.28, y: 2.78, w: 2.3, h: 0.72, fontFace: HEAD, fontSize: 16, bold: true,
+      x: xs[i] + 0.26, y: 2.76, w: 2.34, h: 0.86, fontFace: HEAD, fontSize: 15, bold: true,
       color: i === 0 ? WHITE : INK, margin: 0, valign: "top", lineSpacing: 20,
     });
     s.addText(desc, {
-      x: xs[i] + 0.28, y: 3.52, w: 2.3, h: 0.9, fontFace: BODY, fontSize: 12,
+      x: xs[i] + 0.26, y: 3.66, w: 2.34, h: 0.82, fontFace: BODY, fontSize: 12,
       color: i === 0 ? MUTED_D : MUTED, margin: 0, valign: "top", lineSpacing: 15,
     });
   }

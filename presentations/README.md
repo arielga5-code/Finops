@@ -11,6 +11,10 @@ Management-facing material derived from the practice this repo implements.
 15 slides, same visuals, argued for a different room. Present either one; pick
 the file whose notes match the audience.
 
+[`finops-gaining-visibility.pdf`](finops-gaining-visibility.pdf) is a rendered
+copy for quick review without PowerPoint. It carries no speaker notes and is
+regenerated from the deck, so never edit it directly.
+
 ## FinOps: Gaining Visibility
 
 The case for the **Inform** phase — why cost allocation, granular reporting, unit
