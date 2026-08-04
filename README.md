@@ -24,6 +24,10 @@ which app, made yesterday's bill jump 40%, and was it worth it?"
 
 ## Presentations
 
+- [`presentations/finops-cio-brief.pptx`](presentations/finops-cio-brief.pptx) —
+  the five-slide CIO cut: the gap, why the discipline moved toward the
+  technology organization this year, allocation, the four controls, and a
+  90-day plan with three decisions. Start here.
 - [`presentations/finops-gaining-visibility.pptx`](presentations/finops-gaining-visibility.pptx) —
   22-slide management briefing in two parts. Visibility: why it precedes
   optimization, the five things that block it, how to unblock each one.
