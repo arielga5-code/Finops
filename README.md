@@ -27,8 +27,13 @@ which app, made yesterday's bill jump 40%, and was it worth it?"
 - [`presentations/finops-gaining-visibility.pptx`](presentations/finops-gaining-visibility.pptx) —
   15-slide management briefing on the Inform phase: why visibility precedes
   optimization, the five things that block it, and how to unblock each one.
-  Generated from [`presentations/build-deck.js`](presentations/build-deck.js); see
-  [`presentations/README.md`](presentations/README.md).
+- [`presentations/finops-gaining-visibility-cfo.pptx`](presentations/finops-gaining-visibility-cfo.pptx) —
+  the same slides with speaker notes rewritten for a CFO: variance
+  explainability, accrual and forecast quality, commitments as purchase
+  obligations, chargeback as an accounting change.
+
+Both are generated from [`presentations/build-deck.js`](presentations/build-deck.js);
+see [`presentations/README.md`](presentations/README.md).
 
 ## Assets
 

@@ -8,7 +8,28 @@ const ReactDOMServer = require("react-dom/server");
 const Fi = require("react-icons/fi");
 const sharp = require("sharp");
 
-const OUT = process.argv[2] || path.join(__dirname, "finops-gaining-visibility.pptx");
+/*
+ * usage: node build-deck.js [outfile.pptx] [audience]
+ *   audience: "exec" (default) or "cfo" — selects the speaker-note set only.
+ *             The slides themselves are identical in both variants.
+ */
+const AUDIENCE = (process.argv[3] || "exec").toLowerCase();
+const NOTES = {
+  exec: require("./notes-exec.js"),
+  cfo: require("./notes-cfo.js"),
+}[AUDIENCE];
+if (!NOTES) {
+  console.error('unknown audience "' + AUDIENCE + '" — expected "exec" or "cfo"');
+  process.exit(1);
+}
+
+const OUT = process.argv[2] ||
+  path.join(__dirname, "finops-gaining-visibility" + (AUDIENCE === "exec" ? "" : "-" + AUDIENCE) + ".pptx");
+
+function note(slide, n) {
+  if (!NOTES[n]) throw new Error("missing note for slide " + n);
+  slide.addNotes(NOTES[n]);
+}
 
 /* ---------- palette ---------- */
 const DARK = "141A22";
@@ -90,8 +111,8 @@ function kicker(slide, text, dark) {
 
 function title(slide, text, dark, opts = {}) {
   slide.addText(text, {
-    x: M, y: opts.y || 0.85, w: opts.w || 11.9, h: opts.h || 0.85,
-    fontFace: HEAD, fontSize: opts.size || 34, bold: true,
+    x: M, y: opts.y || 0.84, w: opts.w || 12.13, h: opts.h || 0.88,
+    fontFace: HEAD, fontSize: opts.size || 31, bold: true,
     color: dark ? WHITE : INK, margin: 0, valign: "middle",
   });
 }
@@ -189,11 +210,7 @@ async function slide1() {
     charSpacing: 1.6, color: AMBER, margin: 0, valign: "middle",
   });
 
-  s.addNotes(
-    "Framing: this briefing is about the Inform phase of FinOps — visibility. " +
-    "It is deliberately not an optimization pitch. The argument is that visibility is the " +
-    "prerequisite that makes every later saving durable rather than one-off."
-  );
+  note(s, 1);
   return s;
 }
 
@@ -233,12 +250,7 @@ async function slide2() {
     { x: 7.82, y: 4.91, w: 4.59, h: 1.35, fontFace: BODY, margin: 0, valign: "middle", lineSpacing: 20 }
   );
 
-  s.addNotes(
-    "Open with the lived experience rather than theory: the month-end surprise. " +
-    "If you have one, use a real example of a bill that moved and could not be explained within 24 hours. " +
-    "The point of the quote is that a dashboard is not the same thing as visibility — " +
-    "visibility means an owner and a cause can be named."
-  );
+  note(s, 2);
 }
 
 async function slide3() {
@@ -291,11 +303,7 @@ async function slide3() {
     text: "“Without visibility, nothing else in the practice works.”",
   });
 
-  s.addNotes(
-    "Stress the 'Finance + DevOps' compound: this is an operating model that puts two functions in the " +
-    "same conversation, not a tool purchase. Inform is highlighted because it is where this organization is, " +
-    "and because the cycle repeats — each optimization round needs fresh visibility to target the next one."
-  );
+  note(s, 3);
 }
 
 async function slide4() {
@@ -334,12 +342,7 @@ async function slide4() {
     { x: M + 0.34, y: 6.02, w: 11.45, h: 0.92, fontFace: BODY, fontSize: 14, margin: 0, valign: "middle" }
   );
 
-  s.addNotes(
-    "These four questions are the acceptance test for the visibility programme. " +
-    "Invite the room to answer them for our own estate right now — the gaps in the answers are the business case. " +
-    "The bottom line matters most to a cost-conscious executive: without allocation, the only lever left is " +
-    "an across-the-board cut, which lands hardest on whoever is least able to argue back rather than on actual waste."
-  );
+  note(s, 4);
 }
 
 async function slide5() {
@@ -386,12 +389,7 @@ async function slide5() {
     { x: M + 0.36, y: 6.12, w: 11.4, h: 0.62, fontFace: BODY, fontSize: 16, margin: 0, valign: "middle" }
   );
 
-  s.addNotes(
-    "Four capabilities, in dependency order: allocation makes reporting meaningful, reporting makes unit " +
-    "economics computable, and freshness determines whether any of it is actionable. " +
-    "Unit economics is the one that changes the conversation with the board — it separates 'spend is up' " +
-    "from 'spend per customer is down', which are opposite stories told by the same invoice."
-  );
+  note(s, 5);
 }
 
 async function slide6() {
@@ -427,12 +425,7 @@ async function slide6() {
     { x: M, y: 6.4, w: 12.13, h: 0.6, fontFace: HEAD, fontSize: 14.5, italic: true, color: AMBER, margin: 0, valign: "middle" }
   );
 
-  s.addNotes(
-    "This is the honest slide: it says the goal is hard and names why. " +
-    "The next four slides map one-to-one onto the first four blockers. " +
-    "SaaS and marketplace spend has no dedicated solution slide because the fix is procurement discipline " +
-    "rather than tooling — flag it as an action for finance, not engineering."
-  );
+  note(s, 6);
 }
 
 async function slide7() {
@@ -483,12 +476,7 @@ async function slide7() {
     tx += 2.42;
   }
 
-  s.addNotes(
-    "The one slide to take away if only one lands. Two decisions are needed from this room: " +
-    "who owns the tag taxonomy, and whether we are willing to enforce it with policy that blocks " +
-    "untagged resource creation. Enforcement at creation is nearly free; retrofitting a live estate is not. " +
-    "The five minimum tags are a starting point — resist the urge to design thirty."
-  );
+  note(s, 7);
 }
 
 async function slide8() {
@@ -526,24 +514,19 @@ async function slide8() {
     text: "“A thoughtful chargeback model often drives more intentional decisions and long-term discipline.”",
   });
 
-  s.addNotes(
-    "Worth naming our own shared platforms out loud here. " +
-    "The caveat to flag: a shared platform carries one set of tags, so resource tags alone cannot split it — " +
-    "per-team attribution needs either gateway-level keys or application-level instrumentation. " +
-    "Decide which before promising anyone chargeback on a shared service."
-  );
+  note(s, 8);
 }
 
 async function slide9() {
   const s = pres.addSlide();
   bg(s, WHITE);
   kicker(s, "Solution 3 — commitments & discounts");
-  title(s, "Making Reserved Instances and Savings Plans visible");
+  title(s, "Making the price we actually pay visible");
   sub(s, "Discounts obscure true attribution: the price shown on a resource is not the price the business paid.");
 
   card(s, { x: M, y: 2.3, w: 3.85, h: 2.98, fill: DARK_CARD });
   s.addText("60–80%", {
-    x: M + 0.3, y: 2.9, w: 3.25, h: 1.05, fontFace: HEAD, fontSize: 56, bold: true,
+    x: M + 0.28, y: 2.86, w: 3.3, h: 1.05, fontFace: HEAD, fontSize: 46, bold: true,
     color: AMBER, margin: 0, valign: "middle",
   });
   s.addText("Target commitment coverage on stable, predictable workloads.", {
@@ -576,12 +559,7 @@ async function slide9() {
     text: "A commitment nobody uses is the most expensive form of waste — it is locked in, and it is invisible on a list-price report.",
   });
 
-  s.addNotes(
-    "Two failure modes to describe: under-coverage, where we pay on-demand rates for workloads that never " +
-    "turn off; and over-commitment, where we buy for a peak that never returns. " +
-    "The reporting fix is showing both prices — teams that only see the discounted rate cannot tell whether " +
-    "the commitment is earning its keep, and teams that only see list price will not believe the savings claim."
-  );
+  note(s, 9);
 }
 
 async function slide10() {
@@ -617,11 +595,7 @@ async function slide10() {
       "instead of looking at each cloud or vendor in a silo.”",
   });
 
-  s.addNotes(
-    "Calibrate to our own footprint: if we are effectively single-cloud, the native tooling is sufficient and " +
-    "a platform purchase is premature. The FOCUS point still matters even then — asking vendors for " +
-    "FOCUS-compliant exports keeps the option open and makes any future migration cheap."
-  );
+  note(s, 10);
 }
 
 async function slide11() {
@@ -648,11 +622,11 @@ async function slide11() {
     card(s, { x: m.x, y: 1.95, w: 5.9, h: 3.35, fill: m.fill, shadow: false });
     await iconBadge(s, { x: m.x + 0.34, y: 2.22, d: 0.64, bg: WHITE, icon: m.icon, color: m.badge === TEAL ? "1F6B5C" : "B87B18" });
     s.addText(m.name, {
-      x: m.x + 1.12, y: 2.22, w: 2.0, h: 0.64, fontFace: HEAD, fontSize: 24, bold: true,
+      x: m.x + 1.12, y: 2.22, w: 2.6, h: 0.64, fontFace: HEAD, fontSize: 21, bold: true,
       color: INK, margin: 0, valign: "middle",
     });
     s.addText(m.tag, {
-      x: m.x + 3.2, y: 2.22, w: 2.36, h: 0.64, fontFace: BODY, fontSize: 11.5, bold: true,
+      x: m.x + 3.75, y: 2.22, w: 1.81, h: 0.64, fontFace: BODY, fontSize: 11.5, bold: true,
       charSpacing: 1.4, color: MUTED, margin: 0, align: "right", valign: "middle",
     });
     s.addText(m.what, {
@@ -682,12 +656,7 @@ async function slide11() {
     { x: M, y: 6.5, w: 12.13, h: 0.42, fontFace: HEAD, fontSize: 14, italic: true, color: MUTED, margin: 0, valign: "middle" }
   );
 
-  s.addNotes(
-    "The sequencing is the message. Showback is a runway, not a lesser version of chargeback: it is where " +
-    "allocation disputes get found and settled while the stakes are still low. " +
-    "A chargeback launched on 60% tagging coverage produces an argument about the numbers instead of a " +
-    "conversation about the spend, and that argument is expensive to unwind."
-  );
+  note(s, 11);
 }
 
 async function slide12() {
@@ -722,11 +691,7 @@ async function slide12() {
     });
   }
 
-  s.addNotes(
-    "Use this as a maturity self-assessment rather than a wish list: mark each of the six as in place, " +
-    "partial, or absent for our estate. Note that four of the six are visibility practices — " +
-    "high performers are not distinguished by how aggressively they cut, but by how early and how precisely they see."
-  );
+  note(s, 12);
 }
 
 async function slide13() {
@@ -782,19 +747,14 @@ async function slide13() {
     ty += 0.45;
   }
 
-  s.addNotes(
-    "This is the ask. Step 1 is highlighted because it is the only one that cannot be parallelized — " +
-    "everything downstream degrades if the taxonomy is still in flux. " +
-    "Steps 2 and 4 are both arguments against over-engineering: pick the top spend categories and the " +
-    "tooling that matches the estate we actually have, not the one we might have in three years."
-  );
+  note(s, 13);
 }
 
 async function slide14() {
   const s = pres.addSlide();
   bg(s, DARK);
   kicker(s, "Key takeaways");
-  title(s, "Visibility is not the goal — it is the foundation", true);
+  title(s, "Visibility is the foundation, not the goal", true);
 
   const chain = [
     ["Visibility", "enables accountability", "Teams can only own what they can see."],
@@ -805,22 +765,22 @@ async function slide14() {
   const xs = [0.6, 3.70, 6.80, 9.90];
   for (let i = 0; i < chain.length; i++) {
     const [head, verb, desc] = chain[i];
-    card(s, { x: xs[i], y: 2.15, w: 2.83, h: 2.35, fill: DARK_CARD, shadow: false });
+    card(s, { x: xs[i], y: 2.15, w: 2.83, h: 2.5, fill: DARK_CARD, shadow: false });
     s.addText(head, {
-      x: xs[i] + 0.28, y: 2.42, w: 2.3, h: 0.45, fontFace: HEAD, fontSize: 21, bold: true,
+      x: xs[i] + 0.26, y: 2.4, w: 2.32, h: 0.42, fontFace: HEAD, fontSize: 18, bold: true,
       color: AMBER, margin: 0, valign: "middle",
     });
     s.addText(verb, {
-      x: xs[i] + 0.28, y: 2.9, w: 2.3, h: 0.4, fontFace: BODY, fontSize: 13.5, bold: true,
+      x: xs[i] + 0.26, y: 2.86, w: 2.32, h: 0.5, fontFace: BODY, fontSize: 13, bold: true,
       color: WHITE, margin: 0, valign: "middle",
     });
     s.addText(desc, {
-      x: xs[i] + 0.28, y: 3.4, w: 2.3, h: 1.05, fontFace: BODY, fontSize: 12.5,
+      x: xs[i] + 0.26, y: 3.45, w: 2.32, h: 1.1, fontFace: BODY, fontSize: 12.5,
       color: MUTED_D, margin: 0, valign: "top", lineSpacing: 16,
     });
     if (i < chain.length - 1) {
       s.addShape(pres.ShapeType.rightArrow, {
-        x: xs[i] + 2.88, y: 3.22, w: 0.21, h: 0.2,
+        x: xs[i] + 2.88, y: 3.28, w: 0.21, h: 0.2,
         fill: { color: "3D4B5B" }, line: { type: "none" },
       });
     }
@@ -832,11 +792,7 @@ async function slide14() {
       "than those that jump straight to cuts.”",
   });
 
-  s.addNotes(
-    "Close on the causal chain rather than a summary of slides. Each link is a separate management " +
-    "commitment: allocation data, published ownership, cost surfaced in the engineering workflow, and a " +
-    "review cadence that keeps it alive. Ask for the first two today; the rest follow from them."
-  );
+  note(s, 14);
 }
 
 async function slide15() {
@@ -880,12 +836,7 @@ async function slide15() {
     lit: (c, r) => c + r >= 5,
   });
 
-  s.addNotes(
-    "Anticipate three questions. What will this cost — mostly effort, not licences, if we stay on native " +
-    "tooling. How long until we see savings — allocation coverage improves in weeks, targeted savings follow " +
-    "the first full month of clean data. Who owns it — name the tagging owner and the review cadence before " +
-    "leaving the room, or nothing on the previous slides happens."
-  );
+  note(s, 15);
 }
 
 /* ---------- main ---------- */
@@ -894,7 +845,9 @@ async function slide15() {
   pres.layout = "LAYOUT_WIDE";
   pres.author = "FinOps";
   pres.title = "FinOps: Gaining Visibility";
-  pres.subject = "Cloud financial management — management briefing";
+  pres.subject = AUDIENCE === "cfo"
+    ? "Cloud financial management — CFO briefing"
+    : "Cloud financial management — management briefing";
 
   await slide1();
   await slide2();
@@ -913,5 +866,5 @@ async function slide15() {
   await slide15();
 
   await pres.writeFile({ fileName: OUT });
-  console.log("wrote " + OUT);
+  console.log("wrote " + OUT + "  (notes: " + AUDIENCE + ")");
 })();
