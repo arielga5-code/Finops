@@ -1305,6 +1305,51 @@ async function slideShipIt() {
   note(s, "ship-it");
 }
 
+async function slideTooling() {
+  const s = pres.addSlide();
+  bg(s, WHITE);
+  kicker(s, "Tooling — a worked example");
+  title(s, "What a FinOps platform adds: Finout");
+  sub(s, "The capabilities a dedicated platform brings over native billing consoles, and what to test before buying one.");
+
+  const caps = [
+    ["FiLayers", "One normalized bill", "Cloud, SaaS and AI in one view — AWS, Azure, GCP, OCI, Kubernetes, Snowflake, Databricks, OpenAI, Anthropic. FOCUS supported."],
+    ["FiTag", "Virtual tags", "Allocates untagged and shared cost by rule, without touching infrastructure tags — showback without a retagging project."],
+    ["FiBox", "Kubernetes to pod level", "Cluster, namespace and pod allocation without an agent, which is the shared-cost problem most tools leave unsolved."],
+    ["FiBarChart2", "Dashboards and unit economics", "Widgets for cost, usage, waste, budget and unit cost; business metrics from Datadog, Salesforce or Looker to divide by."],
+    ["FiBell", "Budgets, forecast, anomalies", "Budget structures, forecasting on any unit cost, and anomaly alerts on unexpected movement."],
+    ["FiTool", "Waste detection with an owner", "CostGuard consolidates recommendations across providers, assigns an owner and tracks the saving — into Jira, Slack or ServiceNow."],
+  ];
+  const xs = [0.6, 4.74, 8.88];
+  const ys = [2.32, 4.36];
+  for (let i = 0; i < caps.length; i++) {
+    const [ic, name, desc] = caps[i];
+    const x = xs[i % 3], y = ys[Math.floor(i / 3)];
+    card(s, { x, y, w: 3.84, h: 1.88, fill: TINT, shadow: false });
+    await iconBadge(s, { x: x + 0.32, y: y + 0.26, d: 0.5, bg: WHITE, icon: ic, color: "1F6B5C" });
+    s.addText(name, {
+      x: x + 0.96, y: y + 0.24, w: 2.7, h: 0.54, fontFace: HEAD, fontSize: 15, bold: true,
+      color: INK, margin: 0, valign: "middle",
+    });
+    s.addText(desc, {
+      x: x + 0.32, y: y + 0.86, w: 3.2, h: 0.94, fontFace: BODY, fontSize: 11.5,
+      color: MUTED, margin: 0, valign: "top", lineSpacing: 15,
+    });
+  }
+
+  card(s, { x: M, y: 6.4, w: 12.13, h: 0.86, fill: DARK_CARD });
+  s.addText(
+    [
+      { text: "Before buying, prove three things on our own data:  ", options: { color: AMBER, bold: true } },
+      { text: "that it allocates the spend we cannot allocate today, that it attributes Azure OpenAI cost per calling application rather than per resource, and that it exports FOCUS so we are not locked in. Vendor-published outcomes — around 30% cost reduction and 50% engineer time saved — are marketing claims, not a forecast for us.", options: { color: MUTED_D } },
+    ],
+    { x: M + 0.36, y: 6.4, w: 11.4, h: 0.86, fontFace: BODY, fontSize: 12, margin: 0,
+      valign: "middle", lineSpacing: 16 }
+  );
+
+  note(s, "tooling-finout");
+}
+
 async function slidePathForward() {
   const s = pres.addSlide();
   bg(s, WHITE);
@@ -1485,6 +1530,7 @@ async function slideClosing() {
   await slideBillingShock();
   await slideAiCost();
   await slideShipIt();
+  await slideTooling();
 
   await slidePathForward();
   await slideTakeaways();

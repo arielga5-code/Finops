@@ -207,6 +207,23 @@ module.exports = {
     "finance-grade report improves anyway, because the underlying data gets used and therefore " +
     "gets corrected.",
 
+  "tooling-finout":
+    "Use this slide to answer 'what would we actually buy', with a named example rather than an " +
+    "abstract category. Everything in the six cards is a capability the vendor publishes; the " +
+    "shape is representative of the enterprise platforms in this space rather than unique to one. " +
+    "The two cards that matter most for us are virtual tags and Kubernetes allocation, because " +
+    "they attack the two problems earlier in this deck that tagging discipline alone does not " +
+    "solve — the spend that is already untagged, and shared platforms that carry one set of tags " +
+    "for many consumers. " +
+    "Keep the deck's own advice in view when you present this. Slide 10 says native tooling is " +
+    "sufficient for a single-cloud estate, and that has not changed: a platform earns its licence " +
+    "when there are several billing sources to normalize, or when allocation cannot be fixed at " +
+    "source. Say so, or the deck contradicts itself. " +
+    "The bottom bar is the part to read aloud. Three proofs on our own data before any purchase, " +
+    "and an explicit flag that the published outcome numbers are marketing claims. Quoting a " +
+    "vendor's savings percentage as though it were our forecast is the fastest way to lose the " +
+    "room's trust in everything else on these slides.",
+
   "path-forward":
     "This is the ask. Step 1 is highlighted because it is the only one that cannot be parallelized — " +
     "everything downstream degrades if the taxonomy is still in flux. " +

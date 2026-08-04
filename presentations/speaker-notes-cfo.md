@@ -122,16 +122,21 @@ Read this as the risk slide for the fastest-growing line in the technology budge
 This is the governance-of-the-programme slide, and the one that answers 'how will we know this is working before the savings arrive'. The distinction to hold on to is identified versus realized savings. Identified is an estimate produced by a tool; realized is a change visible on an invoice. Treat the first as a pipeline and only the second as a result, and never let the two be reported as one number — that conflation is how cost programmes end up claiming savings the P&L cannot find. Adoption is the leading indicator worth putting in the monthly pack: the share of findings with a named owner and a date. It moves months before the savings do, and it is the earliest reliable signal that the practice is real rather than decorative. The closing line is the framing to keep with a board: we are buying better decisions, and a lower bill is what a better decision looks like a quarter later. It also sets the right expectation on timing.
 
 
-## Slide 24 — Where to start
+## Slide 24 — What a FinOps platform adds: Finout
+
+The procurement slide. Treat the six capabilities as the requirement list rather than as an endorsement — they describe what this category of platform does, and the same list should go to any competing vendor so the comparison is like for like. Two commercial points. First, the pricing model in this market is usually a percentage of cloud spend under management or a tiered subscription, which means the cost grows with the estate — worth confirming before it becomes a line that scales with the problem it manages. Second, insist on FOCUS export in the contract: it is the standard that makes the data portable and keeps a future migration cheap. Be explicit about the published outcomes. Roughly 30% cost reduction and 50% engineer time saved are vendor marketing figures, not audited results and not a commitment to us. If we want a business case, it should be built on our own measured allocation gap and the cost of the analyst time this would replace — a proof of value on our data, with success criteria agreed in advance.
+
+
+## Slide 25 — Where to start
 
 This is the ask, and the honest cost answer is effort rather than licence spend if we stay on native tooling — name the roles and the share of their time instead of quoting a budget number you would have to defend. Step one is the only item that cannot run in parallel: every downstream report degrades if the taxonomy is still moving. Split the ownership explicitly — finance owns the taxonomy, the allocation policy and the KPI definitions; engineering owns enforcement, instrumentation and remediation. Steps two and four are both arguments for restraint: attack the largest cost categories rather than pursuing complete granularity, and buy tooling that matches the estate we have rather than the one we might have in three years.
 
 
-## Slide 25 — Visibility is the foundation, not the goal
+## Slide 26 — Visibility is the foundation, not the goal
 
 Close on why this sequencing produces a better financial outcome than cutting first. A cut delivers a one-time step down and reverses as soon as attention moves elsewhere; allocation plus ownership changes the rate at which cost is added, which compounds across every subsequent period. That is also the honest framing for the board: the near-term deliverable is explainable variance and a forecast we can stand behind, with targeted savings following the first full period of clean data. Ask for the first two links today — the allocation standard and published ownership — because the rest follow from them and cannot be bought separately.
 
 
-## Slide 26 — Questions & discussion
+## Slide 27 — Questions & discussion
 
 Expect five questions and have the answers ready. What does it cost: effort, principally, plus any tooling only if we are genuinely multi-cloud. When do savings appear: allocation coverage improves within weeks, targeted savings follow the first full period of clean data, and be careful not to promise a percentage before we can see where the waste is. Who owns it: name the taxonomy owner and the monthly review before leaving the room, or none of this happens. Does it affect the close: better, not worse — daily data improves the accrual, though chargeback adds a journal step worth scoping with the controller. And will chargeback start an internal war: only if we launch it on allocation nobody trusts, which is exactly what the showback runway is for.

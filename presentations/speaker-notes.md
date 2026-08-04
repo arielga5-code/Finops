@@ -122,16 +122,21 @@ The slide that makes the whole deck concrete for anyone running AI workloads, be
 The operating-model slide, and the honest self-check for whoever runs this practice. Everything earlier in the deck produces findings; this is about whether findings become changes. Walk the chain and stop on the second box. A finding with no named owner and no date does not fail loudly — it simply sits in a dashboard being accurate, which is the most common way a cost programme dies. Sizing and dating each item is what turns a report into a queue of work someone can be asked about. The measures on the right are the ones to report upward, and they are deliberately not savings numbers. Adoption — the share of findings that acquired an owner and a date — predicts savings; accuracy does not. Realized against identified is the pair that keeps everyone honest, because identified savings are a forecast and only realized savings appear on an invoice. The build-for-engineers point is worth saying plainly: an engineer wants the three things worth fixing this sprint, not a complete and beautiful cost model. Serve that, and the finance-grade report improves anyway, because the underlying data gets used and therefore gets corrected.
 
 
-## Slide 24 — Where to start
+## Slide 24 — What a FinOps platform adds: Finout
+
+Use this slide to answer 'what would we actually buy', with a named example rather than an abstract category. Everything in the six cards is a capability the vendor publishes; the shape is representative of the enterprise platforms in this space rather than unique to one. The two cards that matter most for us are virtual tags and Kubernetes allocation, because they attack the two problems earlier in this deck that tagging discipline alone does not solve — the spend that is already untagged, and shared platforms that carry one set of tags for many consumers. Keep the deck's own advice in view when you present this. Slide 10 says native tooling is sufficient for a single-cloud estate, and that has not changed: a platform earns its licence when there are several billing sources to normalize, or when allocation cannot be fixed at source. Say so, or the deck contradicts itself. The bottom bar is the part to read aloud. Three proofs on our own data before any purchase, and an explicit flag that the published outcome numbers are marketing claims. Quoting a vendor's savings percentage as though it were our forecast is the fastest way to lose the room's trust in everything else on these slides.
+
+
+## Slide 25 — Where to start
 
 This is the ask. Step 1 is highlighted because it is the only one that cannot be parallelized — everything downstream degrades if the taxonomy is still in flux. Steps 2 and 4 are both arguments against over-engineering: pick the top spend categories and the tooling that matches the estate we actually have, not the one we might have in three years.
 
 
-## Slide 25 — Visibility is the foundation, not the goal
+## Slide 26 — Visibility is the foundation, not the goal
 
 Close on the causal chain rather than a summary of slides. Each link is a separate management commitment: allocation data, published ownership, cost surfaced in the engineering workflow, and a review cadence that keeps it alive. Ask for the first two today; the rest follow from them.
 
 
-## Slide 26 — Questions & discussion
+## Slide 27 — Questions & discussion
 
 Anticipate three questions. What will this cost — mostly effort, not licences, if we stay on native tooling. How long until we see savings — allocation coverage improves in weeks, targeted savings follow the first full month of clean data. Who owns it — name the tagging owner and the review cadence before leaving the room, or nothing on the previous slides happens.

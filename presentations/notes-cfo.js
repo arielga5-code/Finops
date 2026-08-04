@@ -251,6 +251,21 @@ module.exports = {
     "lower bill is what a better decision looks like a quarter later. It also sets the right " +
     "expectation on timing.",
 
+  "tooling-finout":
+    "The procurement slide. Treat the six capabilities as the requirement list rather than as an " +
+    "endorsement — they describe what this category of platform does, and the same list should go " +
+    "to any competing vendor so the comparison is like for like. " +
+    "Two commercial points. First, the pricing model in this market is usually a percentage of " +
+    "cloud spend under management or a tiered subscription, which means the cost grows with the " +
+    "estate — worth confirming before it becomes a line that scales with the problem it manages. " +
+    "Second, insist on FOCUS export in the contract: it is the standard that makes the data " +
+    "portable and keeps a future migration cheap. " +
+    "Be explicit about the published outcomes. Roughly 30% cost reduction and 50% engineer time " +
+    "saved are vendor marketing figures, not audited results and not a commitment to us. If we " +
+    "want a business case, it should be built on our own measured allocation gap and the cost of " +
+    "the analyst time this would replace — a proof of value on our data, with success criteria " +
+    "agreed in advance.",
+
   "path-forward":
     "This is the ask, and the honest cost answer is effort rather than licence spend if we stay " +
     "on native tooling — name the roles and the share of their time instead of quoting a budget " +
