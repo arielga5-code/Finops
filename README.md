@@ -22,6 +22,14 @@ which app, made yesterday's bill jump 40%, and was it worth it?"
 | [06-ai-anomaly-and-assistant.md](docs/06-ai-anomaly-and-assistant.md) | ML anomaly detection jobs, AI Assistant, agentic investigation |
 | [07-finops-operating-model.md](docs/07-finops-operating-model.md) | Tagging, showback, review cadence, what to do when an alert fires |
 
+## Presentations
+
+- [`presentations/finops-gaining-visibility.pptx`](presentations/finops-gaining-visibility.pptx) —
+  15-slide management briefing on the Inform phase: why visibility precedes
+  optimization, the five things that block it, and how to unblock each one.
+  Generated from [`presentations/build-deck.js`](presentations/build-deck.js); see
+  [`presentations/README.md`](presentations/README.md).
+
 ## Assets
 
 Ready to apply, not pseudocode:
