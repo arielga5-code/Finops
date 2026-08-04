@@ -7,19 +7,25 @@ Management-facing material derived from the practice this repo implements.
 | [`finops-gaining-visibility.pptx`](finops-gaining-visibility.pptx) | Mixed executive leadership | [`speaker-notes.md`](speaker-notes.md) |
 | [`finops-gaining-visibility-cfo.pptx`](finops-gaining-visibility-cfo.pptx) | CFO / finance leadership | [`speaker-notes-cfo.md`](speaker-notes-cfo.md) |
 
+21 slides in two parts: **visibility** (what is being spent and by whom) and
+**governance** (who owns it, what limits it, what stops it).
+
 **The two decks have identical slides.** Only the speaker notes differ — same
-15 slides, same visuals, argued for a different room. Present either one; pick
+21 slides, same visuals, argued for a different room. Present either one; pick
 the file whose notes match the audience.
 
 [`finops-gaining-visibility.pdf`](finops-gaining-visibility.pdf) is a rendered
 copy for quick review without PowerPoint. It carries no speaker notes and is
 regenerated from the deck, so never edit it directly.
 
-## FinOps: Gaining Visibility
+## FinOps: Visibility & Governance
 
-The case for the **Inform** phase — why cost allocation, granular reporting, unit
-economics and fresh data have to come before any optimization programme, what
-blocks visibility in practice, and how to unblock each one.
+Part one makes the case for the **Inform** phase — why cost allocation, granular
+reporting, unit economics and fresh data have to come before any optimization
+programme, what blocks visibility in practice, and how to unblock each one.
+
+Part two covers the **controls**, because a report is not a control: ownership,
+budget thresholds, rate limits, alert routing, and who is accountable for what.
 
 Structure:
 
@@ -29,11 +35,24 @@ Structure:
 | 4–5 | Why visibility comes first; what "good visibility" looks like |
 | 6 | The five blockers — tagging, shared resources, commitments, multi-cloud, SaaS |
 | 7–10 | One solution slide per blocker |
-| 11–13 | Showback vs chargeback, 2025 best practices, the recommended starting sequence |
-| 14–15 | Takeaways and discussion |
+| 11–12 | Showback vs chargeback; 2025 best practices |
+| 13 | **Part two — Governance** divider |
+| 14 | Application ownership — a named owner, and what they are accountable for |
+| 15 | Budget controls — notify, review, gate; proportional burn vs flat thresholds |
+| 16 | Rate limits & quotas — the only control fast enough to stop spend in progress |
+| 17 | Automated alerts — three tiers, three destinations, and three ways to get it wrong |
+| 18 | Shared responsibility — who decides, who builds, who pays |
+| 19–21 | The starting sequence, takeaways, discussion |
+
+The governance half is grounded in this repo's own implementation docs —
+the alert tiering and latency figures on slides 16 and 17 come from
+[`docs/05-alerting.md`](../docs/05-alerting.md) and
+[`docs/00-architecture.md`](../docs/00-architecture.md#the-latency-problem).
 
 Two slides have deliberate blanks to fill in before presenting: the date on
-slide 1 and the contacts on slide 15.
+slide 1 and the contacts on slide 21. Slide 18's responsibility grid is drawn
+with role names — fill in real names before the meeting where you want a
+decision.
 
 **Before presenting, add your own numbers.** Slides 2, 4 and 5 are written to
 carry real figures — current monthly spend, the share of spend landing
@@ -48,8 +67,11 @@ that is not printed on it, and where to substitute real figures.
 The **CFO cut** argues the same slides in finance terms — variance and whether it
 can be explained, accrual and forecast quality, allocation as a coding
 discipline, commitments as purchase obligations, and chargeback as an accounting
-change that needs a date. It also front-loads the ask: sponsorship of the
-allocation standard, and a decision on when showback becomes chargeback.
+change that needs a date. Across part two it reads the governance slides as
+delegation of authority, budget phasing and exception handling applied to a cost
+line that has been running without them. It also front-loads the ask:
+sponsorship of the allocation standard, and a decision on when showback becomes
+chargeback.
 
 The repo's own operating model doc — [`docs/07-finops-operating-model.md`](../docs/07-finops-operating-model.md)
 — is the implementation counterpart to slides 7 and 11: minimum tag set,

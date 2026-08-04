@@ -171,19 +171,19 @@ function dotGrid(slide, o) {
 
 /* ================= slides ================= */
 
-async function slide1() {
+async function slideTitle() {
   const s = pres.addSlide();
   bg(s, DARK);
   s.addText("MANAGEMENT BRIEFING", {
     x: M, y: 1.5, w: 7, h: 0.3, fontFace: BODY, fontSize: 12, bold: true,
     charSpacing: 2.6, color: AMBER, margin: 0, valign: "middle",
   });
-  s.addText("FinOps:\nGaining Visibility", {
-    x: M, y: 1.95, w: 7.6, h: 1.9, fontFace: HEAD, fontSize: 46, bold: true,
-    color: WHITE, margin: 0, valign: "top", lineSpacing: 52,
+  s.addText("FinOps:\nVisibility & Governance", {
+    x: M, y: 1.95, w: 8.0, h: 1.6, fontFace: HEAD, fontSize: 38, bold: true,
+    color: WHITE, margin: 0, valign: "top", lineSpacing: 44,
   });
-  s.addText("The foundation of cloud financial management", {
-    x: M, y: 3.95, w: 7.4, h: 0.4, fontFace: BODY, fontSize: 19,
+  s.addText("Seeing cloud spend — and controlling it", {
+    x: M, y: 3.72, w: 7.4, h: 0.4, fontFace: BODY, fontSize: 19,
     color: MUTED_D, margin: 0, valign: "middle",
   });
   s.addText(
@@ -210,11 +210,11 @@ async function slide1() {
     charSpacing: 1.6, color: AMBER, margin: 0, valign: "middle",
   });
 
-  note(s, 1);
+  note(s, "title");
   return s;
 }
 
-async function slide2() {
+async function slideProblem() {
   const s = pres.addSlide();
   bg(s, WHITE);
   kicker(s, "The problem we face");
@@ -250,10 +250,10 @@ async function slide2() {
     { x: 7.82, y: 4.91, w: 4.59, h: 1.35, fontFace: BODY, margin: 0, valign: "middle", lineSpacing: 20 }
   );
 
-  note(s, 2);
+  note(s, "problem");
 }
 
-async function slide3() {
+async function slideWhatIsFinops() {
   const s = pres.addSlide();
   bg(s, WHITE);
   kicker(s, "Definition");
@@ -303,10 +303,10 @@ async function slide3() {
     text: "“Without visibility, nothing else in the practice works.”",
   });
 
-  note(s, 3);
+  note(s, "what-is-finops");
 }
 
-async function slide4() {
+async function slideWhyVisibility() {
   const s = pres.addSlide();
   bg(s, WHITE);
   kicker(s, "Why visibility first");
@@ -342,10 +342,10 @@ async function slide4() {
     { x: M + 0.34, y: 6.02, w: 11.45, h: 0.92, fontFace: BODY, fontSize: 14, margin: 0, valign: "middle" }
   );
 
-  note(s, 4);
+  note(s, "why-visibility");
 }
 
-async function slide5() {
+async function slideFramework() {
   const s = pres.addSlide();
   bg(s, WHITE);
   kicker(s, "The visibility framework");
@@ -389,10 +389,10 @@ async function slide5() {
     { x: M + 0.36, y: 6.12, w: 11.4, h: 0.62, fontFace: BODY, fontSize: 16, margin: 0, valign: "middle" }
   );
 
-  note(s, 5);
+  note(s, "framework");
 }
 
-async function slide6() {
+async function slideBlockers() {
   const s = pres.addSlide();
   bg(s, DARK);
   kicker(s, "The visibility blockers");
@@ -425,10 +425,10 @@ async function slide6() {
     { x: M, y: 6.4, w: 12.13, h: 0.6, fontFace: HEAD, fontSize: 14.5, italic: true, color: AMBER, margin: 0, valign: "middle" }
   );
 
-  note(s, 6);
+  note(s, "blockers");
 }
 
-async function slide7() {
+async function slideTagging() {
   const s = pres.addSlide();
   bg(s, WHITE);
   kicker(s, "Solution 1 — tagging strategy");
@@ -476,10 +476,10 @@ async function slide7() {
     tx += 2.42;
   }
 
-  note(s, 7);
+  note(s, "tagging");
 }
 
-async function slide8() {
+async function slideSharedResources() {
   const s = pres.addSlide();
   bg(s, WHITE);
   kicker(s, "Solution 2 — shared resources");
@@ -514,10 +514,10 @@ async function slide8() {
     text: "“A thoughtful chargeback model often drives more intentional decisions and long-term discipline.”",
   });
 
-  note(s, 8);
+  note(s, "shared-resources");
 }
 
-async function slide9() {
+async function slideCommitments() {
   const s = pres.addSlide();
   bg(s, WHITE);
   kicker(s, "Solution 3 — commitments & discounts");
@@ -559,10 +559,10 @@ async function slide9() {
     text: "A commitment nobody uses is the most expensive form of waste — it is locked in, and it is invisible on a list-price report.",
   });
 
-  note(s, 9);
+  note(s, "commitments");
 }
 
-async function slide10() {
+async function slideMultiCloud() {
   const s = pres.addSlide();
   bg(s, WHITE);
   kicker(s, "Solution 4 — multi-cloud visibility");
@@ -595,10 +595,10 @@ async function slide10() {
       "instead of looking at each cloud or vendor in a silo.”",
   });
 
-  note(s, 10);
+  note(s, "multi-cloud");
 }
 
-async function slide11() {
+async function slideShowbackChargeback() {
   const s = pres.addSlide();
   bg(s, WHITE);
   kicker(s, "Building accountability");
@@ -656,10 +656,10 @@ async function slide11() {
     { x: M, y: 6.5, w: 12.13, h: 0.42, fontFace: HEAD, fontSize: 14, italic: true, color: MUTED, margin: 0, valign: "middle" }
   );
 
-  note(s, 11);
+  note(s, "showback-chargeback");
 }
 
-async function slide12() {
+async function slideBestPractices() {
   const s = pres.addSlide();
   bg(s, WHITE);
   kicker(s, "2025–2026 best practices");
@@ -691,10 +691,360 @@ async function slide12() {
     });
   }
 
-  note(s, 12);
+  note(s, "best-practices");
 }
 
-async function slide13() {
+/* ================= part two — governance ================= */
+
+async function slideGovernanceIntro() {
+  const s = pres.addSlide();
+  bg(s, DARK);
+  s.addText("PART TWO", {
+    x: M, y: 1.35, w: 6, h: 0.3, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 2.6, color: AMBER, margin: 0, valign: "middle",
+  });
+  s.addText("Governance", {
+    x: M, y: 1.75, w: 6.6, h: 1.0, fontFace: HEAD, fontSize: 42, bold: true,
+    color: WHITE, margin: 0, valign: "middle",
+  });
+  s.addText(
+    "Visibility tells you what happened. Governance decides what is allowed to happen — " +
+    "who owns the spend, what it may reach, and what stops it automatically.",
+    { x: M, y: 2.9, w: 6.3, h: 1.1, fontFace: BODY, fontSize: 15.5, color: MUTED_D,
+      margin: 0, valign: "top", lineSpacing: 22 }
+  );
+  s.addText(
+    "Reporting is not a control. Every item on the right exists because someone found " +
+    "that out the expensive way.",
+    { x: M, y: 4.25, w: 6.3, h: 0.8, fontFace: HEAD, fontSize: 14.5, italic: true,
+      color: AMBER, margin: 0, valign: "top", lineSpacing: 21 }
+  );
+
+  const pillars = [
+    ["01", "Application ownership", "A named owner for every workload"],
+    ["02", "Budget controls", "Thresholds that trigger before month-end"],
+    ["03", "Rate limits & quotas", "The only control fast enough to stop spend"],
+    ["04", "Automated alerts", "Routed to the person who can act"],
+    ["05", "Shared responsibility", "Who decides, who builds, who pays"],
+  ];
+  let y = 1.5;
+  for (const [num, name, desc] of pillars) {
+    card(s, { x: 7.3, y, w: 5.43, h: 0.86, fill: DARK_CARD, shadow: false });
+    s.addText(num, {
+      x: 7.56, y, w: 0.6, h: 0.86, fontFace: HEAD, fontSize: 19, bold: true,
+      color: AMBER, margin: 0, valign: "middle",
+    });
+    s.addText(
+      [
+        { text: name, options: { bold: true, fontSize: 14.5, color: WHITE, breakLine: true } },
+        { text: desc, options: { fontSize: 12, color: MUTED_D } },
+      ],
+      { x: 8.24, y, w: 4.3, h: 0.86, fontFace: BODY, margin: 0, valign: "middle", lineSpacing: 16 }
+    );
+    y += 0.96;
+  }
+
+  note(s, "governance-intro");
+}
+
+async function slideAppOwnership() {
+  const s = pres.addSlide();
+  bg(s, WHITE);
+  kicker(s, "Governance 1 — application ownership");
+  title(s, "Every workload has a named owner");
+
+  card(s, { x: M, y: 1.95, w: 4.1, h: 3.3, fill: DARK_CARD });
+  await iconBadge(s, { x: M + 0.34, y: 2.24, d: 0.66, bg: AMBER, icon: "FiUser", color: "13202B" });
+  s.addText("Owner of record", {
+    x: M + 0.34, y: 3.05, w: 3.4, h: 0.34, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 1.8, color: AMBER, margin: 0, valign: "middle",
+  });
+  s.addText(
+    "A named person, not a distribution list and not “the platform team”. " +
+    "A group address means nobody answers the alert at 2am on a Sunday.",
+    { x: M + 0.34, y: 3.42, w: 3.42, h: 1.6, fontFace: HEAD, fontSize: 14.5, italic: true,
+      color: WHITE, margin: 0, valign: "top", lineSpacing: 21 }
+  );
+
+  const duties = [
+    ["FiCheckSquare", "Owns the budget", "Signs off the application's budget and explains the variance when it moves."],
+    ["FiBell", "Answers the alerts", "Named as the routing target for anomalies and threshold breaches on their workload."],
+    ["FiCalendar", "Reviews monthly", "Attends the monthly review with their own numbers, not a summary of everyone's."],
+    ["FiTrash2", "Decommissions", "Retires what is no longer used. Nothing else in the estate does this by itself."],
+  ];
+  let y = 1.95;
+  for (const [ic, label, desc] of duties) {
+    await iconRow(s, {
+      x: 5.1, y, w: 7.63, h: 0.78, icon: ic, badgeBg: TEAL_SOFT, iconColor: "1F6B5C",
+      label, desc, labelColor: INK, descColor: MUTED, d: 0.5, labelSize: 14.5, descSize: 12.5,
+    });
+    y += 0.85;
+  }
+
+  card(s, { x: M, y: 5.52, w: 12.13, h: 1.32, fill: AMBER_SOFT, shadow: false });
+  s.addText("Unowned is not unowned", {
+    x: M + 0.36, y: 5.68, w: 5, h: 0.32, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 1.8, color: "6B4A0E", margin: 0, valign: "middle",
+  });
+  s.addText(
+    "Every resource without an owner already has one — the central budget. Make ownership a " +
+    "deployment requirement rather than a reporting field, and give orphaned resources a " +
+    "standing rule: no owner, no renewal.",
+    { x: M + 0.36, y: 6.0, w: 11.4, h: 0.72, fontFace: BODY, fontSize: 14,
+      color: "6B4A0E", margin: 0, valign: "top", lineSpacing: 19 }
+  );
+
+  note(s, "app-ownership");
+}
+
+async function slideBudgetControls() {
+  const s = pres.addSlide();
+  bg(s, WHITE);
+  kicker(s, "Governance 2 — budget controls");
+  title(s, "Thresholds that fire before month-end");
+  sub(s, "A budget nobody is warned about is a number in a spreadsheet, not a control.");
+
+  const steps = [
+    ["FiEye", "Notify", "Burn ahead of plan",
+      "Proportional to the month elapsed. Goes to the team channel.", TEAL_SOFT, "1F6B5C"],
+    ["FiAlertTriangle", "Review", "Forecast exceeds budget",
+      "Projected month-end overrun. Owner and finance review within days.", AMBER_SOFT, "B87B18"],
+    ["FiLock", "Gate", "Hard ceiling reached",
+      "New spend needs explicit approval, or the quota is capped.", "F6E0DC", "A6432F"],
+  ];
+  const xs = [0.6, 4.74, 8.88];
+  for (let i = 0; i < steps.length; i++) {
+    const [ic, name, trigger, desc, fill, iconColor] = steps[i];
+    card(s, { x: xs[i], y: 2.3, w: 3.84, h: 2.35, fill, shadow: false });
+    await iconBadge(s, { x: xs[i] + 0.32, y: 2.58, d: 0.6, bg: WHITE, icon: ic, color: iconColor });
+    s.addText(name, {
+      x: xs[i] + 1.04, y: 2.58, w: 2.5, h: 0.6, fontFace: HEAD, fontSize: 20, bold: true,
+      color: INK, margin: 0, valign: "middle",
+    });
+    s.addText(trigger, {
+      x: xs[i] + 0.32, y: 3.32, w: 3.2, h: 0.34, fontFace: BODY, fontSize: 12.5, bold: true,
+      color: iconColor, margin: 0, valign: "middle",
+    });
+    s.addText(desc, {
+      x: xs[i] + 0.32, y: 3.7, w: 3.2, h: 0.8, fontFace: BODY, fontSize: 12.5,
+      color: MUTED, margin: 0, valign: "top", lineSpacing: 16,
+    });
+    if (i < steps.length - 1) {
+      s.addShape(pres.ShapeType.rightArrow, {
+        x: xs[i] + 3.9, y: 3.38, w: 0.22, h: 0.2,
+        fill: { color: "C3CBD5" }, line: { type: "none" },
+      });
+    }
+  }
+
+  card(s, { x: M, y: 4.95, w: 12.13, h: 1.95, fill: DARK_CARD });
+  s.addText("Make it proportional, not flat", {
+    x: M + 0.36, y: 5.12, w: 6, h: 0.34, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 1.8, color: AMBER, margin: 0, valign: "middle",
+  });
+  s.addText(
+    [
+      { text: "Day 10 of a 30-day month should be near a third of budget. At 60%, that is the alert. ", options: { color: WHITE } },
+      { text: "A flat “80% of budget” threshold fires on day 24 of a healthy month and day 8 of a catastrophic one — with equal urgency, and therefore equal indifference.", options: { color: MUTED_D } },
+    ],
+    { x: M + 0.36, y: 5.5, w: 11.4, h: 1.2, fontFace: BODY, fontSize: 14, margin: 0,
+      valign: "top", lineSpacing: 21 }
+  );
+
+  note(s, "budget-controls");
+}
+
+async function slideRateLimits() {
+  const s = pres.addSlide();
+  bg(s, WHITE);
+  kicker(s, "Governance 3 — rate limits & quotas");
+  title(s, "The only control fast enough to stop spend");
+
+  card(s, { x: M, y: 1.9, w: 5.55, h: 2.62, fill: TINT, shadow: false });
+  s.addText("How fast each signal moves", {
+    x: M + 0.34, y: 2.06, w: 4.8, h: 0.34, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 1.8, color: MUTED, margin: 0, valign: "middle",
+  });
+  const signals = [
+    ["Billing data", "24–48h behind", 2.9, "C3CBD5"],
+    ["Utilization metrics", "~5 minutes", 0.82, AMBER],
+    ["Application telemetry", "seconds", 0.3, TEAL],
+  ];
+  let sy = 2.52;
+  for (const [name, latency, barW, color] of signals) {
+    s.addText(name, {
+      x: M + 0.34, y: sy, w: 2.0, h: 0.34, fontFace: BODY, fontSize: 12.5,
+      color: INK, margin: 0, valign: "middle",
+    });
+    s.addShape(pres.ShapeType.roundRect, {
+      x: M + 2.42, y: sy + 0.1, w: barW, h: 0.16, rectRadius: 0.08,
+      fill: { color }, line: { type: "none" },
+    });
+    s.addText(latency, {
+      x: M + 0.34, y: sy + 0.3, w: 4.8, h: 0.3, fontFace: BODY, fontSize: 11.5, bold: true,
+      color: MUTED, margin: 0, valign: "middle",
+    });
+    sy += 0.66;
+  }
+
+  quoteBlock(s, {
+    x: 6.53, y: 1.9, w: 6.2, h: 2.62, fill: DARK_CARD, color: WHITE, size: 15,
+    text: "“A cost alert cannot save you from a runaway job. By the time actual cost moves, " +
+      "you have already spent the money.”",
+  });
+
+  const controls = [
+    ["FiSliders", "Per-deployment quotas", "Cap tokens or requests per minute on each deployment."],
+    ["FiFilter", "Gateway throttling", "Rate-limit per consumer key, so one client cannot drain the shared pool."],
+    ["FiMaximize2", "Autoscale ceilings", "A maximum instance count on every scale set. Scaling is not a budget."],
+    ["FiPower", "Non-prod shutdown", "Scheduled stop outside working hours — the cheapest saving available."],
+  ];
+  const cxs = [0.6, 6.83];
+  const cys = [4.8, 6.0];
+  for (let i = 0; i < controls.length; i++) {
+    const [ic, label, desc] = controls[i];
+    await iconRow(s, {
+      x: cxs[i % 2], y: cys[Math.floor(i / 2)], w: 5.9, h: 1.0, icon: ic,
+      badgeBg: AMBER_SOFT, iconColor: "B87B18",
+      label, desc, labelColor: INK, descColor: MUTED, d: 0.5, labelSize: 14, descSize: 12,
+    });
+  }
+
+  note(s, "rate-limits");
+}
+
+async function slideAutomatedAlerts() {
+  const s = pres.addSlide();
+  bg(s, DARK);
+  kicker(s, "Governance 4 — automated alerts");
+  title(s, "Three tiers, three destinations", true);
+  sub(s, "Sort alerts by what they can actually prevent — then route them accordingly.", true);
+
+  const head = ["Tier", "Built on", "Latency", "Routes to"];
+  const cols = [0.94, 3.5, 6.9, 9.0];
+  const widths = [2.4, 3.2, 1.9, 3.3];
+  for (let i = 0; i < head.length; i++) {
+    s.addText(head[i], {
+      x: cols[i], y: 2.3, w: widths[i], h: 0.3, fontFace: BODY, fontSize: 11, bold: true,
+      charSpacing: 1.6, color: AMBER, margin: 0, valign: "middle",
+    });
+  }
+
+  const tiers = [
+    ["Protective", "Tokens, utilization, error rates", "minutes", "On-call — page it", AMBER],
+    ["Budget", "Billing data", "24–48 hours", "Team channel, weekly digest", TEAL],
+    ["Advisory", "Billing plus forecast", "daily", "A ticket. Never a page.", "8C9AAC"],
+  ];
+  let y = 2.72;
+  for (const [name, built, lat, route, color] of tiers) {
+    card(s, { x: M, y, w: 12.13, h: 0.92, fill: DARK_CARD, shadow: false });
+    s.addText(name, {
+      x: cols[0], y, w: widths[0], h: 0.92, fontFace: HEAD, fontSize: 18, bold: true,
+      color, margin: 0, valign: "middle",
+    });
+    s.addText(built, {
+      x: cols[1], y, w: widths[1], h: 0.92, fontFace: BODY, fontSize: 13,
+      color: WHITE, margin: 0, valign: "middle",
+    });
+    s.addText(lat, {
+      x: cols[2], y, w: widths[2], h: 0.92, fontFace: BODY, fontSize: 13, bold: true,
+      color: MUTED_D, margin: 0, valign: "middle",
+    });
+    s.addText(route, {
+      x: cols[3], y, w: widths[3], h: 0.92, fontFace: BODY, fontSize: 13,
+      color: MUTED_D, margin: 0, valign: "middle",
+    });
+    y += 1.02;
+  }
+
+  const rules = [
+    ["FiSlash", "Never page on a budget threshold", "You are waking someone about a fact they cannot change."],
+    ["FiVolume2", "A muted alert is worse than none", "It leaves the false confidence that something is watching."],
+    ["FiWifiOff", "Alert on silence too", "A stopped data feed reads exactly like a healthy month."],
+  ];
+  const rxs = [0.6, 4.74, 8.88];
+  for (let i = 0; i < rules.length; i++) {
+    const [ic, label, desc] = rules[i];
+    card(s, { x: rxs[i], y: 5.9, w: 3.84, h: 1.15, fill: "1A222C", shadow: false });
+    await iconBadge(s, { x: rxs[i] + 0.28, y: 6.14, d: 0.46, bg: "2E3A48", icon: ic, color: AMBER });
+    s.addText(
+      [
+        { text: label, options: { bold: true, fontSize: 12.5, color: WHITE, breakLine: true } },
+        { text: desc, options: { fontSize: 11, color: MUTED_D } },
+      ],
+      { x: rxs[i] + 0.86, y: 5.98, w: 2.8, h: 1.0, fontFace: BODY, margin: 0, valign: "middle", lineSpacing: 14 }
+    );
+  }
+
+  note(s, "automated-alerts");
+}
+
+async function slideSharedResponsibility() {
+  const s = pres.addSlide();
+  bg(s, WHITE);
+  kicker(s, "Governance 5 — shared responsibility");
+  title(s, "Who decides, who builds, who pays");
+  sub(s, "FinOps fails when it is one team's job. These are the four parties and what each one owns.");
+
+  const parties = ["Finance", "FinOps / Platform", "Engineering", "Leadership"];
+  const rows = [
+    ["Budgets & allocation policy", 1, 0, 0, 2],
+    ["Tagging & ownership standard", 2, 1, 0, 0],
+    ["Guardrails, quotas & alerts", 0, 1, 2, 0],
+    ["Responding to an alert", 0, 2, 1, 0],
+    ["Commitment & tooling spend", 2, 2, 0, 1],
+  ];
+
+  const labelW = 4.0;
+  const colW = 1.95;
+  const colX = (i) => M + labelW + 0.15 + i * (colW + 0.13);
+
+  for (let i = 0; i < parties.length; i++) {
+    s.addText(parties[i], {
+      x: colX(i), y: 2.32, w: colW, h: 0.36, fontFace: BODY, fontSize: 12, bold: true,
+      charSpacing: 0.8, color: MUTED, margin: 0, align: "center", valign: "middle",
+    });
+  }
+
+  let y = 2.78;
+  for (const row of rows) {
+    const [label, ...marks] = row;
+    card(s, { x: M, y, w: 12.13, h: 0.72, fill: TINT, shadow: false });
+    s.addText(label, {
+      x: M + 0.34, y, w: labelW - 0.2, h: 0.72, fontFace: BODY, fontSize: 14, bold: true,
+      color: INK, margin: 0, valign: "middle",
+    });
+    for (let i = 0; i < marks.length; i++) {
+      if (marks[i] === 0) continue;
+      const owns = marks[i] === 1;
+      const d = owns ? 0.34 : 0.22;
+      s.addShape(pres.ShapeType.ellipse, {
+        x: colX(i) + (colW - d) / 2, y: y + (0.72 - d) / 2, w: d, h: d,
+        fill: { color: owns ? AMBER : "C3CBD5" }, line: { type: "none" },
+      });
+    }
+    y += 0.8;
+  }
+
+  s.addShape(pres.ShapeType.ellipse, {
+    x: M, y: 6.86, w: 0.2, h: 0.2, fill: { color: AMBER }, line: { type: "none" },
+  });
+  s.addText("Accountable — the decision stops here", {
+    x: M + 0.3, y: 6.78, w: 4.2, h: 0.36, fontFace: BODY, fontSize: 12,
+    color: MUTED, margin: 0, valign: "middle",
+  });
+  s.addShape(pres.ShapeType.ellipse, {
+    x: 5.2, y: 6.9, w: 0.14, h: 0.14, fill: { color: "C3CBD5" }, line: { type: "none" },
+  });
+  s.addText("Contributes — does the work, does not decide", {
+    x: 5.46, y: 6.78, w: 5.0, h: 0.36, fontFace: BODY, fontSize: 12,
+    color: MUTED, margin: 0, valign: "middle",
+  });
+
+  note(s, "shared-responsibility");
+}
+
+async function slidePathForward() {
   const s = pres.addSlide();
   bg(s, WHITE);
   kicker(s, "The path forward");
@@ -704,7 +1054,7 @@ async function slide13() {
     ["01", "Set the tagging standard", "Agree a consistent taxonomy before investing in dashboards."],
     ["02", "Start with the biggest spend", "Attack the largest categories first. Don't chase perfect granularity everywhere."],
     ["03", "Get finance and engineering talking", "Bring both into the conversation early, not as an afterthought."],
-    ["04", "Choose tools that fit the footprint", "Native tooling for single-cloud; specialized platforms only for genuine multi-cloud."],
+    ["04", "Set guardrails early", "Owners, budget thresholds and quotas cost little to add — and stop the expensive surprises."],
   ];
   const xs = [0.6, 3.70, 6.80, 9.90];
   for (let i = 0; i < steps.length; i++) {
@@ -725,8 +1075,8 @@ async function slide13() {
   }
 
   card(s, { x: M, y: 4.85, w: 12.13, h: 2.05, fill: TINT, shadow: false });
-  s.addText("Tooling options", {
-    x: M + 0.36, y: 5.0, w: 4, h: 0.32, fontFace: BODY, fontSize: 12, bold: true,
+  s.addText("Tooling — match the footprint, not the ambition", {
+    x: M + 0.36, y: 5.0, w: 6.6, h: 0.32, fontFace: BODY, fontSize: 12, bold: true,
     charSpacing: 1.8, color: MUTED, margin: 0, valign: "middle",
   });
   const tools = [
@@ -747,10 +1097,10 @@ async function slide13() {
     ty += 0.45;
   }
 
-  note(s, 13);
+  note(s, "path-forward");
 }
 
-async function slide14() {
+async function slideTakeaways() {
   const s = pres.addSlide();
   bg(s, DARK);
   kicker(s, "Key takeaways");
@@ -792,17 +1142,17 @@ async function slide14() {
       "than those that jump straight to cuts.”",
   });
 
-  note(s, 14);
+  note(s, "takeaways");
 }
 
-async function slide15() {
+async function slideClosing() {
   const s = pres.addSlide();
   bg(s, DARK);
   s.addText("Questions & discussion", {
     x: M, y: 1.85, w: 8, h: 0.9, fontFace: HEAD, fontSize: 40, bold: true,
     color: WHITE, margin: 0, valign: "middle",
   });
-  s.addText("FinOps: Gaining Visibility — the foundation of cloud financial management", {
+  s.addText("FinOps: Visibility & Governance — seeing cloud spend, and controlling it", {
     x: M, y: 2.85, w: 7.6, h: 0.45, fontFace: BODY, fontSize: 16,
     color: MUTED_D, margin: 0, valign: "middle",
   });
@@ -836,7 +1186,7 @@ async function slide15() {
     lit: (c, r) => c + r >= 5,
   });
 
-  note(s, 15);
+  note(s, "closing");
 }
 
 /* ---------- main ---------- */
@@ -849,21 +1199,29 @@ async function slide15() {
     ? "Cloud financial management — CFO briefing"
     : "Cloud financial management — management briefing";
 
-  await slide1();
-  await slide2();
-  await slide3();
-  await slide4();
-  await slide5();
-  await slide6();
-  await slide7();
-  await slide8();
-  await slide9();
-  await slide10();
-  await slide11();
-  await slide12();
-  await slide13();
-  await slide14();
-  await slide15();
+  await slideTitle();
+  await slideProblem();
+  await slideWhatIsFinops();
+  await slideWhyVisibility();
+  await slideFramework();
+  await slideBlockers();
+  await slideTagging();
+  await slideSharedResources();
+  await slideCommitments();
+  await slideMultiCloud();
+  await slideShowbackChargeback();
+  await slideBestPractices();
+
+  await slideGovernanceIntro();
+  await slideAppOwnership();
+  await slideBudgetControls();
+  await slideRateLimits();
+  await slideAutomatedAlerts();
+  await slideSharedResponsibility();
+
+  await slidePathForward();
+  await slideTakeaways();
+  await slideClosing();
 
   await pres.writeFile({ fileName: OUT });
   console.log("wrote " + OUT + "  (notes: " + AUDIENCE + ")");

@@ -1,13 +1,14 @@
 /*
  * Speaker notes, CFO cut.
  *
- * Same fifteen slides, argued in finance terms: variance and its explainability,
- * forecast and accrual quality, allocation as a coding discipline, commitments as
- * purchase obligations, and chargeback as an accounting change with a date.
+ * The same twenty-one slides, argued in finance terms: variance and its
+ * explainability, forecast and accrual quality, allocation as a coding discipline,
+ * commitments as purchase obligations, chargeback as an accounting change with a
+ * date, and the governance half as delegation of authority and budget phasing.
  * No figures are asserted here — every number belongs to the presenting company.
  */
 module.exports = {
-  1:
+  "title":
     "Open by naming what you want from this meeting, because a CFO will be listening for the " +
     "ask. Two decisions: sponsorship of a mandatory cost-allocation standard, and a date for " +
     "moving from showback to chargeback. Everything else on these slides is supporting argument. " +
@@ -16,7 +17,7 @@ module.exports = {
     "with no purchase order in between. This briefing is about restoring the coding and " +
     "ownership discipline that every other cost line already has.",
 
-  2:
+  "problem":
     "The finance symptom is variance you cannot explain, and an accrual you are guessing at. " +
     "Cloud arrives as one large invoice after the fact, without a requisition trail, and the " +
     "detail behind it is a usage file rather than a coded ledger. Put the test to the room: for " +
@@ -25,7 +26,7 @@ module.exports = {
     "closes. Note the second-order cost too — unexplained variance drives conservative padding " +
     "into next year's budget, so poor visibility quietly inflates the plan.",
 
-  3:
+  "what-is-finops":
     "For a finance audience the useful analogy is standard costing and variance analysis, not " +
     "DevOps culture. Inform is the ledger detail and the cost-centre coding. Optimize is acting " +
     "on the variance once it can be attributed. Operate is making that a monthly discipline " +
@@ -34,7 +35,7 @@ module.exports = {
     "different business by June. Budget for it as an ongoing process cost, small, not a one-time " +
     "implementation.",
 
-  4:
+  "why-visibility":
     "These four questions are the acceptance criteria, and each maps to something finance already " +
     "owns. Which teams drive spend is cost-centre ownership. Whether spend grows faster than the " +
     "business is the efficiency question behind gross margin. Paid-for-but-unused is working " +
@@ -44,7 +45,7 @@ module.exports = {
     "which is applied by negotiating strength rather than by waste, and which tends to reverse " +
     "within two quarters.",
 
-  5:
+  "framework":
     "Read these as four finance capabilities. Allocation is a chart-of-accounts problem — cost " +
     "cannot be coded to an owner that was never recorded. Granular reporting is what turns a " +
     "variance into an explanation short enough to put in a board pack. Unit economics is the one " +
@@ -54,7 +55,7 @@ module.exports = {
     "close: a monthly-only feed means the accrual is an estimate and the first reliable number " +
     "arrives after the period is shut.",
 
-  6:
+  "blockers":
     "Each of these has a direct finance consequence worth naming. Inconsistent tagging is a " +
     "suspense account — spend that lands nowhere and gets allocated by argument. Shared resources " +
     "are an internal transfer-pricing question. Commitments break unit cost reporting, because " +
@@ -64,7 +65,7 @@ module.exports = {
     "cards, frequently auto-renewing, and it will not appear anywhere in the cloud reporting we " +
     "are discussing today.",
 
-  7:
+  "tagging":
     "This is the slide that needs a CFO decision, and the parallel is exact: we already refuse to " +
     "process an invoice without a cost centre, and this is the same control applied at the point " +
     "of resource creation. Enforcement is cheap at creation and expensive in arrears — retagging " +
@@ -74,7 +75,7 @@ module.exports = {
     "surfaces the allocation disputes before they touch anyone's budget. Ask for finance to own " +
     "the taxonomy — it is a coding standard, and engineering should not be defining it alone.",
 
-  8:
+  "shared-resources":
     "Shared platforms are an internal transfer-pricing decision, so treat the choice of basis the " +
     "way you would any other allocation method. Two practical points. First, pick a basis you can " +
     "defend to a budget owner who is motivated to dispute it — measured consumption beats " +
@@ -85,7 +86,7 @@ module.exports = {
     "tags, so splitting it needs usage instrumentation, not tagging. Confirm that exists before " +
     "committing to chargeback on a shared service.",
 
-  9:
+  "commitments":
     "This slide has the most direct cash and balance-sheet consequence, so take it slowly. A " +
     "commitment is a multi-year purchase obligation bought at a discount against a usage forecast " +
     "— under-committing means paying on-demand rates for workloads that never turn off, and " +
@@ -97,7 +98,7 @@ module.exports = {
     "showing only discounted rates hides whether the commitment is earning its keep, and showing " +
     "only list price makes the savings claim unverifiable. Both belong in the report.",
 
-  10:
+  "multi-cloud":
     "Calibrate this one to our actual footprint before presenting it, because a CFO will hear a " +
     "platform purchase coming. If we are effectively single-cloud, say so plainly and recommend " +
     "against buying anything — the native tooling is adequate and a third-party platform is a " +
@@ -106,7 +107,7 @@ module.exports = {
     "costs nothing today while keeping consolidated reporting cheap if the footprint changes " +
     "later. That is the recommendation here — a procurement clause, not a purchase.",
 
-  11:
+  "showback-chargeback":
     "Chargeback is an accounting change, so treat it like one. Moving cloud cost into business " +
     "unit P&L changes reported margins by unit, changes what budget owners are measured against, " +
     "and will be contested in the first month it happens. That contest is survivable if the " +
@@ -117,7 +118,7 @@ module.exports = {
     "new basis rather than restated mid-period. That date is the second decision to take away " +
     "from this meeting.",
 
-  12:
+  "best-practices":
     "Present these six as the KPI set finance should own and see monthly, not as an engineering " +
     "maturity model. Four are directly reportable: percentage of spend allocated, forecast " +
     "accuracy against actuals, unit cost trend, and commitment coverage against utilization. The " +
@@ -127,7 +128,67 @@ module.exports = {
     "estate, and the gaps become the work plan. Worth noting that most of this list is about " +
     "seeing spend earlier rather than cutting it, which is the argument of the whole deck.",
 
-  13:
+  "governance-intro":
+    "Signal the shift explicitly: part one asked for visibility, part two asks for controls, and " +
+    "controls are where the money is actually protected. The framing that lands with a finance " +
+    "audience is that we are adding the approval and limit structure that every other spend " +
+    "category already has — cloud is the one line where large amounts are committed daily with " +
+    "no requisition, no ceiling and no named approver. Nothing in this section is exotic; it is " +
+    "delegation of authority, budget thresholds and exception handling, applied to a cost line " +
+    "that has been running without them.",
+
+  "app-ownership":
+    "This is delegated budget authority, expressed in engineering terms. The four duties map to " +
+    "what any budget holder already does — sign off the number, explain the variance, review " +
+    "monthly, retire what is not needed — and the request is simply that cloud spend gets the " +
+    "same named accountability. The point to press: a distribution list cannot hold budget " +
+    "authority, so a group address in the owner field is an unowned budget with better " +
+    "paperwork. The bottom line is the finance consequence — unowned spend is not unbudgeted, it " +
+    "lands in central overhead, which is exactly where cost is hardest to challenge and easiest " +
+    "to grow.",
+
+  "budget-controls":
+    "The tier that matters to this audience is the third one, because it is the only place a " +
+    "financial control actually binds — the first two are notifications. Ask directly whether we " +
+    "are willing to have a limit that stops something, and where; without one, the budget is a " +
+    "forecast with a stern tone. Proportional burn is worth understanding as a variance tool: it " +
+    "compares consumption against elapsed period rather than against the total, which is the same " +
+    "logic as phasing a budget rather than dividing it by twelve. It also gives earlier warning " +
+    "— a flat threshold cannot fire before the money is largely spent. Finally, budgets should " +
+    "live in one place finance maintains, not embedded in engineering tooling where changing a " +
+    "number requires a ticket.",
+
+  "rate-limits":
+    "The latency chart explains something that surprises most finance teams: the cost data behind " +
+    "every budget report is a day or two stale, so no threshold built on it can prevent an " +
+    "overrun — it can only report one. That is the argument for technical limits, which act in " +
+    "seconds on live usage. Frame the four controls as pre-approved spending limits rather than " +
+    "engineering settings: a quota is a ceiling on what can be consumed without someone " +
+    "authorizing more, which is precisely how spend authority works elsewhere. They are also " +
+    "cheap to reverse, so the asymmetry favours setting them: a limit set too low costs a short " +
+    "delay, while no limit costs whatever the incident costs.",
+
+  "automated-alerts":
+    "Read this as the escalation policy behind the budget controls, and note who is on the " +
+    "receiving end of each tier — that is the operational commitment being requested. " +
+    "The finance-relevant caution is the middle one: alerts that fire without a possible response " +
+    "get muted, and muted alerting produces false assurance in exactly the reports leadership " +
+    "relies on. The third caution deserves a controller's attention — if the data feed stops, " +
+    "every threshold silently passes and the dashboards look calm, so we monitor for the absence " +
+    "of data as well as for bad numbers. That is a controls question, not a technical one, and it " +
+    "is the sort of gap an auditor will eventually ask about.",
+
+  "shared-responsibility":
+    "End on governance structure, because this is the slide that answers 'who is accountable' " +
+    "before the question is asked in a less comfortable setting. Finance owns budget and " +
+    "allocation policy; the platform function owns the standard and the instrumentation; " +
+    "engineering owns building and responding; leadership arbitrates the commitments and the " +
+    "trade-offs. Note that authority and execution are deliberately separated on the guardrails " +
+    "and alert rows — the people who build the limits are not the people who decide where they " +
+    "sit. Ask for two names today, the taxonomy owner and the budget-policy owner, and the rest " +
+    "of the grid can be filled in by the next review.",
+
+  "path-forward":
     "This is the ask, and the honest cost answer is effort rather than licence spend if we stay " +
     "on native tooling — name the roles and the share of their time instead of quoting a budget " +
     "number you would have to defend. Step one is the only item that cannot run in parallel: " +
@@ -138,7 +199,7 @@ module.exports = {
     "granularity, and buy tooling that matches the estate we have rather than the one we might " +
     "have in three years.",
 
-  14:
+  "takeaways":
     "Close on why this sequencing produces a better financial outcome than cutting first. A cut " +
     "delivers a one-time step down and reverses as soon as attention moves elsewhere; allocation " +
     "plus ownership changes the rate at which cost is added, which compounds across every " +
@@ -148,7 +209,7 @@ module.exports = {
     "standard and published ownership — because the rest follow from them and cannot be bought " +
     "separately.",
 
-  15:
+  "closing":
     "Expect five questions and have the answers ready. What does it cost: effort, principally, " +
     "plus any tooling only if we are genuinely multi-cloud. When do savings appear: allocation " +
     "coverage improves within weeks, targeted savings follow the first full period of clean data, " +
