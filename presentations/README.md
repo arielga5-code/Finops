@@ -5,18 +5,18 @@ Management-facing material derived from the practice this repo implements.
 | Deck | Length | Audience | Notes |
 |---|---|---|---|
 | [`finops-cio-brief.pptx`](finops-cio-brief.pptx) | 5 slides | CIO / CTO — a short decision meeting | [`speaker-notes-cio.md`](speaker-notes-cio.md) |
-| [`finops-gaining-visibility.pptx`](finops-gaining-visibility.pptx) | 23 slides | Mixed executive leadership | [`speaker-notes.md`](speaker-notes.md) |
-| [`finops-gaining-visibility-cfo.pptx`](finops-gaining-visibility-cfo.pptx) | 23 slides | CFO / finance leadership | [`speaker-notes-cfo.md`](speaker-notes-cfo.md) |
+| [`finops-gaining-visibility.pptx`](finops-gaining-visibility.pptx) | 24 slides | Mixed executive leadership | [`speaker-notes.md`](speaker-notes.md) |
+| [`finops-gaining-visibility-cfo.pptx`](finops-gaining-visibility-cfo.pptx) | 24 slides | CFO / finance leadership | [`speaker-notes-cfo.md`](speaker-notes-cfo.md) |
 
 **Start with the CIO brief.** It is the argument in five slides and asks for
-three decisions; the 23-slide deck is the evidence behind it, better used as a
+three decisions; the 24-slide deck is the evidence behind it, better used as a
 follow-up than presented in full.
 
 The long deck runs in two parts: **visibility** (what is being spent and by
 whom) and **governance** (who owns it, what limits it, what stops it).
 
 **The two long decks have identical slides.** Only the speaker notes differ — same
-23 slides, same visuals, argued for a different room. Present either one; pick
+24 slides, same visuals, argued for a different room. Present either one; pick
 the file whose notes match the audience.
 
 [`finops-cio-brief.pdf`](finops-cio-brief.pdf) and
@@ -48,21 +48,27 @@ Structure:
 | 16 | Rate limits & quotas — the only control fast enough to stop spend in progress |
 | 17 | Automated alerts — three tiers, three destinations, and three ways to get it wrong |
 | 18 | Shared responsibility — who decides, who builds, who pays |
-| 19 | Shift left — cost at design and pull-request time, before it is expensive to change |
-| 20 | Avoiding bill shock — the same overrun found at four different moments |
-| 21–23 | The starting sequence, takeaways, discussion |
+| 19 | Shift left — where FinOps belongs in the lifecycle, and the exchange that happens in the design room |
+| 20 | The six design-time questions, and the cost target they produce |
+| 21 | Avoiding bill shock — the same overrun found at four different moments |
+| 22–24 | The starting sequence, takeaways, discussion |
 
 The governance half is grounded in this repo's own implementation docs —
 the alert tiering and latency figures on slides 16 and 17 come from
 [`docs/05-alerting.md`](../docs/05-alerting.md) and
 [`docs/00-architecture.md`](../docs/00-architecture.md#the-latency-problem).
 
-Slide 19 (shift left) is the one place the decks describe a practice this repo
-does not yet implement — cost estimation in the deployment pipeline. Treat it as
-a roadmap item rather than a description of what is running today.
+**Shift left, slides 19–20.** The point is organizational before it is technical:
+FinOps sits in design and intake, understands what the project needs, and leaves
+with a cost target recorded beside the latency and availability targets. The
+Foundation names this work — *Architecting & Workload Placement* and *Onboarding
+Workloads*. Slide 20 is the practical half, six design questions an architect can
+answer in the room. The pipeline enforcement it mentions (cost diff on the pull
+request, policy as code) is the one practice these decks describe that this repo
+does not yet implement — treat it as a roadmap item.
 
 Two slides have deliberate blanks to fill in before presenting: the date on
-slide 1 and the contacts on slide 23. Slide 18's responsibility grid is drawn
+slide 1 and the contacts on slide 24. Slide 18's responsibility grid is drawn
 with role names — fill in real names before the meeting where you want a
 decision.
 
@@ -155,4 +161,6 @@ Shift left (slide 19 of the long deck, and the left column of the brief's slide 
 - [Architecting & Workload Placement](https://www.finops.org/framework/capabilities/architecting-for-cloud/) and [Governance, Policy & Risk](https://www.finops.org/framework/capabilities/policy-governance/) — the two Framework capabilities it sits across
 - [Shift Left, defined](https://www.infracost.io/resources/glossary/shift-left) — cost feedback in IaC and pull requests
 - [FinOps 2026: shift left and up](https://thecuberesearch.com/finops-2026-shift-left-and-up-as-ai-drives-technology-value/) — pre-deployment costing as the top requested capability
+- [Onboarding Workloads](https://www.finops.org/framework/capabilities/onboarding-workloads/) — decision support during design and intake
+- [Cost-aware product decisions](https://www.finops.org/insights/cost-aware-product-decisions/) — cost as a non-functional requirement
 - [Policy-as-code for cost governance](https://www.firefly.ai/blog/shift-left-finops-how-governance-policy-as-code-are-enabling-cloud-cost-optimization)

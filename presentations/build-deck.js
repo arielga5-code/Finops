@@ -913,75 +913,140 @@ async function slideShiftLeft() {
   const s = pres.addSlide();
   bg(s, WHITE);
   kicker(s, "Governance — shift left");
-  title(s, "Catch it at design, not on the invoice");
-  sub(s, "Cost is a design constraint, reviewed alongside security and reliability — not a report that arrives afterwards.");
+  title(s, "Shift left is a seat at the design table");
+  sub(s, "Not a tool. A change in when FinOps shows up — and the earlier it is, the less of the bill is already decided.");
 
-  /* cost of changing a decision, by the stage it is caught */
-  s.addText("Effort to change the decision", {
-    x: M, y: 2.4, w: 4.5, h: 0.3, fontFace: BODY, fontSize: 12, bold: true,
-    charSpacing: 1.8, color: MUTED, margin: 0, valign: "middle",
-  });
-  const base = 5.5;
-  const bars = [
-    [0.75, 0.5, "Design", "a conversation", TEAL],
-    [2.35, 1.0, "Pull request", "an edit", TEAL],
-    [3.95, 1.85, "Deployed", "a migration", AMBER],
-    [5.55, 2.6, "Invoiced", "a negotiation", "A6432F"],
-  ];
-  for (const [x, h, name, effort, color] of bars) {
+  /* where FinOps enters the lifecycle */
+  const stages = ["Requirements", "Design", "Build", "Deploy", "Run", "Invoice"];
+  const bandY = 2.9;
+  const stageW = 1.94;
+  const gap = 0.11;
+  const startX = M;
+  for (let i = 0; i < stages.length; i++) {
+    const x = startX + i * (stageW + gap);
+    const early = i < 2;
     s.addShape(pres.ShapeType.roundRect, {
-      x, y: base - h, w: 1.3, h, rectRadius: 0.06,
-      fill: { color }, line: { type: "none" },
+      x, y: bandY, w: stageW, h: 0.62, rectRadius: 0.08,
+      fill: { color: early ? AMBER_SOFT : TINT }, line: { type: "none" },
     });
-    s.addText(name, {
-      x: x - 0.15, y: base + 0.08, w: 1.6, h: 0.3, fontFace: BODY, fontSize: 12.5, bold: true,
-      color: INK, margin: 0, align: "center", valign: "middle",
-    });
-    s.addText(effort, {
-      x: x - 0.15, y: base + 0.38, w: 1.6, h: 0.28, fontFace: BODY, fontSize: 11.5,
-      color: MUTED, margin: 0, align: "center", valign: "middle",
+    s.addText(stages[i], {
+      x, y: bandY, w: stageW, h: 0.62, fontFace: BODY, fontSize: 13,
+      bold: early, color: early ? "6B4A0E" : MUTED, margin: 0,
+      align: "center", valign: "middle",
     });
   }
-  s.addShape(pres.ShapeType.roundRect, {
-    x: M, y: base, w: 6.55, h: 0.04, rectRadius: 0.02,
-    fill: { color: "DFE4EA" }, line: { type: "none" },
+
+  s.addText("Where FinOps belongs", {
+    x: startX, y: bandY - 0.42, w: 4.1, h: 0.34, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 1.4, color: "B87B18", margin: 0, valign: "middle",
+  });
+  s.addText("Where FinOps usually arrives", {
+    x: startX + 4 * (stageW + gap), y: bandY + 0.72, w: 3.93, h: 0.34,
+    fontFace: BODY, fontSize: 12, bold: true, charSpacing: 1.4,
+    color: MUTED, margin: 0, align: "right", valign: "middle",
+  });
+  s.addText("Most of the lifetime cost is committed here.", {
+    x: startX, y: bandY + 0.72, w: 6.0, h: 0.34, fontFace: BODY, fontSize: 12.5,
+    color: INK, margin: 0, valign: "middle",
   });
 
-  /* the three insertion points */
-  card(s, { x: 7.5, y: 2.28, w: 5.23, h: 3.94, fill: DARK_CARD });
-  s.addText("Where cost enters the workflow", {
-    x: 7.84, y: 2.48, w: 4.5, h: 0.32, fontFace: BODY, fontSize: 12, bold: true,
-    charSpacing: 1.8, color: AMBER, margin: 0, valign: "middle",
-  });
-  const points = [
-    ["FiPenTool", "Architecture review", "Price two or three options before choosing one. Multi-AZ or single, this SKU or that."],
-    ["FiGitPullRequest", "Cost diff on the pull request", "Every infrastructure change shows its monthly delta, so cost is part of code review."],
-    ["FiShield", "Policy as code", "Tagging and budget rules enforced in the pipeline — the expensive change never merges."],
-  ];
-  let y = 2.92;
-  for (const [ic, label, desc] of points) {
-    await iconBadge(s, { x: 7.84, y: y + 0.08, d: 0.46, bg: "2E3A48", icon: ic, color: AMBER });
-    s.addText(
-      [
-        { text: label, options: { bold: true, fontSize: 13.5, color: WHITE, breakLine: true } },
-        { text: desc, options: { fontSize: 12, color: MUTED_D } },
+  /* the two-way exchange */
+  const columns = [
+    {
+      x: M, fill: DARK_CARD, tag: "What FinOps brings to the room", tagColor: AMBER,
+      textColor: WHITE, descColor: MUTED_D,
+      items: [
+        ["Two or three options, priced", "The choice gets made with the number visible."],
+        ["A cost target for the workload", "Recorded beside latency and availability."],
+        ["The allocation plan", "Which tags, which cost centre, which unit."],
       ],
-      { x: 8.46, y, w: 3.94, h: 1.0, fontFace: BODY, margin: 0, valign: "middle", lineSpacing: 16 }
-    );
-    y += 1.08;
+    },
+    {
+      x: 6.83, fill: TINT, tag: "What FinOps needs to learn from the team", tagColor: "1F6B5C",
+      textColor: INK, descColor: MUTED,
+      items: [
+        ["What the project actually needs", "Scale, growth, retention, and the real SLO."],
+        ["What is temporary", "An end date set now costs nothing to honour later."],
+        ["Where the business value sits", "Per customer, per order, per model call."],
+      ],
+    },
+  ];
+  for (const col of columns) {
+    card(s, { x: col.x, y: 4.28, w: 5.9, h: 2.32, fill: col.fill, shadow: false });
+    s.addText(col.tag.toUpperCase(), {
+      x: col.x + 0.34, y: 4.46, w: 5.2, h: 0.3, fontFace: BODY, fontSize: 11, bold: true,
+      charSpacing: 1.4, color: col.tagColor, margin: 0, valign: "middle",
+    });
+    let y = 4.86;
+    for (const [label, desc] of col.items) {
+      s.addShape(pres.ShapeType.ellipse, {
+        x: col.x + 0.36, y: y + 0.16, w: 0.11, h: 0.11,
+        fill: { color: col.tagColor }, line: { type: "none" },
+      });
+      s.addText(
+        [
+          { text: label + "  ", options: { bold: true, color: col.textColor } },
+          { text: desc, options: { color: col.descColor } },
+        ],
+        { x: col.x + 0.62, y, w: 4.94, h: 0.56, fontFace: BODY, fontSize: 12.5,
+          margin: 0, valign: "top", lineSpacing: 16 }
+      );
+      y += 0.58;
+    }
   }
 
-  card(s, { x: M, y: 6.28, w: 12.13, h: 0.92, fill: AMBER_SOFT, shadow: false });
   s.addText(
-    [
-      { text: "Pre-deployment architecture costing is the most requested capability in the State of FinOps 2026 — ", options: { bold: true } },
-      { text: "and the practices that get it working describe FinOps as partnering with engineers, not policing them. Give teams the cost of a choice at the moment they make it; nobody has to become a pricing expert.", options: {} },
-    ],
-    { x: M + 0.36, y: 6.28, w: 11.4, h: 0.92, fontFace: BODY, fontSize: 13,
-      color: "6B4A0E", margin: 0, valign: "middle", lineSpacing: 18 }
+    "The FinOps Framework names this: Architecting & Workload Placement, and Onboarding Workloads — " +
+    "cost, usage and impact decision support during design and intake.",
+    { x: M, y: 6.72, w: 12.13, h: 0.5, fontFace: BODY, fontSize: 12.5,
+      color: MUTED, margin: 0, valign: "middle" }
   );
 
   note(s, "shift-left");
+}
+
+async function slideDesignQuestions() {
+  const s = pres.addSlide();
+  bg(s, DARK);
+  kicker(s, "Governance — shift left in practice");
+  title(s, "Six questions, asked before the build starts", true);
+  sub(s, "None of them is a finance question. All of them decide the bill.", true);
+
+  const questions = [
+    ["FiActivity", "Shape of the load", "Peak versus average, and how spiky? Sizing for a peak that lasts an hour a week is the most common overspend."],
+    ["FiDatabase", "Data volume and retention", "How much is stored, for how long, and how much leaves the region? Egress and retention rarely appear in the estimate."],
+    ["FiShield", "What the SLO actually requires", "Multi-region and multi-AZ are priced choices. Ask which one the business will genuinely pay for."],
+    ["FiClock", "What is temporary", "Non-production with no end date becomes permanent. An expiry set on day one is free; removing it later is a project."],
+    ["FiCpu", "For AI workloads", "Tokens per request, cache hit rate, model tier, and whether provisioned throughput is justified by the traffic."],
+    ["FiTag", "Owner and unit", "Which cost centre carries it, and what unit we will divide the cost by once it is live."],
+  ];
+  const xs = [0.6, 4.74, 8.88];
+  const ys = [2.32, 4.52];
+  for (let i = 0; i < questions.length; i++) {
+    const [ic, label, desc] = questions[i];
+    const x = xs[i % 3], y = ys[Math.floor(i / 3)];
+    card(s, { x, y, w: 3.84, h: 2.05, fill: DARK_CARD, shadow: false });
+    await iconBadge(s, { x: x + 0.32, y: y + 0.28, d: 0.5, bg: "2E3A48", icon: ic, color: AMBER });
+    s.addText(label, {
+      x: x + 0.96, y: y + 0.26, w: 2.7, h: 0.54, fontFace: HEAD, fontSize: 15, bold: true,
+      color: WHITE, margin: 0, valign: "middle",
+    });
+    s.addText(desc, {
+      x: x + 0.32, y: y + 0.92, w: 3.2, h: 1.05, fontFace: BODY, fontSize: 12,
+      color: MUTED_D, margin: 0, valign: "top", lineSpacing: 16,
+    });
+  }
+
+  s.addText(
+    [
+      { text: "The output is a number attached to the design: ", options: { color: AMBER, bold: true } },
+      { text: "an estimate, and a cost target recorded beside the latency and availability targets. A cost diff on the pull request and policy as code keep it honest afterwards.", options: { color: MUTED_D } },
+    ],
+    { x: M, y: 6.74, w: 12.13, h: 0.6, fontFace: BODY, fontSize: 12.5, margin: 0,
+      valign: "top", lineSpacing: 18 }
+  );
+
+  note(s, "design-questions");
 }
 
 async function slideBillingShock() {
@@ -1238,6 +1303,7 @@ async function slideClosing() {
   await slideAutomatedAlerts();
   await slideSharedResponsibility();
   await slideShiftLeft();
+  await slideDesignQuestions();
   await slideBillingShock();
 
   await slidePathForward();

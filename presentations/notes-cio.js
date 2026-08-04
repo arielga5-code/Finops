@@ -52,20 +52,23 @@ module.exports = {
 
   governance:
     "The reframe to make here is that there are two moments to control a cost, and most " +
-    "organizations only operate the second one. On the left is shift left: cost entering the " +
-    "engineering workflow at the moment the choice is made — priced architecture options, a cost " +
-    "diff on the pull request, tagging and budget rules enforced as policy in the pipeline. On " +
-    "the right are the runtime controls, which act on spend that already exists. " +
-    "The economics favour the left column heavily. The same decision costs a conversation at " +
-    "design, an edit at pull-request time, a migration once deployed and a negotiation once it is " +
-    "on a contract — nothing about the decision changed, only the price of revisiting it. " +
-    "Two things to say out loud. First, the external evidence: pre-deployment costing is the most " +
-    "requested capability in the State of FinOps 2026, so this is the direction of the discipline " +
-    "rather than a local preference. Second, the cultural condition — this works where FinOps " +
-    "partners with engineers and fails where it polices them. Nobody is being asked to become a " +
-    "pricing expert; they are being handed the number at the moment they are already deciding. " +
-    "If the CIO asks where to start, the pull-request cost diff is the answer: it lands inside a " +
-    "ritual every team already has, and it needs no new meeting.",
+    "organizations only operate the second one. " +
+    "Be precise about what shift left means, because it is usually heard as a tool purchase: it " +
+    "means the FinOps person is in the design and intake conversation, understanding what the " +
+    "project actually needs, at the point the architecture is chosen. The cost diff and the policy " +
+    "checks are how that decision is held afterwards — they are the enforcement, not the practice. " +
+    "The economics justify it. The same decision costs a conversation at design, an edit at " +
+    "pull-request time, a migration once deployed and a negotiation once it is on a contract. " +
+    "Nothing about the decision changed, only the price of revisiting it — and most of a " +
+    "workload's lifetime cost is settled once the architecture is agreed. " +
+    "Two things to say out loud. First the external evidence: pre-deployment costing is the most " +
+    "requested capability in the State of FinOps 2026, and the Framework names this work — " +
+    "Architecting & Workload Placement, and Onboarding Workloads. Second the condition for it " +
+    "working: FinOps sits with engineers rather than auditing them. Nobody is being asked to " +
+    "become a pricing expert. " +
+    "If the CIO asks what this costs, the answer is someone's time in design reviews. If they ask " +
+    "where to start, it is the pull-request cost diff — it lands inside a ritual teams already " +
+    "have and needs no new meeting.",
 
   ask:
     "Land the plane on specifics. Ninety days, three phases, and nothing in it requires a purchase " +

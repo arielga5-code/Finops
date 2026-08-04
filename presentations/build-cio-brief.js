@@ -221,16 +221,16 @@ async function slideGovernance() {
   bg(s, DARK);
   kicker(s, "Part two — control it");
   title(s, "Two moments to control a cost", true);
-  sub(s, "Before it is deployed, when changing it is a conversation. After, when changing it is a migration.", true);
+  sub(s, "At design, when changing it is a conversation. After deployment, when changing it is a migration.", true);
 
   const columns = [
     {
       x: 0.6, tag: "Before deploy — shift left", accent: AMBER,
-      lead: "Cost enters the engineering workflow, at the moment the choice is made.",
+      lead: "FinOps in the design conversation, where the decisions that commit the money are made.",
       items: [
-        ["FiPenTool", "Priced architecture review", "Two or three options costed before one is chosen."],
-        ["FiGitPullRequest", "Cost diff on the pull request", "Every infrastructure change shows its monthly delta."],
-        ["FiShield", "Policy as code", "Tagging and budget rules enforced in the pipeline."],
+        ["FiUsers", "A seat at design and intake", "Understand what the project needs before the architecture is set."],
+        ["FiPenTool", "Options priced, target agreed", "Two or three costed; a cost target recorded beside the SLOs."],
+        ["FiGitPullRequest", "Enforced in the pipeline", "Cost diff on the pull request; tagging and budget rules as policy."],
       ],
     },
     {
@@ -272,7 +272,7 @@ async function slideGovernance() {
   s.addText(
     [
       { text: "Pre-deployment costing is the most requested capability in the State of FinOps 2026. ", options: { color: AMBER, bold: true } },
-      { text: "It works where FinOps partners with engineers rather than policing them — and a cost alert still cannot stop a runaway job, because by the time billing moves the money is spent.", options: { color: MUTED_D } },
+      { text: "It works where FinOps sits with engineers at design rather than auditing them afterwards — and a cost alert still cannot stop a runaway job, because by the time billing moves the money is spent.", options: { color: MUTED_D } },
     ],
     { x: M + 0.36, y: 6.22, w: 11.4, h: 0.86, fontFace: BODY, fontSize: 12.5, margin: 0,
       valign: "middle", lineSpacing: 17 }

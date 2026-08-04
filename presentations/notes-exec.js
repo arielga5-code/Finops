@@ -135,17 +135,32 @@ module.exports = {
     "with roles is a discussion, the grid with names is a commitment.",
 
   "shift-left":
-    "The slide that answers 'so what do you actually want engineering to do differently', and the " +
-    "chart is the argument: the same decision costs a conversation at design, an edit at pull " +
-    "request, a migration once deployed and a negotiation once it is on a contract. Nothing about " +
-    "the decision changed — only the cost of revisiting it. " +
-    "The three insertion points are deliberately small. None of them asks an engineer to learn " +
-    "cloud pricing; they put the number in front of the person at the moment they are already " +
-    "making the choice. The pull-request cost diff is the one to push for first, because it lands " +
-    "inside a ritual teams already have. " +
-    "Say the last line out loud, because it is the difference between this working and this being " +
-    "resented: the practices that succeed describe FinOps as partnering with engineers rather " +
-    "than policing them. A cost review that only ever says no gets routed around within a quarter.",
+    "This is the slide that defines shift left properly, so do not let it be heard as a tooling " +
+    "pitch. Shift left is a change in when the FinOps conversation happens: today it starts when " +
+    "the invoice arrives, and it belongs at requirements and design, where the decisions that " +
+    "commit the money are actually made. " +
+    "Walk the band left to right and make the point under it — by the time the design is agreed, " +
+    "most of the lifetime cost of that workload is already determined. Rightsizing afterwards " +
+    "trims the margin; the architecture set the base. " +
+    "The two cards are the exchange, and the right one matters more than the left. FinOps arrives " +
+    "with priced options and a cost target, but it leaves with an understanding of what the " +
+    "project actually needs — the real SLO, what is temporary, where the business value sits. " +
+    "That is why a named person has to be in the room rather than a report being circulated. " +
+    "Cite the Framework line at the bottom: this is a defined capability, not an invented process.",
+
+  "design-questions":
+    "The practical companion to the previous slide, and the one to hand to an architect. None of " +
+    "the six is a finance question — every one is a design question the team can answer in the " +
+    "room, and every one moves the bill by a large factor. " +
+    "Pick two to talk through rather than reading all six. The shape-of-load question is the " +
+    "highest-yield: sizing for a weekly peak is the most common and most expensive habit. The " +
+    "temporary question is the cheapest win, because an expiry date set on day one costs nothing " +
+    "and removing an environment two years later is a project nobody volunteers for. " +
+    "The bottom line is what makes the meeting real: the output is a number attached to the " +
+    "design and a cost target recorded next to the latency and availability targets, so cost " +
+    "becomes a non-functional requirement rather than a preference. Automation enforces it " +
+    "afterwards — the cost diff on the pull request and policy as code — but the number comes " +
+    "from this conversation, not from the tool.",
 
   "billing-shock":
     "The payoff slide for both halves of the deck, and the one to use if someone asks what all " +

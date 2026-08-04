@@ -97,26 +97,31 @@ The tiering rule is the takeaway: sort alerts by what they can actually prevent,
 Close the section on the division of labour, because the most common failure here is not a missing tool but an assumption that FinOps is the platform team's job. Walk one row rather than all five — guardrails is a good choice, since engineering builds them but does not get to decide unilaterally where the ceiling sits. The pattern to point out is that no column owns more than two rows: this is a shared model by construction, and any version where one function owns everything has quietly become that function's problem alone. Bring a filled-in version of this grid with real names to the next meeting; the grid with roles is a discussion, the grid with names is a commitment.
 
 
-## Slide 19 — Catch it at design, not on the invoice
+## Slide 19 — Shift left is a seat at the design table
 
-The slide that answers 'so what do you actually want engineering to do differently', and the chart is the argument: the same decision costs a conversation at design, an edit at pull request, a migration once deployed and a negotiation once it is on a contract. Nothing about the decision changed — only the cost of revisiting it. The three insertion points are deliberately small. None of them asks an engineer to learn cloud pricing; they put the number in front of the person at the moment they are already making the choice. The pull-request cost diff is the one to push for first, because it lands inside a ritual teams already have. Say the last line out loud, because it is the difference between this working and this being resented: the practices that succeed describe FinOps as partnering with engineers rather than policing them. A cost review that only ever says no gets routed around within a quarter.
+This is the slide that defines shift left properly, so do not let it be heard as a tooling pitch. Shift left is a change in when the FinOps conversation happens: today it starts when the invoice arrives, and it belongs at requirements and design, where the decisions that commit the money are actually made. Walk the band left to right and make the point under it — by the time the design is agreed, most of the lifetime cost of that workload is already determined. Rightsizing afterwards trims the margin; the architecture set the base. The two cards are the exchange, and the right one matters more than the left. FinOps arrives with priced options and a cost target, but it leaves with an understanding of what the project actually needs — the real SLO, what is temporary, where the business value sits. That is why a named person has to be in the room rather than a report being circulated. Cite the Framework line at the bottom: this is a defined capability, not an invented process.
 
 
-## Slide 20 — Nobody should learn it from the invoice
+## Slide 20 — Six questions, asked before the build starts
+
+The practical companion to the previous slide, and the one to hand to an architect. None of the six is a finance question — every one is a design question the team can answer in the room, and every one moves the bill by a large factor. Pick two to talk through rather than reading all six. The shape-of-load question is the highest-yield: sizing for a weekly peak is the most common and most expensive habit. The temporary question is the cheapest win, because an expiry date set on day one costs nothing and removing an environment two years later is a project nobody volunteers for. The bottom line is what makes the meeting real: the output is a number attached to the design and a cost target recorded next to the latency and availability targets, so cost becomes a non-functional requirement rather than a preference. Automation enforces it afterwards — the cost diff on the pull request and policy as code — but the number comes from this conversation, not from the tool.
+
+
+## Slide 21 — Nobody should learn it from the invoice
 
 The payoff slide for both halves of the deck, and the one to use if someone asks what all this buys. Walk the timeline left to right: the same overrun, found at four different moments, and only the first three leave anyone a decision to make. The fourth point is the status quo — it is not that the invoice is wrong, it is that by the time it arrives the only available action is explaining it. Land the closing line deliberately: we are not promising a smaller bill, and anyone who promises that before seeing the data is guessing. We are promising a bill with nothing surprising in it, which is a different and more defensible commitment.
 
 
-## Slide 21 — Where to start
+## Slide 22 — Where to start
 
 This is the ask. Step 1 is highlighted because it is the only one that cannot be parallelized — everything downstream degrades if the taxonomy is still in flux. Steps 2 and 4 are both arguments against over-engineering: pick the top spend categories and the tooling that matches the estate we actually have, not the one we might have in three years.
 
 
-## Slide 22 — Visibility is the foundation, not the goal
+## Slide 23 — Visibility is the foundation, not the goal
 
 Close on the causal chain rather than a summary of slides. Each link is a separate management commitment: allocation data, published ownership, cost surfaced in the engineering workflow, and a review cadence that keeps it alive. Ask for the first two today; the rest follow from them.
 
 
-## Slide 23 — Questions & discussion
+## Slide 24 — Questions & discussion
 
 Anticipate three questions. What will this cost — mostly effort, not licences, if we stay on native tooling. How long until we see savings — allocation coverage improves in weeks, targeted savings follow the first full month of clean data. Who owns it — name the tagging owner and the review cadence before leaving the room, or nothing on the previous slides happens.
