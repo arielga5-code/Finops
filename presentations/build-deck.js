@@ -1127,6 +1127,73 @@ async function slideBillingShock() {
   note(s, "billing-shock");
 }
 
+async function slideAiCost() {
+  const s = pres.addSlide();
+  bg(s, WHITE);
+  kicker(s, "Governance — the AI line");
+  title(s, "AI is repeating the cloud journey, at speed");
+  sub(s, "The same three failures — no owner, no attribution, no ceiling — arriving on a much shorter clock.");
+
+  const stats = [
+    ["72%", "hit an unexpected AI bill in the past year", "One in three, more than once.", "A6432F"],
+    ["52%", "have no clear owner for AI cost", "Split across engineering, FinOps, finance and IT.", AMBER],
+    ["4 in 5", "need a day or more to trace a spike to its source", "Only about one in five manage it within hours.", AMBER],
+    ["26%", "of AI spend estimated wasted", "Respondents' own estimate, not a measurement.", MUTED],
+  ];
+  const xs = [0.6, 3.7, 6.8, 9.9];
+  for (let i = 0; i < stats.length; i++) {
+    const [big, line, foot, color] = stats[i];
+    card(s, { x: xs[i], y: 2.32, w: 2.83, h: 2.4, fill: TINT, shadow: false });
+    s.addText(big, {
+      x: xs[i] + 0.28, y: 2.5, w: 2.3, h: 0.7, fontFace: HEAD, fontSize: 32, bold: true,
+      color, margin: 0, valign: "middle",
+    });
+    s.addText(line, {
+      x: xs[i] + 0.28, y: 3.24, w: 2.3, h: 0.85, fontFace: BODY, fontSize: 13,
+      color: INK, margin: 0, valign: "top", lineSpacing: 17,
+    });
+    s.addText(foot, {
+      x: xs[i] + 0.28, y: 4.06, w: 2.3, h: 0.56, fontFace: BODY, fontSize: 11,
+      color: MUTED, margin: 0, valign: "top", lineSpacing: 14,
+    });
+  }
+
+  card(s, { x: M, y: 5.0, w: 7.3, h: 1.62, fill: DARK_CARD });
+  s.addText("The number to manage", {
+    x: M + 0.34, y: 5.18, w: 5, h: 0.32, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 1.8, color: AMBER, margin: 0, valign: "middle",
+  });
+  s.addText(
+    [
+      { text: "Time to attribute a spike. ", options: { color: WHITE, bold: true } },
+      { text: "It turns an argument about governance into a number we can move — days today, hours as the target — and it is the one metric a runaway AI workload is measured against.", options: { color: MUTED_D } },
+    ],
+    { x: M + 0.34, y: 5.54, w: 6.62, h: 0.96, fontFace: BODY, fontSize: 13.5, margin: 0,
+      valign: "top", lineSpacing: 19 }
+  );
+
+  card(s, { x: 8.23, y: 5.0, w: 4.5, h: 1.62, fill: AMBER_SOFT, shadow: false });
+  s.addText("Why a rollup will not do it", {
+    x: 8.57, y: 5.18, w: 4, h: 0.32, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 1.8, color: "6B4A0E", margin: 0, valign: "middle",
+  });
+  s.addText(
+    "AI waste hides in prompt design, model choice and retry logic. A monthly bill by resource " +
+    "cannot name the caller — that needs per-consumer token attribution.",
+    { x: 8.57, y: 5.54, w: 3.86, h: 0.96, fontFace: BODY, fontSize: 12.5,
+      color: "6B4A0E", margin: 0, valign: "top", lineSpacing: 17 }
+  );
+
+  s.addText(
+    "Harness / Sapio Research, 2026 State of AI in FinOps — 700 engineering leaders and practitioners, May–June 2026. " +
+    "Vendor-sponsored research; the waste and maturity figures are self-reported estimates.",
+    { x: M, y: 6.78, w: 12.13, h: 0.5, fontFace: BODY, fontSize: 10.5,
+      color: MUTED, margin: 0, valign: "middle" }
+  );
+
+  note(s, "ai-cost");
+}
+
 async function slideShipIt() {
   const s = pres.addSlide();
   bg(s, WHITE);
@@ -1416,6 +1483,7 @@ async function slideClosing() {
   await slideShiftLeft();
   await slideDesignQuestions();
   await slideBillingShock();
+  await slideAiCost();
   await slideShipIt();
 
   await slidePathForward();

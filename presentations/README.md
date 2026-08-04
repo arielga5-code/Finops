@@ -5,18 +5,18 @@ Management-facing material derived from the practice this repo implements.
 | Deck | Length | Audience | Notes |
 |---|---|---|---|
 | [`finops-cio-brief.pptx`](finops-cio-brief.pptx) | 5 slides | CIO / CTO — a short decision meeting | [`speaker-notes-cio.md`](speaker-notes-cio.md) |
-| [`finops-gaining-visibility.pptx`](finops-gaining-visibility.pptx) | 25 slides | Mixed executive leadership | [`speaker-notes.md`](speaker-notes.md) |
-| [`finops-gaining-visibility-cfo.pptx`](finops-gaining-visibility-cfo.pptx) | 25 slides | CFO / finance leadership | [`speaker-notes-cfo.md`](speaker-notes-cfo.md) |
+| [`finops-gaining-visibility.pptx`](finops-gaining-visibility.pptx) | 26 slides | Mixed executive leadership | [`speaker-notes.md`](speaker-notes.md) |
+| [`finops-gaining-visibility-cfo.pptx`](finops-gaining-visibility-cfo.pptx) | 26 slides | CFO / finance leadership | [`speaker-notes-cfo.md`](speaker-notes-cfo.md) |
 
 **Start with the CIO brief.** It is the argument in five slides and asks for
-three decisions; the 25-slide deck is the evidence behind it, better used as a
+three decisions; the 26-slide deck is the evidence behind it, better used as a
 follow-up than presented in full.
 
 The long deck runs in two parts: **visibility** (what is being spent and by
 whom) and **governance** (who owns it, what limits it, what stops it).
 
 **The two long decks have identical slides.** Only the speaker notes differ — same
-25 slides, same visuals, argued for a different room. Present either one; pick
+26 slides, same visuals, argued for a different room. Present either one; pick
 the file whose notes match the audience.
 
 [`finops-cio-brief.pdf`](finops-cio-brief.pdf) and
@@ -51,8 +51,9 @@ Structure:
 | 19 | Shift left — where FinOps belongs in the lifecycle, and the exchange that happens in the design room |
 | 20 | The six design-time questions, and the cost target they produce |
 | 21 | Avoiding bill shock — the same overrun found at four different moments |
-| 22 | Ship the insight — findings need an owner and a date; measure adoption, not accuracy |
-| 23–25 | The starting sequence, takeaways, discussion |
+| 22 | The AI line — the same failures on a shorter clock, and time-to-attribute as the metric |
+| 23 | Ship the insight — findings need an owner and a date; measure adoption, not accuracy |
+| 24–26 | The starting sequence, takeaways, discussion |
 
 The governance half is grounded in this repo's own implementation docs —
 the alert tiering and latency figures on slides 16 and 17 come from
@@ -69,7 +70,7 @@ request, policy as code) is the one practice these decks describe that this repo
 does not yet implement — treat it as a roadmap item.
 
 Two slides have deliberate blanks to fill in before presenting: the date on
-slide 1 and the contacts on slide 25. Slide 18's responsibility grid is drawn
+slide 1 and the contacts on slide 26. Slide 18's responsibility grid is drawn
 with role names — fill in real names before the meeting where you want a
 decision.
 
@@ -165,9 +166,25 @@ Shift left (slide 19 of the long deck, and the left column of the brief's slide 
 - [Onboarding Workloads](https://www.finops.org/framework/capabilities/onboarding-workloads/) — decision support during design and intake
 - [Cost-aware product decisions](https://www.finops.org/insights/cost-aware-product-decisions/) — cost as a non-functional requirement
 
-Slide 22 (ship the insight) was prompted by a "FinOps is a product" infographic
+**Slide 22 uses vendor-sponsored research and says so on the slide.** The
+Harness / Sapio *2026 State of AI in FinOps* survey (700 practitioners, May–June
+2026) is published by a company selling AI cost tooling. The ownership,
+surprise-bill and diagnosis-time findings are repeated by independent coverage
+and are safe to cite; the 26% waste figure is what respondents estimated, not a
+measurement, and the slide labels it as such. Several figures that circulate in
+summaries of this report — policy-enforcement rates, maturity self-scores,
+engineers' cost awareness — could not be verified outside the vendor's own
+material and were deliberately left off the slide.
+
+Slide 23 (ship the insight) was prompted by a "FinOps is a product" infographic
 by Bhaskara Balaga, shared on LinkedIn. The practices on the slide — findings
 carrying an owner and a date, reporting realized against identified savings, and
 treating adoption as the leading indicator — are standard FinOps practice; the
 product framing is his, and worth crediting if you repeat it verbatim.
 - [Policy-as-code for cost governance](https://www.firefly.ai/blog/shift-left-finops-how-governance-policy-as-code-are-enabling-cloud-cost-optimization)
+
+The AI line (slide 22 of the long deck, and the first gap bullet of the brief):
+
+- [2026 State of AI in FinOps](https://www.harness.io/state-of-ai-in-finops-2026) — the vendor's own report page
+- [Press release with methodology](https://www.prnewswire.com/news-releases/new-harness-report-reveals-enterprise-ai-spend-has-outgrown-the-systems-built-to-track-it-302837776.html) — Sapio Research, 700 respondents across five countries
+- Independent coverage repeating the headline findings: [CIO Dive](https://www.ciodive.com/news/control-AI-costs-spending-harness/826492/), [Digitalisation World](https://digitalisationworld.com/news/23121-enterprises-waste-26-of-ai-spend-amid-unclear-cost-ownership-harness-finds), [digit.fyi](https://www.digit.fyi/ai-spend-outpaces-financial-oversight/)

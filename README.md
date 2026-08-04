@@ -29,7 +29,7 @@ which app, made yesterday's bill jump 40%, and was it worth it?"
   technology organization this year, allocation, the four controls, and a
   90-day plan with three decisions. Start here.
 - [`presentations/finops-gaining-visibility.pptx`](presentations/finops-gaining-visibility.pptx) —
-  24-slide management briefing in two parts. Visibility: why it precedes
+  26-slide management briefing in two parts. Visibility: why it precedes
   optimization, the five things that block it, how to unblock each one.
   Governance: application ownership, budget controls, rate limits, alert
   routing, the shared responsibility model, shift left — FinOps at the design

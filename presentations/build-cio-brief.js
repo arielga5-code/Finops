@@ -47,7 +47,7 @@ async function slideGap() {
   );
 
   const gaps = [
-    ["FiHelpCircle", "No owner on the change", "When the number moves, naming who caused it takes days — or never happens."],
+    ["FiHelpCircle", "No owner on the change", "Four in five organizations need a day or more to trace an AI spike to its source."],
     ["FiClock", "Data arrives after the fact", "Billing lands 24–48h late, so every cost alert reports rather than prevents."],
     ["FiSlash", "Nothing stops a runaway", "No quota, no ceiling, no gate. The first hard limit is the invoice."],
   ];

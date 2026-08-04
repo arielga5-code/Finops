@@ -112,21 +112,26 @@ The practical companion to the previous slide, and the one to hand to an archite
 The payoff slide for both halves of the deck, and the one to use if someone asks what all this buys. Walk the timeline left to right: the same overrun, found at four different moments, and only the first three leave anyone a decision to make. The fourth point is the status quo — it is not that the invoice is wrong, it is that by the time it arrives the only available action is explaining it. Land the closing line deliberately: we are not promising a smaller bill, and anyone who promises that before seeing the data is guessing. We are promising a bill with nothing surprising in it, which is a different and more defensible commitment.
 
 
-## Slide 22 — Ship the insight, don't just publish it
+## Slide 22 — AI is repeating the cloud journey, at speed
+
+The slide that makes the whole deck concrete for anyone running AI workloads, because AI is where these failures are arriving fastest. Same three gaps as cloud a decade ago — no owner, no attribution, no ceiling — compressed into about eighteen months. Lead with the third tile, not the waste figure. Four in five organizations need a day or more to trace an AI spike to its source, and roughly one in five manage it within hours. That converts an abstract governance ask into a measurable operational problem — time to attribute — which is a number an engineering leader can be held to and can move. Be straight about the source when asked, and say it before someone else does: this is vendor-sponsored research from a company selling AI cost tooling, and the waste figure is what respondents estimated rather than anything measured. The ownership, surprise-bill and diagnosis-time findings are the durable ones; the 26% is illustrative. Using it honestly is more persuasive than over-claiming it. The right-hand card is the technical consequence and the reason a generic cost platform is not enough here: AI waste lives in prompt design, model selection and retry behaviour, none of which appears in a resource-level bill. Naming the caller needs per-consumer token attribution — gateway subscription keys or application-level attributes.
+
+
+## Slide 23 — Ship the insight, don't just publish it
 
 The operating-model slide, and the honest self-check for whoever runs this practice. Everything earlier in the deck produces findings; this is about whether findings become changes. Walk the chain and stop on the second box. A finding with no named owner and no date does not fail loudly — it simply sits in a dashboard being accurate, which is the most common way a cost programme dies. Sizing and dating each item is what turns a report into a queue of work someone can be asked about. The measures on the right are the ones to report upward, and they are deliberately not savings numbers. Adoption — the share of findings that acquired an owner and a date — predicts savings; accuracy does not. Realized against identified is the pair that keeps everyone honest, because identified savings are a forecast and only realized savings appear on an invoice. The build-for-engineers point is worth saying plainly: an engineer wants the three things worth fixing this sprint, not a complete and beautiful cost model. Serve that, and the finance-grade report improves anyway, because the underlying data gets used and therefore gets corrected.
 
 
-## Slide 23 — Where to start
+## Slide 24 — Where to start
 
 This is the ask. Step 1 is highlighted because it is the only one that cannot be parallelized — everything downstream degrades if the taxonomy is still in flux. Steps 2 and 4 are both arguments against over-engineering: pick the top spend categories and the tooling that matches the estate we actually have, not the one we might have in three years.
 
 
-## Slide 24 — Visibility is the foundation, not the goal
+## Slide 25 — Visibility is the foundation, not the goal
 
 Close on the causal chain rather than a summary of slides. Each link is a separate management commitment: allocation data, published ownership, cost surfaced in the engineering workflow, and a review cadence that keeps it alive. Ask for the first two today; the rest follow from them.
 
 
-## Slide 25 — Questions & discussion
+## Slide 26 — Questions & discussion
 
 Anticipate three questions. What will this cost — mostly effort, not licences, if we stay on native tooling. How long until we see savings — allocation coverage improves in weeks, targeted savings follow the first full month of clean data. Who owns it — name the tagging owner and the review cadence before leaving the room, or nothing on the previous slides happens.

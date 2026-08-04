@@ -19,6 +19,13 @@ module.exports = {
     "to explain the last unexpected increase, what share of spend currently lands unallocated, and " +
     "whether any workload has a hard ceiling today. Specifics here are worth more than any slide " +
     "later in the deck. " +
+    "The first bullet carries an external number so it does not read as our complaint — four in " +
+    "five organizations need a day or more to trace an AI cost spike to its source, and only " +
+    "about one in five manage it within hours. Source it if asked: the Harness 2026 State of AI " +
+    "in FinOps survey, 700 practitioners, run by Sapio Research. Say unprompted that it is " +
+    "vendor-sponsored research; the ownership and diagnosis-time findings are the solid ones. " +
+    "The useful framing it gives you is time to attribute a spike — a measurable operational " +
+    "number rather than a governance abstraction. Offer it as the metric this programme moves. " +
     "Close the opening by reading the line under the asks — no new headcount, no platform " +
     "purchase — because that is the first thing a CIO is calculating while you talk. If the " +
     "meeting ends after this slide, the three asks are what you wanted.",

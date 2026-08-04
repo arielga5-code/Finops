@@ -172,6 +172,24 @@ module.exports = {
     "seeing the data is guessing. We are promising a bill with nothing surprising in it, which " +
     "is a different and more defensible commitment.",
 
+  "ai-cost":
+    "The slide that makes the whole deck concrete for anyone running AI workloads, because AI is " +
+    "where these failures are arriving fastest. Same three gaps as cloud a decade ago — no owner, " +
+    "no attribution, no ceiling — compressed into about eighteen months. " +
+    "Lead with the third tile, not the waste figure. Four in five organizations need a day or more " +
+    "to trace an AI spike to its source, and roughly one in five manage it within hours. That " +
+    "converts an abstract governance ask into a measurable operational problem — time to " +
+    "attribute — which is a number an engineering leader can be held to and can move. " +
+    "Be straight about the source when asked, and say it before someone else does: this is " +
+    "vendor-sponsored research from a company selling AI cost tooling, and the waste figure is " +
+    "what respondents estimated rather than anything measured. The ownership, surprise-bill and " +
+    "diagnosis-time findings are the durable ones; the 26% is illustrative. Using it honestly is " +
+    "more persuasive than over-claiming it. " +
+    "The right-hand card is the technical consequence and the reason a generic cost platform is " +
+    "not enough here: AI waste lives in prompt design, model selection and retry behaviour, none " +
+    "of which appears in a resource-level bill. Naming the caller needs per-consumer token " +
+    "attribution — gateway subscription keys or application-level attributes.",
+
   "ship-it":
     "The operating-model slide, and the honest self-check for whoever runs this practice. Everything " +
     "earlier in the deck produces findings; this is about whether findings become changes. " +

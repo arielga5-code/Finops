@@ -221,6 +221,22 @@ module.exports = {
     "variance. That is the promise we can actually keep, and it is worth more at the audit " +
     "committee than a savings figure nobody can attribute afterwards.",
 
+  "ai-cost":
+    "Read this as the risk slide for the fastest-growing line in the technology budget. The " +
+    "pattern is familiar — spend scaled before ownership and controls did — and the consequence " +
+    "is the same: variance nobody can explain quickly. " +
+    "The finance-relevant figure is the diagnosis time. Four in five organizations need a day or " +
+    "more to trace an AI cost spike to its source, which in practice means the exposure continues " +
+    "while the investigation runs. Framing that as a measurable target — hours rather than days — " +
+    "gives us something to report and improve, unlike a general commitment to better governance. " +
+    "Handle the source honestly and do it unprompted: this is vendor research from a company that " +
+    "sells AI cost management, and the 26% waste number is a self-reported estimate rather than a " +
+    "measurement. Cite the ownership and diagnosis findings, which independent coverage repeats, " +
+    "and treat the waste figure as directional only. Over-claiming it invites the audit question " +
+    "we cannot answer. " +
+    "If asked what would change: per-consumer attribution on AI traffic, so a spike resolves to a " +
+    "team and an application rather than to a shared resource.",
+
   "ship-it":
     "This is the governance-of-the-programme slide, and the one that answers 'how will we know this " +
     "is working before the savings arrive'. " +
