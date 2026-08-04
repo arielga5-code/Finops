@@ -97,16 +97,21 @@ Read this as the escalation policy behind the budget controls, and note who is o
 End on governance structure, because this is the slide that answers 'who is accountable' before the question is asked in a less comfortable setting. Finance owns budget and allocation policy; the platform function owns the standard and the instrumentation; engineering owns building and responding; leadership arbitrates the commitments and the trade-offs. Note that authority and execution are deliberately separated on the guardrails and alert rows — the people who build the limits are not the people who decide where they sit. Ask for two names today, the taxonomy owner and the budget-policy owner, and the rest of the grid can be filled in by the next review.
 
 
-## Slide 19 — Where to start
+## Slide 19 — Nobody should learn it from the invoice
+
+This is the slide to bring to the conversation about why the number moved, because it reframes the problem from cost to timing. The overrun is the same in all four columns; what changes is how much notice we get, and notice is what converts a write-off into a decision. The third point is the one with direct budget consequence — a forecast warning two weeks before month end can still change the month's outcome, while the invoice can only be explained after close. Be careful with the closing line and repeat it verbatim: this programme does not commit to reducing spend by a percentage, it commits to no unexplained variance. That is the promise we can actually keep, and it is worth more at the audit committee than a savings figure nobody can attribute afterwards.
+
+
+## Slide 20 — Where to start
 
 This is the ask, and the honest cost answer is effort rather than licence spend if we stay on native tooling — name the roles and the share of their time instead of quoting a budget number you would have to defend. Step one is the only item that cannot run in parallel: every downstream report degrades if the taxonomy is still moving. Split the ownership explicitly — finance owns the taxonomy, the allocation policy and the KPI definitions; engineering owns enforcement, instrumentation and remediation. Steps two and four are both arguments for restraint: attack the largest cost categories rather than pursuing complete granularity, and buy tooling that matches the estate we have rather than the one we might have in three years.
 
 
-## Slide 20 — Visibility is the foundation, not the goal
+## Slide 21 — Visibility is the foundation, not the goal
 
 Close on why this sequencing produces a better financial outcome than cutting first. A cut delivers a one-time step down and reverses as soon as attention moves elsewhere; allocation plus ownership changes the rate at which cost is added, which compounds across every subsequent period. That is also the honest framing for the board: the near-term deliverable is explainable variance and a forecast we can stand behind, with targeted savings following the first full period of clean data. Ask for the first two links today — the allocation standard and published ownership — because the rest follow from them and cannot be bought separately.
 
 
-## Slide 21 — Questions & discussion
+## Slide 22 — Questions & discussion
 
 Expect five questions and have the answers ready. What does it cost: effort, principally, plus any tooling only if we are genuinely multi-cloud. When do savings appear: allocation coverage improves within weeks, targeted savings follow the first full period of clean data, and be careful not to promise a percentage before we can see where the waste is. Who owns it: name the taxonomy owner and the monthly review before leaving the room, or none of this happens. Does it affect the close: better, not worse — daily data improves the accrual, though chargeback adds a journal step worth scoping with the controller. And will chargeback start an internal war: only if we launch it on allocation nobody trusts, which is exactly what the showback runway is for.

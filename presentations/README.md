@@ -7,11 +7,11 @@ Management-facing material derived from the practice this repo implements.
 | [`finops-gaining-visibility.pptx`](finops-gaining-visibility.pptx) | Mixed executive leadership | [`speaker-notes.md`](speaker-notes.md) |
 | [`finops-gaining-visibility-cfo.pptx`](finops-gaining-visibility-cfo.pptx) | CFO / finance leadership | [`speaker-notes-cfo.md`](speaker-notes-cfo.md) |
 
-21 slides in two parts: **visibility** (what is being spent and by whom) and
+22 slides in two parts: **visibility** (what is being spent and by whom) and
 **governance** (who owns it, what limits it, what stops it).
 
 **The two decks have identical slides.** Only the speaker notes differ — same
-21 slides, same visuals, argued for a different room. Present either one; pick
+22 slides, same visuals, argued for a different room. Present either one; pick
 the file whose notes match the audience.
 
 [`finops-gaining-visibility.pdf`](finops-gaining-visibility.pdf) is a rendered
@@ -42,7 +42,8 @@ Structure:
 | 16 | Rate limits & quotas — the only control fast enough to stop spend in progress |
 | 17 | Automated alerts — three tiers, three destinations, and three ways to get it wrong |
 | 18 | Shared responsibility — who decides, who builds, who pays |
-| 19–21 | The starting sequence, takeaways, discussion |
+| 19 | Avoiding bill shock — the same overrun found at four different moments |
+| 20–22 | The starting sequence, takeaways, discussion |
 
 The governance half is grounded in this repo's own implementation docs —
 the alert tiering and latency figures on slides 16 and 17 come from
@@ -50,7 +51,7 @@ the alert tiering and latency figures on slides 16 and 17 come from
 [`docs/00-architecture.md`](../docs/00-architecture.md#the-latency-problem).
 
 Two slides have deliberate blanks to fill in before presenting: the date on
-slide 1 and the contacts on slide 21. Slide 18's responsibility grid is drawn
+slide 1 and the contacts on slide 22. Slide 18's responsibility grid is drawn
 with role names — fill in real names before the meeting where you want a
 decision.
 

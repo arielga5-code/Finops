@@ -134,6 +134,16 @@ module.exports = {
     "alone. Bring a filled-in version of this grid with real names to the next meeting; the grid " +
     "with roles is a discussion, the grid with names is a commitment.",
 
+  "billing-shock":
+    "The payoff slide for both halves of the deck, and the one to use if someone asks what all " +
+    "this buys. Walk the timeline left to right: the same overrun, found at four different " +
+    "moments, and only the first three leave anyone a decision to make. " +
+    "The fourth point is the status quo — it is not that the invoice is wrong, it is that by the " +
+    "time it arrives the only available action is explaining it. Land the closing line " +
+    "deliberately: we are not promising a smaller bill, and anyone who promises that before " +
+    "seeing the data is guessing. We are promising a bill with nothing surprising in it, which " +
+    "is a different and more defensible commitment.",
+
   "path-forward":
     "This is the ask. Step 1 is highlighted because it is the only one that cannot be parallelized — " +
     "everything downstream degrades if the taxonomy is still in flux. " +

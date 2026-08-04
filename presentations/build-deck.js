@@ -1044,6 +1044,84 @@ async function slideSharedResponsibility() {
   note(s, "shared-responsibility");
 }
 
+async function slideBillingShock() {
+  const s = pres.addSlide();
+  bg(s, WHITE);
+  kicker(s, "Governance — putting it together");
+  title(s, "Nobody should learn it from the invoice");
+  sub(s, "The same overrun, found at four different moments. Only the first three leave you anything to do about it.");
+
+  /* when each signal reaches you */
+  const axisY = 3.42;
+  s.addShape(pres.ShapeType.roundRect, {
+    x: 1.9, y: axisY, w: 9.53, h: 0.05, rectRadius: 0.02,
+    fill: { color: "DFE4EA" }, line: { type: "none" },
+  });
+
+  const points = [
+    [1.9, "Usage burn alert", "~10 minutes", "Throttle it, or confirm it was intended.", AMBER, "B87B18"],
+    [5.2, "Daily spend threshold", "next morning", "One team, one number, one owner to ask.", TEAL, "1F6B5C"],
+    [8.5, "Forecast overrun", "~2 weeks out", "Still time to change the month's outcome.", TEAL, "1F6B5C"],
+    [11.43, "The invoice", "30–45 days later", "Nothing left to decide. Only to explain.", "AEB8C4", MUTED],
+  ];
+  for (const [x, name, when, action, dot, textColor] of points) {
+    const boxW = 2.6;
+    const bx = Math.min(Math.max(x - boxW / 2, M), 12.73 - boxW);
+    s.addText(name, {
+      x: bx, y: 2.42, w: boxW, h: 0.34, fontFace: BODY, fontSize: 14, bold: true,
+      color: dot === "AEB8C4" ? MUTED : INK, margin: 0, align: "center", valign: "middle",
+    });
+    s.addText(when, {
+      x: bx, y: 2.78, w: boxW, h: 0.32, fontFace: BODY, fontSize: 12.5, bold: true,
+      charSpacing: 0.6, color: textColor, margin: 0, align: "center", valign: "middle",
+    });
+    s.addShape(pres.ShapeType.ellipse, {
+      x: x - 0.13, y: axisY - 0.105, w: 0.26, h: 0.26,
+      fill: { color: dot }, line: { color: WHITE, width: 2 },
+    });
+    s.addText(action, {
+      x: bx, y: 3.72, w: boxW, h: 0.62, fontFace: BODY, fontSize: 12,
+      color: MUTED, margin: 0, align: "center", valign: "top", lineSpacing: 16,
+    });
+  }
+
+  /* what has to be true */
+  card(s, { x: M, y: 4.7, w: 7.3, h: 2.2, fill: TINT, shadow: false });
+  s.addText("What has to be true", {
+    x: M + 0.36, y: 4.86, w: 4, h: 0.32, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 1.8, color: MUTED, margin: 0, valign: "middle",
+  });
+  const conditions = [
+    "Protective alerts run on usage data, not on billing data",
+    "Every alert has a named owner to route to",
+    "Budgets are phased, so drift shows up in week one",
+    "Quotas cap the worst case while someone investigates",
+  ];
+  let cy = 5.26;
+  for (const c of conditions) {
+    await iconBadge(s, { x: M + 0.36, y: cy, d: 0.3, bg: WHITE, icon: "FiCheck", color: "1F6B5C" });
+    s.addText(c, {
+      x: M + 0.82, y: cy - 0.06, w: 6.2, h: 0.42, fontFace: BODY, fontSize: 13,
+      color: INK, margin: 0, valign: "middle",
+    });
+    cy += 0.42;
+  }
+
+  card(s, { x: 8.23, y: 4.7, w: 4.5, h: 2.2, fill: DARK_CARD });
+  s.addText("The point", {
+    x: 8.55, y: 4.88, w: 3.5, h: 0.32, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 1.8, color: AMBER, margin: 0, valign: "middle",
+  });
+  s.addText(
+    "The goal is not a smaller invoice. It is an invoice with nothing in it you " +
+    "have not already seen, explained and decided about.",
+    { x: 8.55, y: 5.28, w: 3.86, h: 1.4, fontFace: HEAD, fontSize: 15.5, italic: true,
+      color: WHITE, margin: 0, valign: "top", lineSpacing: 22 }
+  );
+
+  note(s, "billing-shock");
+}
+
 async function slidePathForward() {
   const s = pres.addSlide();
   bg(s, WHITE);
@@ -1218,6 +1296,7 @@ async function slideClosing() {
   await slideRateLimits();
   await slideAutomatedAlerts();
   await slideSharedResponsibility();
+  await slideBillingShock();
 
   await slidePathForward();
   await slideTakeaways();

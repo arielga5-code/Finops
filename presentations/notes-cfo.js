@@ -188,6 +188,17 @@ module.exports = {
     "sit. Ask for two names today, the taxonomy owner and the budget-policy owner, and the rest " +
     "of the grid can be filled in by the next review.",
 
+  "billing-shock":
+    "This is the slide to bring to the conversation about why the number moved, because it " +
+    "reframes the problem from cost to timing. The overrun is the same in all four columns; what " +
+    "changes is how much notice we get, and notice is what converts a write-off into a decision. " +
+    "The third point is the one with direct budget consequence — a forecast warning two weeks " +
+    "before month end can still change the month's outcome, while the invoice can only be " +
+    "explained after close. Be careful with the closing line and repeat it verbatim: this " +
+    "programme does not commit to reducing spend by a percentage, it commits to no unexplained " +
+    "variance. That is the promise we can actually keep, and it is worth more at the audit " +
+    "committee than a savings figure nobody can attribute afterwards.",
+
   "path-forward":
     "This is the ask, and the honest cost answer is effort rather than licence spend if we stay " +
     "on native tooling — name the roles and the share of their time instead of quoting a budget " +

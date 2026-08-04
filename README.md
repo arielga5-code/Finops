@@ -25,10 +25,11 @@ which app, made yesterday's bill jump 40%, and was it worth it?"
 ## Presentations
 
 - [`presentations/finops-gaining-visibility.pptx`](presentations/finops-gaining-visibility.pptx) —
-  21-slide management briefing in two parts. Visibility: why it precedes
+  22-slide management briefing in two parts. Visibility: why it precedes
   optimization, the five things that block it, how to unblock each one.
   Governance: application ownership, budget controls, rate limits, alert
-  routing, and the shared responsibility model.
+  routing, the shared responsibility model, and how the same overrun looks
+  when it is found in minutes rather than on the invoice.
 - [`presentations/finops-gaining-visibility-cfo.pptx`](presentations/finops-gaining-visibility-cfo.pptx) —
   the same slides with speaker notes rewritten for a CFO: variance
   explainability, accrual and forecast quality, commitments as purchase
