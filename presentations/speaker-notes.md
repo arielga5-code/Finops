@@ -97,21 +97,26 @@ The tiering rule is the takeaway: sort alerts by what they can actually prevent,
 Close the section on the division of labour, because the most common failure here is not a missing tool but an assumption that FinOps is the platform team's job. Walk one row rather than all five — guardrails is a good choice, since engineering builds them but does not get to decide unilaterally where the ceiling sits. The pattern to point out is that no column owns more than two rows: this is a shared model by construction, and any version where one function owns everything has quietly become that function's problem alone. Bring a filled-in version of this grid with real names to the next meeting; the grid with roles is a discussion, the grid with names is a commitment.
 
 
-## Slide 19 — Nobody should learn it from the invoice
+## Slide 19 — Catch it at design, not on the invoice
+
+The slide that answers 'so what do you actually want engineering to do differently', and the chart is the argument: the same decision costs a conversation at design, an edit at pull request, a migration once deployed and a negotiation once it is on a contract. Nothing about the decision changed — only the cost of revisiting it. The three insertion points are deliberately small. None of them asks an engineer to learn cloud pricing; they put the number in front of the person at the moment they are already making the choice. The pull-request cost diff is the one to push for first, because it lands inside a ritual teams already have. Say the last line out loud, because it is the difference between this working and this being resented: the practices that succeed describe FinOps as partnering with engineers rather than policing them. A cost review that only ever says no gets routed around within a quarter.
+
+
+## Slide 20 — Nobody should learn it from the invoice
 
 The payoff slide for both halves of the deck, and the one to use if someone asks what all this buys. Walk the timeline left to right: the same overrun, found at four different moments, and only the first three leave anyone a decision to make. The fourth point is the status quo — it is not that the invoice is wrong, it is that by the time it arrives the only available action is explaining it. Land the closing line deliberately: we are not promising a smaller bill, and anyone who promises that before seeing the data is guessing. We are promising a bill with nothing surprising in it, which is a different and more defensible commitment.
 
 
-## Slide 20 — Where to start
+## Slide 21 — Where to start
 
 This is the ask. Step 1 is highlighted because it is the only one that cannot be parallelized — everything downstream degrades if the taxonomy is still in flux. Steps 2 and 4 are both arguments against over-engineering: pick the top spend categories and the tooling that matches the estate we actually have, not the one we might have in three years.
 
 
-## Slide 21 — Visibility is the foundation, not the goal
+## Slide 22 — Visibility is the foundation, not the goal
 
 Close on the causal chain rather than a summary of slides. Each link is a separate management commitment: allocation data, published ownership, cost surfaced in the engineering workflow, and a review cadence that keeps it alive. Ask for the first two today; the rest follow from them.
 
 
-## Slide 22 — Questions & discussion
+## Slide 23 — Questions & discussion
 
 Anticipate three questions. What will this cost — mostly effort, not licences, if we stay on native tooling. How long until we see savings — allocation coverage improves in weeks, targeted savings follow the first full month of clean data. Who owns it — name the tagging owner and the review cadence before leaving the room, or nothing on the previous slides happens.

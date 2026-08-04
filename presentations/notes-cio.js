@@ -51,22 +51,27 @@ module.exports = {
     "overspends to a sentence naming a team, a resource, a cost and a result.",
 
   governance:
-    "The ordering is the argument, so walk it in the order shown. Quotas act in seconds and are " +
-    "the only thing on the slide that can stop money being spent. Alerts act in minutes to days. " +
-    "Ownership and budget thresholds are always-on and within the month. Everything a cost " +
-    "dashboard does is downstream of all four. " +
-    "The quote at the bottom is the technical fact underneath the whole section: billing data " +
-    "arrives a day or two late, so any control built on it reports rather than prevents. If the " +
-    "CIO takes one thing from part two, this is it. " +
-    "Expect pushback that limits will throttle legitimate growth. The answer is that a ceiling is " +
-    "not a target — it is the point at which a human is asked whether this was intended — and " +
-    "that every control here is reversible in minutes, which is what makes it safe to set " +
-    "conservatively and loosen later.",
+    "The reframe to make here is that there are two moments to control a cost, and most " +
+    "organizations only operate the second one. On the left is shift left: cost entering the " +
+    "engineering workflow at the moment the choice is made — priced architecture options, a cost " +
+    "diff on the pull request, tagging and budget rules enforced as policy in the pipeline. On " +
+    "the right are the runtime controls, which act on spend that already exists. " +
+    "The economics favour the left column heavily. The same decision costs a conversation at " +
+    "design, an edit at pull-request time, a migration once deployed and a negotiation once it is " +
+    "on a contract — nothing about the decision changed, only the price of revisiting it. " +
+    "Two things to say out loud. First, the external evidence: pre-deployment costing is the most " +
+    "requested capability in the State of FinOps 2026, so this is the direction of the discipline " +
+    "rather than a local preference. Second, the cultural condition — this works where FinOps " +
+    "partners with engineers and fails where it polices them. Nobody is being asked to become a " +
+    "pricing expert; they are being handed the number at the moment they are already deciding. " +
+    "If the CIO asks where to start, the pull-request cost diff is the answer: it lands inside a " +
+    "ritual every team already has, and it needs no new meeting.",
 
   ask:
     "Land the plane on specifics. Ninety days, three phases, and nothing in it requires a purchase " +
     "or a new team — that is deliberate, and worth saying, because a CIO has seen this proposal " +
-    "arrive with a licence attached before. " +
+    "arrive with a licence attached before. The pull-request cost estimate in weeks 5–8 is the " +
+    "shift-left commitment, and it is a pipeline step rather than a product. " +
     "Do not leave the room without the three decisions at the bottom. The third is the one people " +
     "avoid: a limit that never blocks anything is treated as advisory, because it is. Ask " +
     "explicitly whether we are willing to have a hard ceiling somewhere, and where. " +
@@ -74,6 +79,6 @@ module.exports = {
     "are not promising a smaller bill, we are promising an invoice with nothing in it that has " +
     "not already been seen, explained and decided about. A savings percentage promised before " +
     "anyone can see where the waste is would be a guess. " +
-    "The longer 22-slide deck stands behind every claim here if anyone wants the detail — offer " +
+    "The longer 23-slide deck stands behind every claim here if anyone wants the detail — offer " +
     "it as a follow-up rather than presenting from it.",
 };

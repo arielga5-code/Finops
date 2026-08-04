@@ -134,6 +134,19 @@ module.exports = {
     "alone. Bring a filled-in version of this grid with real names to the next meeting; the grid " +
     "with roles is a discussion, the grid with names is a commitment.",
 
+  "shift-left":
+    "The slide that answers 'so what do you actually want engineering to do differently', and the " +
+    "chart is the argument: the same decision costs a conversation at design, an edit at pull " +
+    "request, a migration once deployed and a negotiation once it is on a contract. Nothing about " +
+    "the decision changed — only the cost of revisiting it. " +
+    "The three insertion points are deliberately small. None of them asks an engineer to learn " +
+    "cloud pricing; they put the number in front of the person at the moment they are already " +
+    "making the choice. The pull-request cost diff is the one to push for first, because it lands " +
+    "inside a ritual teams already have. " +
+    "Say the last line out loud, because it is the difference between this working and this being " +
+    "resented: the practices that succeed describe FinOps as partnering with engineers rather " +
+    "than policing them. A cost review that only ever says no gets routed around within a quarter.",
+
   "billing-shock":
     "The payoff slide for both halves of the deck, and the one to use if someone asks what all " +
     "this buys. Walk the timeline left to right: the same overrun, found at four different " +

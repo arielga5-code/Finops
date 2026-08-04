@@ -909,6 +909,81 @@ async function slideSharedResponsibility() {
   note(s, "shared-responsibility");
 }
 
+async function slideShiftLeft() {
+  const s = pres.addSlide();
+  bg(s, WHITE);
+  kicker(s, "Governance — shift left");
+  title(s, "Catch it at design, not on the invoice");
+  sub(s, "Cost is a design constraint, reviewed alongside security and reliability — not a report that arrives afterwards.");
+
+  /* cost of changing a decision, by the stage it is caught */
+  s.addText("Effort to change the decision", {
+    x: M, y: 2.4, w: 4.5, h: 0.3, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 1.8, color: MUTED, margin: 0, valign: "middle",
+  });
+  const base = 5.5;
+  const bars = [
+    [0.75, 0.5, "Design", "a conversation", TEAL],
+    [2.35, 1.0, "Pull request", "an edit", TEAL],
+    [3.95, 1.85, "Deployed", "a migration", AMBER],
+    [5.55, 2.6, "Invoiced", "a negotiation", "A6432F"],
+  ];
+  for (const [x, h, name, effort, color] of bars) {
+    s.addShape(pres.ShapeType.roundRect, {
+      x, y: base - h, w: 1.3, h, rectRadius: 0.06,
+      fill: { color }, line: { type: "none" },
+    });
+    s.addText(name, {
+      x: x - 0.15, y: base + 0.08, w: 1.6, h: 0.3, fontFace: BODY, fontSize: 12.5, bold: true,
+      color: INK, margin: 0, align: "center", valign: "middle",
+    });
+    s.addText(effort, {
+      x: x - 0.15, y: base + 0.38, w: 1.6, h: 0.28, fontFace: BODY, fontSize: 11.5,
+      color: MUTED, margin: 0, align: "center", valign: "middle",
+    });
+  }
+  s.addShape(pres.ShapeType.roundRect, {
+    x: M, y: base, w: 6.55, h: 0.04, rectRadius: 0.02,
+    fill: { color: "DFE4EA" }, line: { type: "none" },
+  });
+
+  /* the three insertion points */
+  card(s, { x: 7.5, y: 2.28, w: 5.23, h: 3.94, fill: DARK_CARD });
+  s.addText("Where cost enters the workflow", {
+    x: 7.84, y: 2.48, w: 4.5, h: 0.32, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 1.8, color: AMBER, margin: 0, valign: "middle",
+  });
+  const points = [
+    ["FiPenTool", "Architecture review", "Price two or three options before choosing one. Multi-AZ or single, this SKU or that."],
+    ["FiGitPullRequest", "Cost diff on the pull request", "Every infrastructure change shows its monthly delta, so cost is part of code review."],
+    ["FiShield", "Policy as code", "Tagging and budget rules enforced in the pipeline — the expensive change never merges."],
+  ];
+  let y = 2.92;
+  for (const [ic, label, desc] of points) {
+    await iconBadge(s, { x: 7.84, y: y + 0.08, d: 0.46, bg: "2E3A48", icon: ic, color: AMBER });
+    s.addText(
+      [
+        { text: label, options: { bold: true, fontSize: 13.5, color: WHITE, breakLine: true } },
+        { text: desc, options: { fontSize: 12, color: MUTED_D } },
+      ],
+      { x: 8.46, y, w: 3.94, h: 1.0, fontFace: BODY, margin: 0, valign: "middle", lineSpacing: 16 }
+    );
+    y += 1.08;
+  }
+
+  card(s, { x: M, y: 6.28, w: 12.13, h: 0.92, fill: AMBER_SOFT, shadow: false });
+  s.addText(
+    [
+      { text: "Pre-deployment architecture costing is the most requested capability in the State of FinOps 2026 — ", options: { bold: true } },
+      { text: "and the practices that get it working describe FinOps as partnering with engineers, not policing them. Give teams the cost of a choice at the moment they make it; nobody has to become a pricing expert.", options: {} },
+    ],
+    { x: M + 0.36, y: 6.28, w: 11.4, h: 0.92, fontFace: BODY, fontSize: 13,
+      color: "6B4A0E", margin: 0, valign: "middle", lineSpacing: 18 }
+  );
+
+  note(s, "shift-left");
+}
+
 async function slideBillingShock() {
   const s = pres.addSlide();
   bg(s, WHITE);
@@ -1162,6 +1237,7 @@ async function slideClosing() {
   await slideRateLimits();
   await slideAutomatedAlerts();
   await slideSharedResponsibility();
+  await slideShiftLeft();
   await slideBillingShock();
 
   await slidePathForward();

@@ -188,6 +188,20 @@ module.exports = {
     "sit. Ask for two names today, the taxonomy owner and the budget-policy owner, and the rest " +
     "of the grid can be filled in by the next review.",
 
+  "shift-left":
+    "The finance reading of this slide is straightforward: the earlier a cost decision is " +
+    "reviewed, the cheaper it is to change, and by the time it reaches an invoice it is " +
+    "effectively fixed. That is the same logic as reviewing a capital request before commitment " +
+    "rather than after — we are simply applying it to architectural choices that commit spend " +
+    "without ever passing through a requisition. " +
+    "Note what this adds to the control environment: an approval point that exists before money " +
+    "is spent, sitting in the engineering workflow rather than in a finance queue. Policy as code " +
+    "is the part to appreciate — budget and tagging rules enforced automatically in the deployment " +
+    "pipeline, which is a preventive control rather than a detective one, and it is auditable. " +
+    "External evidence is worth citing here: pre-deployment architecture costing is the most " +
+    "requested capability in the State of FinOps 2026, so this is where the discipline is heading " +
+    "rather than a local preference.",
+
   "billing-shock":
     "This is the slide to bring to the conversation about why the number moved, because it " +
     "reframes the problem from cost to timing. The overrun is the same in all four columns; what " +

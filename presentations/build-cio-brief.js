@@ -215,46 +215,67 @@ async function slideVisibility() {
   note(s, "visibility");
 }
 
-/* ---------- 4. governance ---------- */
+/* ---------- 4. shift left + runtime controls ---------- */
 async function slideGovernance() {
   const s = pres.addSlide();
   bg(s, DARK);
   kicker(s, "Part two — control it");
-  title(s, "Four controls, and only one of them is fast", true);
-  sub(s, "A report is not a control. These are, in the order they take effect.", true);
+  title(s, "Two moments to control a cost", true);
+  sub(s, "Before it is deployed, when changing it is a conversation. After, when changing it is a migration.", true);
 
-  const controls = [
-    ["FiSliders", "Rate limits & quotas", "seconds", "The only control that can stop spend in progress: token and request caps, gateway throttling, autoscale ceilings.", AMBER],
-    ["FiBell", "Tiered alerts", "minutes to days", "Usage-plane alerts page someone. Budget alerts go to a channel. Advisory alerts become tickets — never a page.", AMBER],
-    ["FiUser", "Named application owners", "always on", "One person per workload who owns the budget, answers the alert and retires what is unused.", TEAL],
-    ["FiTrendingDown", "Budget thresholds", "within the month", "Notify, review, gate — measured against elapsed month, so drift shows in week one rather than at close.", TEAL],
+  const columns = [
+    {
+      x: 0.6, tag: "Before deploy — shift left", accent: AMBER,
+      lead: "Cost enters the engineering workflow, at the moment the choice is made.",
+      items: [
+        ["FiPenTool", "Priced architecture review", "Two or three options costed before one is chosen."],
+        ["FiGitPullRequest", "Cost diff on the pull request", "Every infrastructure change shows its monthly delta."],
+        ["FiShield", "Policy as code", "Tagging and budget rules enforced in the pipeline."],
+      ],
+    },
+    {
+      x: 6.83, tag: "After deploy — runtime", accent: TEAL,
+      lead: "Controls that act on spend already running, in the order they take effect.",
+      items: [
+        ["FiSliders", "Quotas and rate limits", "Seconds. The only control that stops spend in progress."],
+        ["FiBell", "Tiered alerts to named owners", "Minutes on usage data; never a page on a budget number."],
+        ["FiTrendingDown", "Budget thresholds", "Notify, review, gate — measured against the elapsed month."],
+      ],
+    },
   ];
-  const xs = [0.6, 6.83];
-  const ys = [2.32, 4.42];
-  for (let i = 0; i < controls.length; i++) {
-    const [ic, name, speed, desc, color] = controls[i];
-    const x = xs[i % 2], y = ys[Math.floor(i / 2)];
-    card(s, { x, y, w: 5.9, h: 1.9, fill: DARK_CARD, shadow: false });
-    await iconBadge(s, { x: x + 0.32, y: y + 0.3, d: 0.56, bg: "2E3A48", icon: ic, color });
-    s.addText(name, {
-      x: x + 1.04, y: y + 0.28, w: 3.1, h: 0.6, fontFace: HEAD, fontSize: 17, bold: true,
-      color: WHITE, margin: 0, valign: "middle",
+
+  for (const col of columns) {
+    card(s, { x: col.x, y: 2.2, w: 5.9, h: 3.86, fill: DARK_CARD, shadow: false });
+    s.addText(col.tag.toUpperCase(), {
+      x: col.x + 0.34, y: 2.38, w: 5.2, h: 0.32, fontFace: BODY, fontSize: 11.5, bold: true,
+      charSpacing: 1.6, color: col.accent, margin: 0, valign: "middle",
     });
-    s.addText(speed, {
-      x: x + 4.0, y: y + 0.28, w: 1.56, h: 0.6, fontFace: BODY, fontSize: 12, bold: true,
-      color, margin: 0, align: "right", valign: "middle",
+    s.addText(col.lead, {
+      x: col.x + 0.34, y: 2.74, w: 5.22, h: 0.5, fontFace: BODY, fontSize: 12.5,
+      color: MUTED_D, margin: 0, valign: "top", lineSpacing: 17,
     });
-    s.addText(desc, {
-      x: x + 0.34, y: y + 0.96, w: 5.22, h: 0.82, fontFace: BODY, fontSize: 12.5,
-      color: MUTED_D, margin: 0, valign: "top", lineSpacing: 16,
-    });
+    let y = 3.36;
+    for (const [ic, label, desc] of col.items) {
+      await iconBadge(s, { x: col.x + 0.34, y: y + 0.1, d: 0.46, bg: "2E3A48", icon: ic, color: col.accent });
+      s.addText(
+        [
+          { text: label, options: { bold: true, fontSize: 13.5, color: WHITE, breakLine: true } },
+          { text: desc, options: { fontSize: 12, color: MUTED_D } },
+        ],
+        { x: col.x + 0.96, y, w: 4.6, h: 0.86, fontFace: BODY, margin: 0, valign: "middle", lineSpacing: 16 }
+      );
+      y += 0.9;
+    }
   }
 
+  card(s, { x: M, y: 6.22, w: 12.13, h: 0.86, fill: "1A222C", shadow: false });
   s.addText(
-    "“A cost alert cannot save you from a runaway job — by the time the billing data moves, " +
-    "the money is spent. Only the usage plane is fast enough.”",
-    { x: M, y: 6.5, w: 12.13, h: 0.62, fontFace: HEAD, fontSize: 14.5, italic: true,
-      color: AMBER, margin: 0, valign: "middle" }
+    [
+      { text: "Pre-deployment costing is the most requested capability in the State of FinOps 2026. ", options: { color: AMBER, bold: true } },
+      { text: "It works where FinOps partners with engineers rather than policing them — and a cost alert still cannot stop a runaway job, because by the time billing moves the money is spent.", options: { color: MUTED_D } },
+    ],
+    { x: M + 0.36, y: 6.22, w: 11.4, h: 0.86, fontFace: BODY, fontSize: 12.5, margin: 0,
+      valign: "middle", lineSpacing: 17 }
   );
 
   note(s, "governance");
@@ -273,9 +294,9 @@ async function slideAsk() {
       "Name an owner for every application above a spend floor",
       "Report allocation coverage as a number, weekly",
     ], DARK_CARD, WHITE, MUTED_D, AMBER],
-    ["Weeks 5–8", "Guardrails, showback", [
-      "Quotas and autoscale ceilings on the top ten workloads",
-      "Alert tiers wired to owners, not to a shared mailbox",
+    ["Weeks 5–8", "Shift left, guardrails", [
+      "Cost estimate on every infrastructure pull request",
+      "Quotas on the top ten workloads; alerts routed to owners",
       "Showback: every team sees its own spend, nothing is charged",
     ], TINT, INK, MUTED, "B87B18"],
     ["Weeks 9–12", "Review and decide", [

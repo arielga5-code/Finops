@@ -16,7 +16,7 @@ The long deck runs in two parts: **visibility** (what is being spent and by
 whom) and **governance** (who owns it, what limits it, what stops it).
 
 **The two long decks have identical slides.** Only the speaker notes differ — same
-22 slides, same visuals, argued for a different room. Present either one; pick
+23 slides, same visuals, argued for a different room. Present either one; pick
 the file whose notes match the audience.
 
 [`finops-cio-brief.pdf`](finops-cio-brief.pdf) and
@@ -48,16 +48,21 @@ Structure:
 | 16 | Rate limits & quotas — the only control fast enough to stop spend in progress |
 | 17 | Automated alerts — three tiers, three destinations, and three ways to get it wrong |
 | 18 | Shared responsibility — who decides, who builds, who pays |
-| 19 | Avoiding bill shock — the same overrun found at four different moments |
-| 20–22 | The starting sequence, takeaways, discussion |
+| 19 | Shift left — cost at design and pull-request time, before it is expensive to change |
+| 20 | Avoiding bill shock — the same overrun found at four different moments |
+| 21–23 | The starting sequence, takeaways, discussion |
 
 The governance half is grounded in this repo's own implementation docs —
 the alert tiering and latency figures on slides 16 and 17 come from
 [`docs/05-alerting.md`](../docs/05-alerting.md) and
 [`docs/00-architecture.md`](../docs/00-architecture.md#the-latency-problem).
 
+Slide 19 (shift left) is the one place the decks describe a practice this repo
+does not yet implement — cost estimation in the deployment pipeline. Treat it as
+a roadmap item rather than a description of what is running today.
+
 Two slides have deliberate blanks to fill in before presenting: the date on
-slide 1 and the contacts on slide 22. Slide 18's responsibility grid is drawn
+slide 1 and the contacts on slide 23. Slide 18's responsibility grid is drawn
 with role names — fill in real names before the meeting where you want a
 decision.
 
@@ -93,7 +98,7 @@ The same case, cut to a short meeting with one decision-maker:
 | 1 | The gap — no owner on the change, data arrives late, nothing stops a runaway — and the three asks |
 | 2 | Why now — *State of FinOps 2026*: 78% of practices report into the CTO/CIO org, 98% manage AI spend, governance now outranks optimization |
 | 3 | See it — tag, allocate, showback, unit cost; the allocation KPI |
-| 4 | Control it — quotas, tiered alerts, named owners, budget thresholds, ordered by how fast each acts |
+| 4 | Control it — two moments: shift left (priced architecture review, cost diff on the pull request, policy as code) and runtime (quotas, tiered alerts, budget thresholds) |
 | 5 | The ask — a 90-day sequence and the three decisions needed in the room |
 
 Slide 2 carries external evidence rather than assertion, and is the reason the
@@ -144,3 +149,10 @@ against the source before presenting them as ours:
 - [Linux Foundation announcement](https://www.linuxfoundation.org/press/state-of-finops-survey-ai-value-and-skills-top-priorities-as-finops-matures-across-technology-value-98-manage-ai-90-saas-64-licensing-48-data-center-1)
 - [2026 FinOps Framework update](https://www.finops.org/insights/2026-finops-framework/) — FinOps Scopes, beyond public cloud
 - [FOCUS 1.3](https://www.finops.org/insights/introducing-focus-1-3/) — shared-cost splitting, contract commitments, data recency
+
+Shift left (slide 19 of the long deck, and the left column of the brief's slide 4):
+
+- [Architecting & Workload Placement](https://www.finops.org/framework/capabilities/architecting-for-cloud/) and [Governance, Policy & Risk](https://www.finops.org/framework/capabilities/policy-governance/) — the two Framework capabilities it sits across
+- [Shift Left, defined](https://www.infracost.io/resources/glossary/shift-left) — cost feedback in IaC and pull requests
+- [FinOps 2026: shift left and up](https://thecuberesearch.com/finops-2026-shift-left-and-up-as-ai-drives-technology-value/) — pre-deployment costing as the top requested capability
+- [Policy-as-code for cost governance](https://www.firefly.ai/blog/shift-left-finops-how-governance-policy-as-code-are-enabling-cloud-cost-optimization)
