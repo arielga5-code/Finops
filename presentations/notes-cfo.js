@@ -221,6 +221,20 @@ module.exports = {
     "variance. That is the promise we can actually keep, and it is worth more at the audit " +
     "committee than a savings figure nobody can attribute afterwards.",
 
+  "ship-it":
+    "This is the governance-of-the-programme slide, and the one that answers 'how will we know this " +
+    "is working before the savings arrive'. " +
+    "The distinction to hold on to is identified versus realized savings. Identified is an " +
+    "estimate produced by a tool; realized is a change visible on an invoice. Treat the first as a " +
+    "pipeline and only the second as a result, and never let the two be reported as one number — " +
+    "that conflation is how cost programmes end up claiming savings the P&L cannot find. " +
+    "Adoption is the leading indicator worth putting in the monthly pack: the share of findings " +
+    "with a named owner and a date. It moves months before the savings do, and it is the earliest " +
+    "reliable signal that the practice is real rather than decorative. " +
+    "The closing line is the framing to keep with a board: we are buying better decisions, and a " +
+    "lower bill is what a better decision looks like a quarter later. It also sets the right " +
+    "expectation on timing.",
+
   "path-forward":
     "This is the ask, and the honest cost answer is effort rather than licence spend if we stay " +
     "on native tooling — name the roles and the share of their time instead of quoting a budget " +

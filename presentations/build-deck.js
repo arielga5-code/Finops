@@ -1127,6 +1127,117 @@ async function slideBillingShock() {
   note(s, "billing-shock");
 }
 
+async function slideShipIt() {
+  const s = pres.addSlide();
+  bg(s, WHITE);
+  kicker(s, "Operate — running the practice");
+  title(s, "Ship the insight, don't just publish it");
+  sub(s, "A report tells someone a number. Only a change in what they do next reaches the bill.");
+
+  /* finding to realized saving */
+  const steps = [
+    ["Finding", "the dashboard flags it"],
+    ["Named owner", "one person, not a team"],
+    ["Sized", "what it is worth"],
+    ["Target date", "when, not someday"],
+    ["Reviewed", "did it happen"],
+    ["Realized", "measured on the bill"],
+  ];
+  const chipW = 1.86, chipGap = 0.19;
+  for (let i = 0; i < steps.length; i++) {
+    const [name, desc] = steps[i];
+    const x = M + i * (chipW + chipGap);
+    const last = i === steps.length - 1;
+    card(s, {
+      x, y: 2.5, w: chipW, h: 1.05,
+      fill: last ? DARK_CARD : TINT, shadow: false,
+    });
+    s.addText(name, {
+      x, y: 2.62, w: chipW, h: 0.36, fontFace: BODY, fontSize: 13.5, bold: true,
+      color: last ? AMBER : INK, margin: 0, align: "center", valign: "middle",
+    });
+    s.addText(desc, {
+      x: x + 0.1, y: 2.98, w: chipW - 0.2, h: 0.44, fontFace: BODY, fontSize: 11,
+      color: last ? MUTED_D : MUTED, margin: 0, align: "center", valign: "top", lineSpacing: 14,
+    });
+    if (!last) {
+      s.addShape(pres.ShapeType.rightArrow, {
+        x: x + chipW + 0.02, y: 2.94, w: 0.15, h: 0.16,
+        fill: { color: "C3CBD5" }, line: { type: "none" },
+      });
+    }
+  }
+  s.addText("A recommendation without an owner and a date is an opinion.", {
+    x: M, y: 3.68, w: 12.13, h: 0.34, fontFace: BODY, fontSize: 12.5,
+    color: MUTED, margin: 0, valign: "middle",
+  });
+
+  /* report vs product */
+  card(s, { x: M, y: 4.28, w: 5.9, h: 2.45, fill: TINT, shadow: false });
+  s.addText("The difference that matters", {
+    x: M + 0.34, y: 4.46, w: 5, h: 0.32, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 1.8, color: MUTED, margin: 0, valign: "middle",
+  });
+  const contrast = [
+    ["A report", "is finished when the number is right.", MUTED],
+    ["A product", "is finished when someone behaves differently.", INK],
+  ];
+  let cy = 4.84;
+  for (const [label, desc, color] of contrast) {
+    s.addText(
+      [
+        { text: label + "  ", options: { bold: true, color: color === INK ? INK : MUTED } },
+        { text: desc, options: { color: MUTED } },
+      ],
+      { x: M + 0.34, y: cy, w: 5.22, h: 0.58, fontFace: BODY, fontSize: 14, margin: 0,
+        valign: "top", lineSpacing: 19 }
+    );
+    cy += 0.6;
+  }
+  s.addText(
+    "Build for the engineer who wants the three things worth fixing this sprint — the finance " +
+    "report improves as a by-product.",
+    { x: M + 0.34, y: 6.04, w: 5.22, h: 0.5, fontFace: BODY, fontSize: 12.5,
+      color: INK, margin: 0, valign: "top", lineSpacing: 16 }
+  );
+
+  /* the measures */
+  card(s, { x: 6.83, y: 4.28, w: 5.9, h: 2.45, fill: DARK_CARD });
+  s.addText("Measure adoption, not accuracy", {
+    x: 7.17, y: 4.46, w: 5, h: 0.32, fontFace: BODY, fontSize: 12, bold: true,
+    charSpacing: 1.8, color: AMBER, margin: 0, valign: "middle",
+  });
+  const measures = [
+    ["Findings with an owner and a date", "The share that became work."],
+    ["Realized against identified saving", "Only the first reaches an invoice."],
+    ["Time from finding to owner", "Days, not weeks — and trending down."],
+  ];
+  let my = 4.86;
+  for (const [label, desc] of measures) {
+    s.addShape(pres.ShapeType.ellipse, {
+      x: 7.19, y: my + 0.16, w: 0.11, h: 0.11,
+      fill: { color: AMBER }, line: { type: "none" },
+    });
+    s.addText(
+      [
+        { text: label, options: { bold: true, color: WHITE, breakLine: true } },
+        { text: desc, options: { color: MUTED_D } },
+      ],
+      { x: 7.45, y: my, w: 4.98, h: 0.5, fontFace: BODY, fontSize: 12.5, margin: 0,
+        valign: "top", lineSpacing: 16 }
+    );
+    my += 0.56;
+  }
+
+  s.addText(
+    "The goal is a better decision, not a lower bill — the lower bill is what a better decision looks like a quarter later.",
+    { x: M, y: 6.86, w: 12.13, h: 0.44, fontFace: HEAD, fontSize: 14, italic: true,
+      color: MUTED, margin: 0, valign: "middle" }
+  );
+
+  note(s, "ship-it");
+}
+
 async function slidePathForward() {
   const s = pres.addSlide();
   bg(s, WHITE);
@@ -1305,6 +1416,7 @@ async function slideClosing() {
   await slideShiftLeft();
   await slideDesignQuestions();
   await slideBillingShock();
+  await slideShipIt();
 
   await slidePathForward();
   await slideTakeaways();

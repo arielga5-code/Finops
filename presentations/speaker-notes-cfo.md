@@ -112,16 +112,21 @@ Read two or three of these aloud, because they demonstrate that cost questions a
 This is the slide to bring to the conversation about why the number moved, because it reframes the problem from cost to timing. The overrun is the same in all four columns; what changes is how much notice we get, and notice is what converts a write-off into a decision. The third point is the one with direct budget consequence — a forecast warning two weeks before month end can still change the month's outcome, while the invoice can only be explained after close. Be careful with the closing line and repeat it verbatim: this programme does not commit to reducing spend by a percentage, it commits to no unexplained variance. That is the promise we can actually keep, and it is worth more at the audit committee than a savings figure nobody can attribute afterwards.
 
 
-## Slide 22 — Where to start
+## Slide 22 — Ship the insight, don't just publish it
+
+This is the governance-of-the-programme slide, and the one that answers 'how will we know this is working before the savings arrive'. The distinction to hold on to is identified versus realized savings. Identified is an estimate produced by a tool; realized is a change visible on an invoice. Treat the first as a pipeline and only the second as a result, and never let the two be reported as one number — that conflation is how cost programmes end up claiming savings the P&L cannot find. Adoption is the leading indicator worth putting in the monthly pack: the share of findings with a named owner and a date. It moves months before the savings do, and it is the earliest reliable signal that the practice is real rather than decorative. The closing line is the framing to keep with a board: we are buying better decisions, and a lower bill is what a better decision looks like a quarter later. It also sets the right expectation on timing.
+
+
+## Slide 23 — Where to start
 
 This is the ask, and the honest cost answer is effort rather than licence spend if we stay on native tooling — name the roles and the share of their time instead of quoting a budget number you would have to defend. Step one is the only item that cannot run in parallel: every downstream report degrades if the taxonomy is still moving. Split the ownership explicitly — finance owns the taxonomy, the allocation policy and the KPI definitions; engineering owns enforcement, instrumentation and remediation. Steps two and four are both arguments for restraint: attack the largest cost categories rather than pursuing complete granularity, and buy tooling that matches the estate we have rather than the one we might have in three years.
 
 
-## Slide 23 — Visibility is the foundation, not the goal
+## Slide 24 — Visibility is the foundation, not the goal
 
 Close on why this sequencing produces a better financial outcome than cutting first. A cut delivers a one-time step down and reverses as soon as attention moves elsewhere; allocation plus ownership changes the rate at which cost is added, which compounds across every subsequent period. That is also the honest framing for the board: the near-term deliverable is explainable variance and a forecast we can stand behind, with targeted savings following the first full period of clean data. Ask for the first two links today — the allocation standard and published ownership — because the rest follow from them and cannot be bought separately.
 
 
-## Slide 24 — Questions & discussion
+## Slide 25 — Questions & discussion
 
 Expect five questions and have the answers ready. What does it cost: effort, principally, plus any tooling only if we are genuinely multi-cloud. When do savings appear: allocation coverage improves within weeks, targeted savings follow the first full period of clean data, and be careful not to promise a percentage before we can see where the waste is. Who owns it: name the taxonomy owner and the monthly review before leaving the room, or none of this happens. Does it affect the close: better, not worse — daily data improves the accrual, though chargeback adds a journal step worth scoping with the controller. And will chargeback start an internal war: only if we launch it on allocation nobody trusts, which is exactly what the showback runway is for.

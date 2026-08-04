@@ -5,18 +5,18 @@ Management-facing material derived from the practice this repo implements.
 | Deck | Length | Audience | Notes |
 |---|---|---|---|
 | [`finops-cio-brief.pptx`](finops-cio-brief.pptx) | 5 slides | CIO / CTO — a short decision meeting | [`speaker-notes-cio.md`](speaker-notes-cio.md) |
-| [`finops-gaining-visibility.pptx`](finops-gaining-visibility.pptx) | 24 slides | Mixed executive leadership | [`speaker-notes.md`](speaker-notes.md) |
-| [`finops-gaining-visibility-cfo.pptx`](finops-gaining-visibility-cfo.pptx) | 24 slides | CFO / finance leadership | [`speaker-notes-cfo.md`](speaker-notes-cfo.md) |
+| [`finops-gaining-visibility.pptx`](finops-gaining-visibility.pptx) | 25 slides | Mixed executive leadership | [`speaker-notes.md`](speaker-notes.md) |
+| [`finops-gaining-visibility-cfo.pptx`](finops-gaining-visibility-cfo.pptx) | 25 slides | CFO / finance leadership | [`speaker-notes-cfo.md`](speaker-notes-cfo.md) |
 
 **Start with the CIO brief.** It is the argument in five slides and asks for
-three decisions; the 24-slide deck is the evidence behind it, better used as a
+three decisions; the 25-slide deck is the evidence behind it, better used as a
 follow-up than presented in full.
 
 The long deck runs in two parts: **visibility** (what is being spent and by
 whom) and **governance** (who owns it, what limits it, what stops it).
 
 **The two long decks have identical slides.** Only the speaker notes differ — same
-24 slides, same visuals, argued for a different room. Present either one; pick
+25 slides, same visuals, argued for a different room. Present either one; pick
 the file whose notes match the audience.
 
 [`finops-cio-brief.pdf`](finops-cio-brief.pdf) and
@@ -51,7 +51,8 @@ Structure:
 | 19 | Shift left — where FinOps belongs in the lifecycle, and the exchange that happens in the design room |
 | 20 | The six design-time questions, and the cost target they produce |
 | 21 | Avoiding bill shock — the same overrun found at four different moments |
-| 22–24 | The starting sequence, takeaways, discussion |
+| 22 | Ship the insight — findings need an owner and a date; measure adoption, not accuracy |
+| 23–25 | The starting sequence, takeaways, discussion |
 
 The governance half is grounded in this repo's own implementation docs —
 the alert tiering and latency figures on slides 16 and 17 come from
@@ -68,7 +69,7 @@ request, policy as code) is the one practice these decks describe that this repo
 does not yet implement — treat it as a roadmap item.
 
 Two slides have deliberate blanks to fill in before presenting: the date on
-slide 1 and the contacts on slide 24. Slide 18's responsibility grid is drawn
+slide 1 and the contacts on slide 25. Slide 18's responsibility grid is drawn
 with role names — fill in real names before the meeting where you want a
 decision.
 
@@ -163,4 +164,10 @@ Shift left (slide 19 of the long deck, and the left column of the brief's slide 
 - [FinOps 2026: shift left and up](https://thecuberesearch.com/finops-2026-shift-left-and-up-as-ai-drives-technology-value/) — pre-deployment costing as the top requested capability
 - [Onboarding Workloads](https://www.finops.org/framework/capabilities/onboarding-workloads/) — decision support during design and intake
 - [Cost-aware product decisions](https://www.finops.org/insights/cost-aware-product-decisions/) — cost as a non-functional requirement
+
+Slide 22 (ship the insight) was prompted by a "FinOps is a product" infographic
+by Bhaskara Balaga, shared on LinkedIn. The practices on the slide — findings
+carrying an owner and a date, reporting realized against identified savings, and
+treating adoption as the leading indicator — are standard FinOps practice; the
+product framing is his, and worth crediting if you repeat it verbatim.
 - [Policy-as-code for cost governance](https://www.firefly.ai/blog/shift-left-finops-how-governance-policy-as-code-are-enabling-cloud-cost-optimization)
