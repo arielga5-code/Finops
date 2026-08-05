@@ -17,126 +17,66 @@ Open by naming what you want from this meeting, because a CFO will be listening 
 The finance symptom is variance you cannot explain, and an accrual you are guessing at. Cloud arrives as one large invoice after the fact, without a requisition trail, and the detail behind it is a usage file rather than a coded ledger. Put the test to the room: for last quarter's largest unfavourable variance on this line, how long did it take to name the owner and the cause? If the answer is weeks, or never, that is the gap this programme closes. Note the second-order cost too — unexplained variance drives conservative padding into next year's budget, so poor visibility quietly inflates the plan.
 
 
-## Slide 3 — FinOps = Finance + DevOps
+## Slide 3 — You cannot optimize what you cannot see
 
-For a finance audience the useful analogy is standard costing and variance analysis, not DevOps culture. Inform is the ledger detail and the cost-centre coding. Optimize is acting on the variance once it can be attributed. Operate is making that a monthly discipline rather than an annual exercise. The reason it is a cycle rather than a project is that the estate changes continuously — an allocation model that was accurate in January describes a different business by June. Budget for it as an ongoing process cost, small, not a one-time implementation.
-
-
-## Slide 4 — You cannot optimize what you cannot see
-
-These four questions are the acceptance criteria, and each maps to something finance already owns. Which teams drive spend is cost-centre ownership. Whether spend grows faster than the business is the efficiency question behind gross margin. Paid-for-but-unused is working capital sitting idle. Accurate allocation is what makes a budget owner genuinely accountable rather than nominally so. The bottom line is the argument against the alternative: without allocation the only available lever is an across-the-board reduction, which is applied by negotiating strength rather than by waste, and which tends to reverse within two quarters.
+Four questions, each mapping to something finance already owns: cost-centre allocation, the efficiency question behind gross margin, working capital sitting idle, and whether we can act before the period closes. Unit economics is the row to dwell on. Cost per customer separates 'spend is up twenty percent' from 'spend per customer is down eight' — the same invoice telling opposite stories, and only the second belongs in a margin discussion. The freshness row matters for the close: a monthly-only feed means the accrual is an estimate and the first reliable number arrives after the period is shut.
 
 
-## Slide 5 — What “good visibility” looks like
-
-Read these as four finance capabilities. Allocation is a chart-of-accounts problem — cost cannot be coded to an owner that was never recorded. Granular reporting is what turns a variance into an explanation short enough to put in a board pack. Unit economics is the one to dwell on: cost per customer, per transaction, per active user is what separates 'spend is up twenty percent' from 'spend per customer is down eight' — the same invoice, opposite stories, and only the second one belongs in a margin discussion. Daily data matters for the close: a monthly-only feed means the accrual is an estimate and the first reliable number arrives after the period is shut.
-
-
-## Slide 6 — Five filters between us and a clear view
+## Slide 4 — Five filters between us and a clear view
 
 Each of these has a direct finance consequence worth naming. Inconsistent tagging is a suspense account — spend that lands nowhere and gets allocated by argument. Shared resources are an internal transfer-pricing question. Commitments break unit cost reporting, because the rate on the resource is not the rate the business paid. Multi-cloud means no consolidated view without a normalization step. SaaS and marketplace spend is the one to flag to procurement rather than engineering — it is maverick spend, often on corporate cards, frequently auto-renewing, and it will not appear anywhere in the cloud reporting we are discussing today.
 
 
-## Slide 7 — The foundation of all visibility
+## Slide 5 — The foundation of all visibility
 
 This is the slide that needs a CFO decision, and the parallel is exact: we already refuse to process an invoice without a cost centre, and this is the same control applied at the point of resource creation. Enforcement is cheap at creation and expensive in arrears — retagging a live estate is a manual project, while a policy that blocks untagged resources costs nothing after it is configured. The showback runway is the part to sell as risk management: four to six weeks of reporting with no charge to any P&L is a controlled parallel run that surfaces the allocation disputes before they touch anyone's budget. Ask for finance to own the taxonomy — it is a coding standard, and engineering should not be defining it alone.
 
 
-## Slide 8 — Attributing costs that belong to everyone
+## Slide 6 — Two costs that resist a simple owner
 
-Shared platforms are an internal transfer-pricing decision, so treat the choice of basis the way you would any other allocation method. Two practical points. First, pick a basis you can defend to a budget owner who is motivated to dispute it — measured consumption beats headcount or an equal split, because it survives the conversation. Second, freeze it for the fiscal year and document it; a method that changes mid-year makes every period-over-period comparison unusable and invites the argument you were trying to end. Note the technical caveat, because it constrains what we can promise: a shared platform carries a single set of tags, so splitting it needs usage instrumentation, not tagging. Confirm that exists before committing to chargeback on a shared service.
-
-
-## Slide 9 — Making the price we actually pay visible
-
-This slide has the most direct cash and balance-sheet consequence, so take it slowly. A commitment is a multi-year purchase obligation bought at a discount against a usage forecast — under-committing means paying on-demand rates for workloads that never turn off, and over-committing means prepaying for a peak that does not return. Both are visible only if coverage and utilization are reported separately: coverage says how much of steady-state spend sits under a commitment, utilization says whether what we bought is being used. Unused commitment is the worst line on this slide, because it is already spent, cannot be released, and is invisible on any report priced at list. Also make the reporting point: showing only discounted rates hides whether the commitment is earning its keep, and showing only list price makes the savings claim unverifiable. Both belong in the report.
+Both of these are finance decisions dressed as technical ones. Shared platforms are internal transfer pricing: pick a basis you can defend to a budget owner motivated to dispute it, and freeze it for the fiscal year so period-over-period comparisons hold. Note the constraint before promising anything — splitting a shared platform needs usage instrumentation, not tags. Commitments carry the direct cash consequence. They are multi-year purchase obligations bought against a usage forecast, and unused commitment is already spent, cannot be released, and is invisible on a list-price report. Insist that coverage and utilization are reported as two numbers. The showback runway is risk management: a controlled parallel run before anything touches a P&L.
 
 
-## Slide 10 — One view across every provider
+## Slide 7 — The model is one line on a longer bill
 
-Calibrate this one to our actual footprint before presenting it, because a CFO will hear a platform purchase coming. If we are effectively single-cloud, say so plainly and recommend against buying anything — the native tooling is adequate and a third-party platform is a licence cost with no incremental answer. The durable point is FOCUS: it is a common chart of accounts across vendors, and asking for FOCUS-compliant exports in the next contract renewal costs nothing today while keeping consolidated reporting cheap if the footprint changes later. That is the recommendation here — a procurement clause, not a purchase.
-
-
-## Slide 11 — Showback, then chargeback
-
-Chargeback is an accounting change, so treat it like one. Moving cloud cost into business unit P&L changes reported margins by unit, changes what budget owners are measured against, and will be contested in the first month it happens. That contest is survivable if the allocation is trusted and fatal to the programme if it is not — the failure mode is a quarter spent arguing about the numbers rather than about the spend, after which nobody believes the report. Hence the sequencing: showback until allocation coverage is high and stable, then chargeback at a fiscal-year or half-year boundary so budgets are set with the new basis rather than restated mid-period. That date is the second decision to take away from this meeting.
+This is the slide that protects the business case. A project quoted at its model cost is understated by everything underneath it — compute, databases, cache, storage, gateway, egress and log ingestion — all of which bill monthly regardless of how heavily the AI feature is used. The four omissions on the right are the recurring causes of a first-month surprise, and three of them scale with traffic rather than staying fixed, so the pilot systematically understates the run rate. The ask is procedural and cheap: one application identifier across every resource a project touches, so the review sees a single number with a single owner rather than a set of resource lines nobody reconciles. Then divide by the business unit — per customer, per order — which is what turns this from a cost report into a margin conversation, and what makes a build-versus-buy comparison honest.
 
 
-## Slide 12 — What high-performing FinOps teams do
-
-Present these six as the KPI set finance should own and see monthly, not as an engineering maturity model. Four are directly reportable: percentage of spend allocated, forecast accuracy against actuals, unit cost trend, and commitment coverage against utilization. The other two are controls rather than metrics — cost review inside the design process, and policy that blocks expensive configurations before they are deployed, which is the closest thing here to a spending approval gate. Score each as in place, partial or absent for our estate, and the gaps become the work plan. Worth noting that most of this list is about seeing spend earlier rather than cutting it, which is the argument of the whole deck.
-
-
-## Slide 13 — Governance
-
-Signal the shift explicitly: part one asked for visibility, part two asks for controls, and controls are where the money is actually protected. The framing that lands with a finance audience is that we are adding the approval and limit structure that every other spend category already has — cloud is the one line where large amounts are committed daily with no requisition, no ceiling and no named approver. Nothing in this section is exotic; it is delegation of authority, budget thresholds and exception handling, applied to a cost line that has been running without them.
-
-
-## Slide 14 — Every workload has a named owner
-
-This is delegated budget authority, expressed in engineering terms. The four duties map to what any budget holder already does — sign off the number, explain the variance, review monthly, retire what is not needed — and the request is simply that cloud spend gets the same named accountability. The point to press: a distribution list cannot hold budget authority, so a group address in the owner field is an unowned budget with better paperwork. The bottom line is the finance consequence — unowned spend is not unbudgeted, it lands in central overhead, which is exactly where cost is hardest to challenge and easiest to grow.
-
-
-## Slide 15 — Thresholds that fire before month-end
-
-The tier that matters to this audience is the third one, because it is the only place a financial control actually binds — the first two are notifications. Ask directly whether we are willing to have a limit that stops something, and where; without one, the budget is a forecast with a stern tone. Proportional burn is worth understanding as a variance tool: it compares consumption against elapsed period rather than against the total, which is the same logic as phasing a budget rather than dividing it by twelve. It also gives earlier warning — a flat threshold cannot fire before the money is largely spent. Finally, budgets should live in one place finance maintains, not embedded in engineering tooling where changing a number requires a ticket.
-
-
-## Slide 16 — The only control fast enough to stop spend
-
-The latency chart explains something that surprises most finance teams: the cost data behind every budget report is a day or two stale, so no threshold built on it can prevent an overrun — it can only report one. That is the argument for technical limits, which act in seconds on live usage. Frame the four controls as pre-approved spending limits rather than engineering settings: a quota is a ceiling on what can be consumed without someone authorizing more, which is precisely how spend authority works elsewhere. They are also cheap to reverse, so the asymmetry favours setting them: a limit set too low costs a short delay, while no limit costs whatever the incident costs.
-
-
-## Slide 17 — Three tiers, three destinations
-
-Read this as the escalation policy behind the budget controls, and note who is on the receiving end of each tier — that is the operational commitment being requested. The finance-relevant caution is the middle one: alerts that fire without a possible response get muted, and muted alerting produces false assurance in exactly the reports leadership relies on. The third caution deserves a controller's attention — if the data feed stops, every threshold silently passes and the dashboards look calm, so we monitor for the absence of data as well as for bad numbers. That is a controls question, not a technical one, and it is the sort of gap an auditor will eventually ask about.
-
-
-## Slide 18 — Who decides, who builds, who pays
-
-End on governance structure, because this is the slide that answers 'who is accountable' before the question is asked in a less comfortable setting. Finance owns budget and allocation policy; the platform function owns the standard and the instrumentation; engineering owns building and responding; leadership arbitrates the commitments and the trade-offs. Note that authority and execution are deliberately separated on the guardrails and alert rows — the people who build the limits are not the people who decide where they sit. Ask for two names today, the taxonomy owner and the budget-policy owner, and the rest of the grid can be filled in by the next review.
-
-
-## Slide 19 — Shift left is a seat at the design table
-
-The finance parallel is a capital request reviewed before commitment rather than after. These architectural decisions commit recurring spend without ever passing through a requisition, and this slide asks for a review point at the moment the commitment is made. The band is the argument: by the time a design is signed off, most of that workload's lifetime cost is fixed. Everything we do later is trimming a base rate we already accepted. Note the resourcing implication, since it is the obvious question — this needs someone's time in design reviews, not a new team. It is the cheapest control on offer here, and the Framework treats it as a defined capability rather than an optional practice.
-
-
-## Slide 20 — Six questions, asked before the build starts
-
-Read two or three of these aloud, because they demonstrate that cost questions at design are engineering questions, not finance interference — which is the objection this slide exists to disarm. The finance-relevant output is at the bottom: a cost estimate attached to the design and a cost target recorded alongside the other non-functional requirements. That gives us a budget baseline that exists before spend starts, which is what makes later variance meaningful — without it, the first actual is the plan. The AI question deserves attention given how quickly that line grows: token volume, cache behaviour and model tier change the unit cost by an order of magnitude, and provisioned capacity is a commitment decision in everything but name.
-
-
-## Slide 21 — Nobody should learn it from the invoice
-
-This is the slide to bring to the conversation about why the number moved, because it reframes the problem from cost to timing. The overrun is the same in all four columns; what changes is how much notice we get, and notice is what converts a write-off into a decision. The third point is the one with direct budget consequence — a forecast warning two weeks before month end can still change the month's outcome, while the invoice can only be explained after close. Be careful with the closing line and repeat it verbatim: this programme does not commit to reducing spend by a percentage, it commits to no unexplained variance. That is the promise we can actually keep, and it is worth more at the audit committee than a savings figure nobody can attribute afterwards.
-
-
-## Slide 22 — AI is repeating the cloud journey, at speed
+## Slide 8 — AI is repeating the cloud journey, at speed
 
 Read this as the risk slide for the fastest-growing line in the technology budget. The pattern is familiar — spend scaled before ownership and controls did — and the consequence is the same: variance nobody can explain quickly. The finance-relevant figure is the diagnosis time. Four in five organizations need a day or more to trace an AI cost spike to its source, which in practice means the exposure continues while the investigation runs. Framing that as a measurable target — hours rather than days — gives us something to report and improve, unlike a general commitment to better governance. Handle the source honestly and do it unprompted: this is vendor research from a company that sells AI cost management, and the 26% waste number is a self-reported estimate rather than a measurement. Cite the ownership and diagnosis findings, which independent coverage repeats, and treat the waste figure as directional only. Over-claiming it invites the audit question we cannot answer. If asked what would change: per-consumer attribution on AI traffic, so a spike resolves to a team and an application rather than to a shared resource.
 
 
-## Slide 23 — Ship the insight, don't just publish it
+## Slide 9 — A seat at the design table
 
-This is the governance-of-the-programme slide, and the one that answers 'how will we know this is working before the savings arrive'. The distinction to hold on to is identified versus realized savings. Identified is an estimate produced by a tool; realized is a change visible on an invoice. Treat the first as a pipeline and only the second as a result, and never let the two be reported as one number — that conflation is how cost programmes end up claiming savings the P&L cannot find. Adoption is the leading indicator worth putting in the monthly pack: the share of findings with a named owner and a date. It moves months before the savings do, and it is the earliest reliable signal that the practice is real rather than decorative. The closing line is the framing to keep with a board: we are buying better decisions, and a lower bill is what a better decision looks like a quarter later. It also sets the right expectation on timing.
+The finance parallel is a capital request reviewed before commitment rather than after. These architectural decisions commit recurring spend without passing through a requisition, and this asks for a review point at the moment the commitment is made. The output is what matters here: a cost estimate attached to the design and a cost target recorded alongside the other requirements. That gives a budget baseline that exists before spend starts — without it, the first actual becomes the plan and variance means nothing. On resourcing, the honest answer is someone's time in design reviews rather than a new team. It is the cheapest control on this deck.
 
 
-## Slide 24 — What a FinOps platform adds: Finout
+## Slide 10 — Every workload has a named owner
+
+This is delegated budget authority expressed in engineering terms. The four duties are what any budget holder already does — sign off, explain variance, review monthly, retire what is unused — and the request is that cloud spend gets the same named accountability. A distribution list cannot hold budget authority, so a group address in the owner field is an unowned budget with better paperwork. The lower block is the governance structure, and it answers 'who is accountable' before the question is asked somewhere less comfortable. Finance owns budget and allocation policy; the platform function owns the standard and the data; engineering builds and responds; leadership arbitrates commitments. The consequence to name: unowned spend lands in central overhead, which is where cost is hardest to challenge and easiest to grow.
+
+
+## Slide 11 — A report is not a control
+
+Read this as the control environment for the largest uncontrolled line in the budget. The tier that binds is the first one. Quotas are pre-approved spending limits — a ceiling on what can be consumed without someone authorising more, which is exactly how spend authority works elsewhere. The other two notify; only this one prevents. Proportional burn is a variance tool: comparing consumption against elapsed period rather than against the total, the same logic as phasing a budget rather than dividing it by twelve, and it warns earlier. The auditable point is the alert on silence. If the data feed stops, every threshold silently passes and the dashboards look calm — monitoring for the absence of data is a controls question, and the sort of gap an auditor eventually asks about. Ask directly whether we are willing to have a limit that stops something, and where.
+
+
+## Slide 12 — Nobody should learn it from the invoice
+
+This is the slide to bring to the conversation about why the number moved, because it reframes the problem from cost to timing. The overrun is the same in all four columns; what changes is how much notice we get, and notice is what converts a write-off into a decision. The third point is the one with direct budget consequence — a forecast warning two weeks before month end can still change the month's outcome, while the invoice can only be explained after close. Be careful with the closing line and repeat it verbatim: this programme does not commit to reducing spend by a percentage, it commits to no unexplained variance. That is the promise we can actually keep, and it is worth more at the audit committee than a savings figure nobody can attribute afterwards.
+
+
+## Slide 13 — What a FinOps platform adds: Finout
 
 The procurement slide. Treat the six capabilities as the requirement list rather than as an endorsement — they describe what this category of platform does, and the same list should go to any competing vendor so the comparison is like for like. Two commercial points. First, the pricing model in this market is usually a percentage of cloud spend under management or a tiered subscription, which means the cost grows with the estate — worth confirming before it becomes a line that scales with the problem it manages. Second, insist on FOCUS export in the contract: it is the standard that makes the data portable and keeps a future migration cheap. Be explicit about the published outcomes. Roughly 30% cost reduction and 50% engineer time saved are vendor marketing figures, not audited results and not a commitment to us. If we want a business case, it should be built on our own measured allocation gap and the cost of the analyst time this would replace — a proof of value on our data, with success criteria agreed in advance.
 
 
-## Slide 25 — Where to start
+## Slide 14 — Where to start, and what it buys
 
-This is the ask, and the honest cost answer is effort rather than licence spend if we stay on native tooling — name the roles and the share of their time instead of quoting a budget number you would have to defend. Step one is the only item that cannot run in parallel: every downstream report degrades if the taxonomy is still moving. Split the ownership explicitly — finance owns the taxonomy, the allocation policy and the KPI definitions; engineering owns enforcement, instrumentation and remediation. Steps two and four are both arguments for restraint: attack the largest cost categories rather than pursuing complete granularity, and buy tooling that matches the estate we have rather than the one we might have in three years.
-
-
-## Slide 26 — Visibility is the foundation, not the goal
-
-Close on why this sequencing produces a better financial outcome than cutting first. A cut delivers a one-time step down and reverses as soon as attention moves elsewhere; allocation plus ownership changes the rate at which cost is added, which compounds across every subsequent period. That is also the honest framing for the board: the near-term deliverable is explainable variance and a forecast we can stand behind, with targeted savings following the first full period of clean data. Ask for the first two links today — the allocation standard and published ownership — because the rest follow from them and cannot be bought separately.
+The ask, with the outcome folded in. Nothing here requires a purchase or a new team; the cost is effort, and naming the roles and the share of their time is more credible than quoting a budget figure we would have to defend. The KPI block is what belongs in the monthly pack, and none of the three is a savings number. Allocation coverage says whether the data can be trusted, time-to-attribute says whether we can act inside the month, and adoption — findings that acquired an owner and a date — moves months before savings do. Keep the promise precise, because it is the one we can keep: not a smaller invoice, but no unexplained variance. A savings percentage promised before anyone can see where the waste is would be a guess, and it is worth less at an audit committee than a variance we can explain.
 
 
-## Slide 27 — Questions & discussion
+## Slide 15 — Questions & discussion
 
 Expect five questions and have the answers ready. What does it cost: effort, principally, plus any tooling only if we are genuinely multi-cloud. When do savings appear: allocation coverage improves within weeks, targeted savings follow the first full period of clean data, and be careful not to promise a percentage before we can see where the waste is. Who owns it: name the taxonomy owner and the monthly review before leaving the room, or none of this happens. Does it affect the close: better, not worse — daily data improves the accrual, though chargeback adds a journal step worth scoping with the controller. And will chargeback start an internal war: only if we launch it on allocation nobody trusts, which is exactly what the showback runway is for.

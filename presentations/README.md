@@ -5,18 +5,18 @@ Management-facing material derived from the practice this repo implements.
 | Deck | Length | Audience | Notes |
 |---|---|---|---|
 | [`finops-cio-brief.pptx`](finops-cio-brief.pptx) | 5 slides | CIO / CTO — a short decision meeting | [`speaker-notes-cio.md`](speaker-notes-cio.md) |
-| [`finops-gaining-visibility.pptx`](finops-gaining-visibility.pptx) | 27 slides | Mixed executive leadership | [`speaker-notes.md`](speaker-notes.md) |
-| [`finops-gaining-visibility-cfo.pptx`](finops-gaining-visibility-cfo.pptx) | 27 slides | CFO / finance leadership | [`speaker-notes-cfo.md`](speaker-notes-cfo.md) |
+| [`finops-gaining-visibility.pptx`](finops-gaining-visibility.pptx) | 15 slides | Mixed executive leadership | [`speaker-notes.md`](speaker-notes.md) |
+| [`finops-gaining-visibility-cfo.pptx`](finops-gaining-visibility-cfo.pptx) | 15 slides | CFO / finance leadership | [`speaker-notes-cfo.md`](speaker-notes-cfo.md) |
 
 **Start with the CIO brief.** It is the argument in five slides and asks for
-three decisions; the 27-slide deck is the evidence behind it, better used as a
+three decisions; the 15-slide deck is the evidence behind it, better used as a
 follow-up than presented in full.
 
 The long deck runs in two parts: **visibility** (what is being spent and by
 whom) and **governance** (who owns it, what limits it, what stops it).
 
 **The two long decks have identical slides.** Only the speaker notes differ — same
-27 slides, same visuals, argued for a different room. Present either one; pick
+15 slides, same visuals, argued for a different room. Present either one; pick
 the file whose notes match the audience.
 
 [`finops-cio-brief.pdf`](finops-cio-brief.pdf) and
@@ -26,59 +26,66 @@ regenerated from the decks, so never edit them directly.
 
 ## FinOps: Visibility & Governance
 
-Part one makes the case for the **Inform** phase — why cost allocation, granular
-reporting, unit economics and fresh data have to come before any optimization
-programme, what blocks visibility in practice, and how to unblock each one.
-
-Part two covers the **controls**, because a report is not a control: ownership,
-budget thresholds, rate limits, alert routing, and who is accountable for what.
+Part one makes the case for **visibility** — why allocation, unit economics and
+fresh data come before any optimization programme, and what blocks them. Part
+two covers the **controls**, because a report is not a control.
 
 Structure:
 
-| Slides | Content |
+| Slide | Content |
 |---|---|
-| 1–3 | The cost problem, and what FinOps is |
-| 4–5 | Why visibility comes first; what "good visibility" looks like |
-| 6 | The five blockers — tagging, shared resources, commitments, multi-cloud, SaaS |
-| 7–10 | One solution slide per blocker |
-| 11–12 | Showback vs chargeback; 2025 best practices |
-| 13 | **Part two — Governance** divider |
-| 14 | Application ownership — a named owner, and what they are accountable for |
-| 15 | Budget controls — notify, review, gate; proportional burn vs flat thresholds |
-| 16 | Rate limits & quotas — the only control fast enough to stop spend in progress |
-| 17 | Automated alerts — three tiers, three destinations, and three ways to get it wrong |
-| 18 | Shared responsibility — who decides, who builds, who pays |
-| 19 | Shift left — where FinOps belongs in the lifecycle, and the exchange that happens in the design room |
-| 20 | The six design-time questions, and the cost target they produce |
-| 21 | Avoiding bill shock — the same overrun found at four different moments |
-| 22 | The AI line — the same failures on a shorter clock, and time-to-attribute as the metric |
-| 23 | Ship the insight — findings need an owner and a date; measure adoption, not accuracy |
-| 24 | Tooling — what a FinOps platform adds, using Finout as the worked example |
-| 25–27 | The starting sequence, takeaways, discussion |
+| 1 | Title |
+| 2 | The problem — spend that cannot be explained |
+| 3 | Why visibility first — four business questions and the four capabilities that answer them |
+| 4 | The five blockers |
+| 5 | Tagging — the foundation, and the minimum tag set |
+| 6 | The hard cases — shared platforms and commitments, plus the showback runway |
+| 7 | **What a project actually costs** — the model is one line on a longer bill |
+| 8 | The AI line — the same failures on a shorter clock; time-to-attribute as the metric |
+| 9 | Shift left — a seat at the design table, and the six questions asked there |
+| 10 | Ownership — the named owner, and who owns the practice |
+| 11 | The controls — quotas, tiered alerts, budget thresholds, ordered by speed |
+| 12 | Nobody should learn it from the invoice |
+| 13 | Tooling — what a platform adds, using Finout as the worked example |
+| 14 | Where to start, and what it buys — with the KPIs that say whether it is working |
+| 15 | Questions |
 
-The governance half is grounded in this repo's own implementation docs —
-the alert tiering and latency figures on slides 16 and 17 come from
+**This deck was 27 slides and is now 15.** The cuts were duplication, not
+content: cost allocation had been argued on five separate slides, ownership on
+five, showback on three, and the "2025 best practices" slide was an index of
+everything else in the deck. The merges were: the two framing slides into one
+(3), shared resources and commitments into one (6), the shift-left pair into one
+(9), application ownership and the responsibility grid into one (10), budgets,
+rate limits and alerts into one (11), and the path forward with the takeaways
+into one (14). The FinOps definition slide, the multi-cloud slide and the
+governance divider were dropped outright — the first two are covered by the
+tooling slide, the third was structural overhead. Git history has the 27-slide
+version if a point needs recovering.
+
+The governance material is grounded in this repo's implementation docs — the
+alert tiering and latency figures on slide 11 come from
 [`docs/05-alerting.md`](../docs/05-alerting.md) and
 [`docs/00-architecture.md`](../docs/00-architecture.md#the-latency-problem).
 
-**Shift left, slides 19–20.** The point is organizational before it is technical:
-FinOps sits in design and intake, understands what the project needs, and leaves
-with a cost target recorded beside the latency and availability targets. The
-Foundation names this work — *Architecting & Workload Placement* and *Onboarding
-Workloads*. Slide 20 is the practical half, six design questions an architect can
-answer in the room. The pipeline enforcement it mentions (cost diff on the pull
-request, policy as code) is the one practice these decks describe that this repo
-does not yet implement — treat it as a roadmap item.
+**Slide 7 is the project-cost slide.** It exists because an AI feature gets
+quoted at its token cost while running on compute, databases, cache, storage,
+gateway and log ingestion that bill monthly regardless. The ask on it is
+procedural: one ApplicationID across every resource a project touches, so a
+review sees one number and one owner, then divided by a business unit.
 
-Two slides have deliberate blanks to fill in before presenting: the date on
-slide 1 and the contacts on slide 27. Slide 18's responsibility grid is drawn
-with role names — fill in real names before the meeting where you want a
-decision.
+**Slide 13 names a vendor, and the deck argues against buying one prematurely.**
+That tension is handled in the notes: a platform earns its licence when there
+are several billing sources to normalize or when allocation cannot be fixed at
+source. The capabilities come from Finout's published material and are
+representative of the category; the published outcome figures (~30% cost
+reduction, ~50% engineer time saved) are labelled on the slide as marketing
+claims. Slide 8 carries vendor-sponsored survey data and says so on the slide.
 
-**Before presenting, add your own numbers.** Slides 2, 4 and 5 are written to
-carry real figures — current monthly spend, the share of spend landing
-unallocated, and growth rate against a business metric. The argument is far
-stronger with the organization's actual allocation coverage on it.
+Two slides have deliberate blanks: the date on slide 1 and the contacts on
+slide 15.
+
+**Before presenting, add your own numbers.** Slides 2 and 3 are written to carry
+real figures — current monthly spend and the share of spend landing unallocated.
 
 ### The two note sets
 
@@ -87,16 +94,11 @@ that is not printed on it, and where to substitute real figures.
 
 The **CFO cut** argues the same slides in finance terms — variance and whether it
 can be explained, accrual and forecast quality, allocation as a coding
-discipline, commitments as purchase obligations, and chargeback as an accounting
-change that needs a date. Across part two it reads the governance slides as
-delegation of authority, budget phasing and exception handling applied to a cost
-line that has been running without them. It also front-loads the ask:
-sponsorship of the allocation standard, and a decision on when showback becomes
-chargeback.
+discipline, commitments as purchase obligations, and the controls as delegation
+of authority and budget phasing.
 
 The repo's own operating model doc — [`docs/07-finops-operating-model.md`](../docs/07-finops-operating-model.md)
-— is the implementation counterpart to slides 7 and 11: minimum tag set,
-enforcement via Azure Policy, allocation coverage as a KPI, and review cadence.
+— is the implementation counterpart to slides 5 and 6.
 
 ## FinOps — CIO brief (v2, five slides)
 

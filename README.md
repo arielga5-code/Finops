@@ -29,12 +29,10 @@ which app, made yesterday's bill jump 40%, and was it worth it?"
   technology organization this year, allocation, the four controls, and a
   90-day plan with three decisions. Start here.
 - [`presentations/finops-gaining-visibility.pptx`](presentations/finops-gaining-visibility.pptx) —
-  27-slide management briefing in two parts. Visibility: why it precedes
-  optimization, the five things that block it, how to unblock each one.
-  Governance: application ownership, budget controls, rate limits, alert
-  routing, the shared responsibility model, shift left — FinOps at the design
-  table — and how the same overrun looks when it is found in minutes rather
-  than on the invoice.
+  15-slide management briefing. Visibility: allocation, tagging, and the hard
+  cases. Governance: what a project actually costs beyond the model line, the
+  AI cost gap, shift left, ownership, and the controls that act before the
+  invoice does.
 - [`presentations/finops-gaining-visibility-cfo.pptx`](presentations/finops-gaining-visibility-cfo.pptx) —
   the same slides with speaker notes rewritten for a CFO: variance
   explainability, accrual and forecast quality, commitments as purchase
