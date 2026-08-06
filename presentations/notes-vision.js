@@ -1,9 +1,9 @@
 /*
- * Speaker notes for the five-slide vision deck.
+ * Speaker notes for the four-slide vision deck.
  *
  * One idea per slide, in the order a management audience needs it: where we
- * are going, where we stand today, how we get visibility, how we hold it,
- * what we are asking for. No idea repeats across slides.
+ * are going, how we get visibility, how we hold it, what we are asking for.
+ * No idea repeats across slides.
  */
 module.exports = {
   vision:
@@ -14,24 +14,8 @@ module.exports = {
     "line where commitments are made daily, by engineers, with no approval step in between — " +
     "everywhere else in the budget that would be called a control gap, and closing it is the ask. " +
     "The four words at the bottom are the structure for the rest of the deck: named and owned are " +
-    "slide 3, measured is slides 3 and 5, limited is slide 4. Naming them here means nothing later " +
+    "slide 2, measured is slides 2 and 4, limited is slide 3. Naming them here means nothing later " +
     "needs re-introducing.",
-
-  "why-now":
-    "This slide answers 'why is this on the agenda now', with external evidence rather than our " +
-    "own complaint. The 78% figure matters most: FinOps has moved from a finance reporting " +
-    "function to a technology capability, and it now sits in the CTO/CIO organization in most " +
-    "practices \u2014 up eighteen points in three years. That is the industry telling us where " +
-    "accountability belongs. " +
-    "The middle card is the scope point. Practices are no longer managing cloud alone \u2014 AI " +
-    "spend is now near-universal, SaaS is close behind, data centre is climbing. Build allocation " +
-    "and ownership for all of it, or rebuild the same work twice. " +
-    "The third card pre-empts the obvious pushback, 'haven't we already done the cost work?'. " +
-    "Optimization dropped below governance in the 2026 priorities because mature practices hit " +
-    "diminishing returns on hunting waste after the fact \u2014 the returns now come from " +
-    "ownership and governance, which is exactly what slides 3 and 4 propose. " +
-    "Attribute the numbers to the State of FinOps 2026 out loud. This is external evidence, not " +
-    "our opinion, and it is the strongest slide in the deck for that reason.",
 
   "see-it":
     "This is the whole of visibility in one slide, deliberately: trace it, and price it whole. " +

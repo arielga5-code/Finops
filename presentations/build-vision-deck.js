@@ -74,54 +74,6 @@ async function slideVision() {
   note(s, "vision");
 }
 
-/* ---------- 2. why now ---------- */
-async function slideWhyNow() {
-  const s = pres.addSlide();
-  bg(s, WHITE);
-  kicker(s, "Why now");
-  title(s, "This is where the industry is already going");
-  sub(s, "FinOps Foundation, State of FinOps 2026 (n \u2248 1,500 practitioners worldwide).");
-
-  const stats = [
-    ["78%", "of FinOps practices now report into the CTO/CIO organization", "up 18 points since 2023", AMBER, DARK_CARD, WHITE, MUTED_D],
-    ["98%", "of practices now manage AI spend as a core operating cost", "SaaS 90% \u00b7 licensing 64% \u00b7 data centre 48%", "1F6B5C", TEAL_SOFT, INK, MUTED],
-    ["#3", "governance ranks above optimization in 2026 priorities", "behind only AI cost management and AI-driven efficiency", "B87B18", AMBER_SOFT, INK, MUTED],
-  ];
-  const xs = [0.6, 4.74, 8.88];
-  for (let i = 0; i < stats.length; i++) {
-    const [big, line, footnote, bigColor, fill, textColor, footColor] = stats[i];
-    card(s, { x: xs[i], y: 2.32, w: 3.84, h: 3.0, fill, shadow: false });
-    s.addText(big, {
-      x: xs[i] + 0.34, y: 2.6, w: 3.2, h: 1.0, fontFace: HEAD, fontSize: 46, bold: true,
-      color: bigColor, margin: 0, valign: "middle",
-    });
-    s.addText(line, {
-      x: xs[i] + 0.34, y: 3.68, w: 3.2, h: 1.0, fontFace: BODY, fontSize: 14,
-      color: textColor, margin: 0, valign: "top", lineSpacing: 19,
-    });
-    s.addText(footnote, {
-      x: xs[i] + 0.34, y: 4.7, w: 3.2, h: 0.5, fontFace: BODY, fontSize: 11.5,
-      color: footColor, margin: 0, valign: "top", lineSpacing: 15,
-    });
-  }
-
-  card(s, { x: M, y: 5.56, w: 12.13, h: 1.68, fill: DARK_CARD });
-  s.addText("What it means for this organization", {
-    x: M + 0.36, y: 5.74, w: 8, h: 0.32, fontFace: BODY, fontSize: 11.5, bold: true,
-    charSpacing: 1.6, color: AMBER, margin: 0, valign: "middle",
-  });
-  s.addText(
-    [
-      { text: "Cost control has stopped being a finance report and become a technology capability \u2014 ", options: { bold: true, color: WHITE } },
-      { text: "which puts it on this desk. The industry's own conclusion is that attacking waste after the fact has hit diminishing returns; the returns now come from ownership, governance and scope.", options: { color: MUTED_D } },
-    ],
-    { x: M + 0.36, y: 6.1, w: 11.4, h: 1.05, fontFace: BODY, fontSize: 13.5, margin: 0,
-      valign: "top", lineSpacing: 20 }
-  );
-
-  note(s, "why-now");
-}
-
 /* ---------- 3. see it ---------- */
 async function slideSeeIt() {
   const s = pres.addSlide();
@@ -358,7 +310,6 @@ async function slideAsk() {
   pres.subject = "Cloud and AI cost: name it, own it, measure it, limit it";
 
   await slideVision();
-  await slideWhyNow();
   await slideSeeIt();
   await slideControlIt();
   await slideAsk();

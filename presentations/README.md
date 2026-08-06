@@ -4,16 +4,16 @@ Management-facing material derived from the practice this repo implements.
 
 | Deck | Length | Audience | Notes |
 |---|---|---|---|
-| [`finops-vision.pptx`](finops-vision.pptx) | 5 slides | Executive leadership — the vision | [`speaker-notes-vision.md`](speaker-notes-vision.md) |
+| [`finops-vision.pptx`](finops-vision.pptx) | 4 slides | Executive leadership — the vision | [`speaker-notes-vision.md`](speaker-notes-vision.md) |
 | [`finops-cio-brief.pptx`](finops-cio-brief.pptx) | 5 slides | CIO / CTO — a short decision meeting | [`speaker-notes-cio.md`](speaker-notes-cio.md) |
 | [`finops-gaining-visibility.pptx`](finops-gaining-visibility.pptx) | 15 slides | Mixed executive leadership | [`speaker-notes.md`](speaker-notes.md) |
 | [`finops-gaining-visibility-cfo.pptx`](finops-gaining-visibility-cfo.pptx) | 15 slides | CFO / finance leadership | [`speaker-notes-cfo.md`](speaker-notes-cfo.md) |
 
-**Start with the vision deck.** Five slides, one idea each, no repeats: where we
-are going, why now, how we get visibility, how we hold it, what is being asked
-for. It supersedes the earlier CIO brief as the shortest cut — kept the CIO
-brief for a narrower "just the ask" meeting, but the vision deck is the one
-built to the "no duplicate ideas" brief.
+**Start with the vision deck.** Four slides, one idea each, no repeats: where we
+are going, how we get visibility, how we hold it, what is being asked for. It
+supersedes the earlier CIO brief as the shortest cut — kept the CIO brief for a
+narrower "just the ask" meeting, but the vision deck is the one built to the
+"no duplicate ideas" brief.
 
 The long deck runs in two parts: **visibility** (what is being spent and by
 whom) and **governance** (who owns it, what limits it, what stops it).
@@ -27,30 +27,27 @@ the file whose notes match the audience.
 copies for quick review without PowerPoint. They carry no speaker notes and are
 regenerated from the decks, so never edit them directly.
 
-## FinOps — the vision (5 slides, no repeats)
+## FinOps — the vision (4 slides, no repeats)
 
-Built for one instruction: show the vision to leadership in five slides,
-logical order, zero duplicated ideas.
+Built for one instruction: show the vision to leadership in as few slides as
+possible, logical order, zero duplicated ideas.
 
 | Slide | Idea |
 |---|---|
 | 1 | The vision — every project is named, owned, measured, limited |
-| 2 | Why now — *State of FinOps 2026*: 78% of practices report into the CTO/CIO org, 98% manage AI spend, governance now outranks optimization |
-| 3 | See it — trace spend to an owner, and price a project whole (including the non-AI stack around it) |
-| 4 | Control it — shift left at design, guardrails at runtime |
-| 5 | The ask — a 90-day plan, the KPIs, and two decisions needed today |
+| 2 | See it — trace spend to an owner, and price a project whole (including the non-AI stack around it) |
+| 3 | Control it — shift left at design, guardrails at runtime |
+| 4 | The ask — a 90-day plan, the KPIs, and two decisions needed today |
 
-Each idea appears exactly once. Allocation is argued only on slide 3; ownership
-only on slides 1 and 3 (as the tagging owner, not repeated as a topic);
-guardrails only on slide 4; the ask only on slide 5. Nothing here overlaps the
+Each idea appears exactly once. Allocation is argued only on slide 2; ownership
+only on slides 1 and 2 (as the tagging owner, not repeated as a topic);
+guardrails only on slide 3; the ask only on slide 4. Nothing here overlaps the
 15-slide deck's content — it is a distillation, not a subset, and the two can
 be presented independently.
 
-Slide 2 originally paired a "where we stand today" problem list with vendor-
-sponsored AI-cost stats (Harness/Sapio); the vendor content was cut and the
-slide rebuilt on *State of FinOps 2026* alone — verified, Foundation-published
-figures with no vendor sponsor, the same evidence used successfully in the CIO
-brief.
+The deck originally carried a fifth, "why now" slide built on *State of FinOps
+2026* stats. Cut on request rather than folded elsewhere — the four remaining
+slides stand on their own without it.
 
 ## FinOps: Visibility & Governance
 
