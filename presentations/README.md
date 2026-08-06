@@ -10,10 +10,10 @@ Management-facing material derived from the practice this repo implements.
 | [`finops-gaining-visibility-cfo.pptx`](finops-gaining-visibility-cfo.pptx) | 15 slides | CFO / finance leadership | [`speaker-notes-cfo.md`](speaker-notes-cfo.md) |
 
 **Start with the vision deck.** Five slides, one idea each, no repeats: where we
-are going, where we stand today, how we get visibility, how we hold it, what is
-being asked for. It supersedes the earlier CIO brief as the shortest cut —
-kept the CIO brief for a narrower "just the ask" meeting, but the vision deck
-is the one built to the "no duplicate ideas" brief.
+are going, why now, how we get visibility, how we hold it, what is being asked
+for. It supersedes the earlier CIO brief as the shortest cut — kept the CIO
+brief for a narrower "just the ask" meeting, but the vision deck is the one
+built to the "no duplicate ideas" brief.
 
 The long deck runs in two parts: **visibility** (what is being spent and by
 whom) and **governance** (who owns it, what limits it, what stops it).
@@ -35,7 +35,7 @@ logical order, zero duplicated ideas.
 | Slide | Idea |
 |---|---|
 | 1 | The vision — every project is named, owned, measured, limited |
-| 2 | Where we stand today — three gaps, with our own numbers to fill in |
+| 2 | Why now — *State of FinOps 2026*: 78% of practices report into the CTO/CIO org, 98% manage AI spend, governance now outranks optimization |
 | 3 | See it — trace spend to an owner, and price a project whole (including the non-AI stack around it) |
 | 4 | Control it — shift left at design, guardrails at runtime |
 | 5 | The ask — a 90-day plan, the KPIs, and two decisions needed today |
@@ -45,6 +45,12 @@ only on slides 1 and 3 (as the tagging owner, not repeated as a topic);
 guardrails only on slide 4; the ask only on slide 5. Nothing here overlaps the
 15-slide deck's content — it is a distillation, not a subset, and the two can
 be presented independently.
+
+Slide 2 originally paired a "where we stand today" problem list with vendor-
+sponsored AI-cost stats (Harness/Sapio); the vendor content was cut and the
+slide rebuilt on *State of FinOps 2026* alone — verified, Foundation-published
+figures with no vendor sponsor, the same evidence used successfully in the CIO
+brief.
 
 ## FinOps: Visibility & Governance
 

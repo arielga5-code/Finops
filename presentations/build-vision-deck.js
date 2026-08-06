@@ -74,71 +74,52 @@ async function slideVision() {
   note(s, "vision");
 }
 
-/* ---------- 2. where we are today ---------- */
-async function slideToday() {
+/* ---------- 2. why now ---------- */
+async function slideWhyNow() {
   const s = pres.addSlide();
   bg(s, WHITE);
-  kicker(s, "Where we are today");
-  title(s, "The bill arrives before the explanation");
-  sub(s, "Three gaps, and none of them is a reporting problem — reports we have.");
+  kicker(s, "Why now");
+  title(s, "This is where the industry is already going");
+  sub(s, "FinOps Foundation, State of FinOps 2026 (n \u2248 1,500 practitioners worldwide).");
 
-  const gaps = [
-    ["FiHelpCircle", "No owner on the change", "When the number moves, naming who caused it takes days. Often it is never established at all."],
-    ["FiClock", "The data arrives too late", "Billing lands a day or two behind, so every cost alert reports what already happened."],
-    ["FiSlash", "Nothing stops a runaway", "No quota, no ceiling, no approval gate. The first hard limit is the invoice."],
-  ];
-  let y = 2.3;
-  for (const [ic, label, desc] of gaps) {
-    card(s, { x: M, y, w: 7.3, h: 1.24, fill: TINT, shadow: false });
-    await iconBadge(s, { x: M + 0.34, y: y + 0.36, d: 0.52, bg: WHITE, icon: ic, color: "A6432F" });
-    s.addText(
-      [
-        { text: label, options: { bold: true, fontSize: 14.5, color: INK, breakLine: true } },
-        { text: desc, options: { fontSize: 12.5, color: MUTED } },
-      ],
-      { x: M + 1.06, y, w: 6.0, h: 1.24, fontFace: BODY, margin: 0, valign: "middle", lineSpacing: 17 }
-    );
-    y += 1.34;
-  }
-
-  card(s, { x: 8.23, y: 2.3, w: 4.5, h: 4.04, fill: DARK_CARD });
-  s.addText("We are not alone in this", {
-    x: 8.57, y: 2.5, w: 4, h: 0.32, fontFace: BODY, fontSize: 11.5, bold: true,
-    charSpacing: 1.6, color: AMBER, margin: 0, valign: "middle",
-  });
   const stats = [
-    ["4 in 5", "need a day or more to trace an AI cost spike to its source"],
-    ["52%", "have no clear owner for AI cost at all"],
-    ["78%", "of FinOps practices now sit in the CTO/CIO organization"],
+    ["78%", "of FinOps practices now report into the CTO/CIO organization", "up 18 points since 2023", AMBER, DARK_CARD, WHITE, MUTED_D],
+    ["98%", "of practices now manage AI spend as a core operating cost", "SaaS 90% \u00b7 licensing 64% \u00b7 data centre 48%", "1F6B5C", TEAL_SOFT, INK, MUTED],
+    ["#3", "governance ranks above optimization in 2026 priorities", "behind only AI cost management and AI-driven efficiency", "B87B18", AMBER_SOFT, INK, MUTED],
   ];
-  let sy = 2.9;
-  for (const [big, line] of stats) {
+  const xs = [0.6, 4.74, 8.88];
+  for (let i = 0; i < stats.length; i++) {
+    const [big, line, footnote, bigColor, fill, textColor, footColor] = stats[i];
+    card(s, { x: xs[i], y: 2.32, w: 3.84, h: 3.0, fill, shadow: false });
     s.addText(big, {
-      x: 8.57, y: sy, w: 3.9, h: 0.44, fontFace: HEAD, fontSize: 24, bold: true,
-      color: WHITE, margin: 0, valign: "middle",
+      x: xs[i] + 0.34, y: 2.6, w: 3.2, h: 1.0, fontFace: HEAD, fontSize: 46, bold: true,
+      color: bigColor, margin: 0, valign: "middle",
     });
     s.addText(line, {
-      x: 8.57, y: sy + 0.44, w: 3.86, h: 0.5, fontFace: BODY, fontSize: 11.5,
-      color: MUTED_D, margin: 0, valign: "top", lineSpacing: 15,
+      x: xs[i] + 0.34, y: 3.68, w: 3.2, h: 1.0, fontFace: BODY, fontSize: 14,
+      color: textColor, margin: 0, valign: "top", lineSpacing: 19,
     });
-    sy += 1.02;
+    s.addText(footnote, {
+      x: xs[i] + 0.34, y: 4.7, w: 3.2, h: 0.5, fontFace: BODY, fontSize: 11.5,
+      color: footColor, margin: 0, valign: "top", lineSpacing: 15,
+    });
   }
-  s.addText("State of FinOps 2026; Harness / Sapio 2026 (vendor-sponsored).", {
-    x: 8.57, y: 5.98, w: 3.86, h: 0.32, fontFace: BODY, fontSize: 9.5,
-    color: "6E7A88", margin: 0, valign: "middle",
-  });
 
-  card(s, { x: M, y: 6.5, w: 12.13, h: 0.74, fill: AMBER_SOFT, shadow: false });
+  card(s, { x: M, y: 5.56, w: 12.13, h: 1.68, fill: DARK_CARD });
+  s.addText("What it means for this organization", {
+    x: M + 0.36, y: 5.74, w: 8, h: 0.32, fontFace: BODY, fontSize: 11.5, bold: true,
+    charSpacing: 1.6, color: AMBER, margin: 0, valign: "middle",
+  });
   s.addText(
     [
-      { text: "The consequence:  ", options: { bold: true } },
-      { text: "unexplained variance gets padded into next year's budget, so poor visibility quietly inflates the plan as well as the bill.", options: {} },
+      { text: "Cost control has stopped being a finance report and become a technology capability \u2014 ", options: { bold: true, color: WHITE } },
+      { text: "which puts it on this desk. The industry's own conclusion is that attacking waste after the fact has hit diminishing returns; the returns now come from ownership, governance and scope.", options: { color: MUTED_D } },
     ],
-    { x: M + 0.36, y: 6.5, w: 11.4, h: 0.74, fontFace: BODY, fontSize: 13,
-      color: "6B4A0E", margin: 0, valign: "middle" }
+    { x: M + 0.36, y: 6.1, w: 11.4, h: 1.05, fontFace: BODY, fontSize: 13.5, margin: 0,
+      valign: "top", lineSpacing: 20 }
   );
 
-  note(s, "today");
+  note(s, "why-now");
 }
 
 /* ---------- 3. see it ---------- */
@@ -377,7 +358,7 @@ async function slideAsk() {
   pres.subject = "Cloud and AI cost: name it, own it, measure it, limit it";
 
   await slideVision();
-  await slideToday();
+  await slideWhyNow();
   await slideSeeIt();
   await slideControlIt();
   await slideAsk();
