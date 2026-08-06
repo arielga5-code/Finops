@@ -74,7 +74,7 @@ async function slideVision() {
   note(s, "vision");
 }
 
-/* ---------- 3. see it ---------- */
+/* ---------- 2. see it ---------- */
 async function slideSeeIt() {
   const s = pres.addSlide();
   bg(s, WHITE);
@@ -160,7 +160,7 @@ async function slideSeeIt() {
   note(s, "see-it");
 }
 
-/* ---------- 4. control it ---------- */
+/* ---------- 3. control it ---------- */
 async function slideControlIt() {
   const s = pres.addSlide();
   bg(s, DARK);
@@ -225,94 +225,17 @@ async function slideControlIt() {
   note(s, "control-it");
 }
 
-/* ---------- 5. the ask ---------- */
-async function slideAsk() {
-  const s = pres.addSlide();
-  bg(s, WHITE);
-  kicker(s, "What we are asking for");
-  title(s, "Ninety days, and two decisions today");
-
-  const phases = [
-    ["Weeks 1–4", "Name it", "Tag taxonomy published and enforced. An owner recorded for every application above a spend floor.", true],
-    ["Weeks 5–8", "See it", "One number per project, showback to every team, and cost in the design review.", false],
-    ["Weeks 9–12", "Hold it", "Quotas on the largest workloads, alerts routed to owners, monthly review with finance.", false],
-  ];
-  const xs = [0.6, 4.74, 8.88];
-  for (let i = 0; i < phases.length; i++) {
-    const [when, what, desc, hero] = phases[i];
-    card(s, { x: xs[i], y: 2.15, w: 3.84, h: 2.35, fill: hero ? DARK_CARD : TINT, shadow: false });
-    s.addText(when, {
-      x: xs[i] + 0.34, y: 2.34, w: 3.2, h: 0.32, fontFace: BODY, fontSize: 11.5, bold: true,
-      charSpacing: 1.6, color: hero ? AMBER : "B87B18", margin: 0, valign: "middle",
-    });
-    s.addText(what, {
-      x: xs[i] + 0.34, y: 2.7, w: 3.2, h: 0.44, fontFace: HEAD, fontSize: 20, bold: true,
-      color: hero ? WHITE : INK, margin: 0, valign: "middle",
-    });
-    s.addText(desc, {
-      x: xs[i] + 0.34, y: 3.24, w: 3.2, h: 1.0, fontFace: BODY, fontSize: 12.5,
-      color: hero ? MUTED_D : MUTED, margin: 0, valign: "top", lineSpacing: 17,
-    });
-  }
-
-  card(s, { x: M, y: 4.76, w: 5.9, h: 1.6, fill: TINT, shadow: false });
-  s.addText("How we will know it is working", {
-    x: M + 0.34, y: 4.94, w: 5, h: 0.3, fontFace: BODY, fontSize: 11.5, bold: true,
-    charSpacing: 1.4, color: MUTED, margin: 0, valign: "middle",
-  });
-  const kpis = [
-    ["Allocation coverage", "under 5%"],
-    ["Time to attribute a spike", "hours, not days"],
-    ["Cost per unit", "trending, per project"],
-  ];
-  let ky = 5.3;
-  for (const [k, v] of kpis) {
-    s.addText(k, {
-      x: M + 0.34, y: ky, w: 3.0, h: 0.3, fontFace: BODY, fontSize: 12.5, bold: true,
-      color: INK, margin: 0, valign: "middle",
-    });
-    s.addText(v, {
-      x: M + 3.4, y: ky, w: 2.16, h: 0.3, fontFace: BODY, fontSize: 12.5,
-      color: MUTED, margin: 0, align: "right", valign: "middle",
-    });
-    ky += 0.33;
-  }
-
-  card(s, { x: 6.83, y: 4.76, w: 5.9, h: 1.68, fill: DARK_CARD });
-  s.addText("Decisions needed today", {
-    x: 7.17, y: 4.94, w: 5, h: 0.3, fontFace: BODY, fontSize: 11.5, bold: true,
-    charSpacing: 1.4, color: AMBER, margin: 0, valign: "middle",
-  });
-  s.addText(
-    [
-      { text: "1.  Who owns the tagging standard, and by when?", options: { breakLine: true } },
-      { text: "2.  Are we willing to have a limit that blocks?" },
-    ],
-    { x: 7.17, y: 5.28, w: 5.3, h: 1.05, fontFace: BODY, fontSize: 13.5, bold: true,
-      color: WHITE, margin: 0, valign: "top", lineSpacing: 22 }
-  );
-
-  s.addText(
-    "No new headcount and no platform purchase in this plan. A tooling decision comes later, and only if allocation cannot be fixed at source.",
-    { x: M, y: 6.56, w: 12.13, h: 0.5, fontFace: BODY, fontSize: 12.5,
-      color: MUTED, margin: 0, valign: "middle" }
-  );
-
-  note(s, "ask");
-}
-
 (async () => {
   pres = new pptxgen();
   pres.layout = "LAYOUT_WIDE";
   kit.setPres(pres);
   pres.author = "FinOps";
-  pres.title = "FinOps — the vision in five slides";
+  pres.title = "FinOps — the vision";
   pres.subject = "Cloud and AI cost: name it, own it, measure it, limit it";
 
   await slideVision();
   await slideSeeIt();
   await slideControlIt();
-  await slideAsk();
 
   await pres.writeFile({ fileName: OUT });
   console.log("wrote " + OUT);

@@ -1,9 +1,9 @@
 /*
- * Speaker notes for the four-slide vision deck.
+ * Speaker notes for the three-slide vision deck.
  *
  * One idea per slide, in the order a management audience needs it: where we
- * are going, how we get visibility, how we hold it, what we are asking for.
- * No idea repeats across slides.
+ * are going, how we get visibility, how we hold it. No idea repeats across
+ * slides.
  */
 module.exports = {
   vision:
@@ -14,7 +14,7 @@ module.exports = {
     "line where commitments are made daily, by engineers, with no approval step in between — " +
     "everywhere else in the budget that would be called a control gap, and closing it is the ask. " +
     "The four words at the bottom are the structure for the rest of the deck: named and owned are " +
-    "slide 2, measured is slides 2 and 4, limited is slide 3. Naming them here means nothing later " +
+    "slide 2, measured is slide 2, limited is slide 3. Naming them here means nothing later " +
     "needs re-introducing.",
 
   "see-it":
@@ -45,18 +45,4 @@ module.exports = {
     "If asked what this costs: someone's time in design reviews, and reversible technical settings. " +
     "No new tooling is implied by either column.",
 
-  ask:
-    "Land the plane on specifics. Ninety days, three phases, each one word — name it, see it, " +
-    "hold it — mapping directly back to the vision statement on slide 1. Nothing in the plan " +
-    "requires a purchase or new headcount, and the closing line says so explicitly because that is " +
-    "the first thing being calculated while this slide is on screen. " +
-    "The KPI panel is what makes this reportable next quarter, and none of the three is a savings " +
-    "number — allocation coverage says whether the data can be trusted, time-to-attribute says " +
-    "whether we can act, cost per unit says whether growth is healthy. " +
-    "Do not leave the room without the two decisions on the right. The second is the one people " +
-    "avoid — a limit that never blocks anything is treated as advisory, because it is. Ask directly " +
-    "whether we are willing to have a hard ceiling somewhere, and where. " +
-    "If asked about tooling: it is deliberately absent from this plan. A platform is worth " +
-    "evaluating once allocation cannot be fixed at source — that conversation comes after these " +
-    "ninety days, not instead of them.",
 };
