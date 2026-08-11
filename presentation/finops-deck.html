@@ -1,0 +1,607 @@
+<title>FinOps ל-AI על Elastic + Azure</title>
+<style>
+  :root{
+    --ground:#EFF1F5;
+    --surface:#FFFFFF;
+    --surface-2:#E7EAF0;
+    --ink:#111823;
+    --muted:#5A6675;
+    --line:#D2D8E1;
+    --line-soft:#E1E6ED;
+    --live:#0B7F77;
+    --live-soft:rgba(11,127,119,.10);
+    --lag:#8C6113;
+    --lag-soft:rgba(140,97,19,.10);
+    --alarm:#AE3A26;
+    --alarm-soft:rgba(174,58,38,.10);
+    --shadow:0 1px 2px rgba(17,24,35,.06), 0 8px 24px rgba(17,24,35,.05);
+
+    --f-body:"Assistant","Heebo","Arial Hebrew","Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    --f-mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+
+    --s1:clamp(.72rem,.62rem + .3vw,.82rem);
+    --s2:clamp(.88rem,.8rem + .35vw,1.02rem);
+    --s3:clamp(1.02rem,.92rem + .5vw,1.22rem);
+    --s4:clamp(1.35rem,1.1rem + 1.1vw,1.9rem);
+    --s5:clamp(1.9rem,1.4rem + 2.4vw,3.1rem);
+    --s6:clamp(2.4rem,1.6rem + 4vw,4.6rem);
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#0C121A;
+      --surface:#141C26;
+      --surface-2:#1B2531;
+      --ink:#E3E9F0;
+      --muted:#8C99AA;
+      --line:#25313F;
+      --line-soft:#1E2833;
+      --live:#3FCEBD;
+      --live-soft:rgba(63,206,189,.12);
+      --lag:#D9A445;
+      --lag-soft:rgba(217,164,69,.12);
+      --alarm:#EC7A63;
+      --alarm-soft:rgba(236,122,99,.12);
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0C121A;
+    --surface:#141C26;
+    --surface-2:#1B2531;
+    --ink:#E3E9F0;
+    --muted:#8C99AA;
+    --line:#25313F;
+    --line-soft:#1E2833;
+    --live:#3FCEBD;
+    --live-soft:rgba(63,206,189,.12);
+    --lag:#D9A445;
+    --lag-soft:rgba(217,164,69,.12);
+    --alarm:#EC7A63;
+    --alarm-soft:rgba(236,122,99,.12);
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    direction:rtl;
+    background:var(--ground);
+    color:var(--ink);
+    font-family:var(--f-body);
+    font-size:var(--s2);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *{animation:none !important;transition:none !important}
+  }
+
+  .deck{scroll-snap-type:y mandatory;overflow-y:auto;height:100dvh}
+  .slide{
+    scroll-snap-align:start;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    padding:clamp(1.6rem,1rem + 3vw,4.5rem);
+    padding-bottom:clamp(3.4rem,2.4rem + 3vw,5.5rem);
+    border-bottom:1px solid var(--line-soft);
+    position:relative;
+  }
+  .wrap{width:100%;max-width:1120px;margin:0 auto;display:flex;flex-direction:column;gap:clamp(1rem,.6rem + 1.4vw,2rem)}
+
+  .eyebrow{
+    display:flex;align-items:center;gap:.7rem;
+    font-family:var(--f-mono);font-size:var(--s1);
+    letter-spacing:.09em;text-transform:uppercase;color:var(--muted);
+  }
+  .eyebrow .num{
+    font-variant-numeric:tabular-nums;
+    color:var(--ink);border:1px solid var(--line);border-radius:2px;
+    padding:.05rem .4rem;
+  }
+  .eyebrow .bar{flex:1;height:1px;background:var(--line)}
+
+  h1{
+    font-size:var(--s6);line-height:1.02;margin:0;font-weight:800;
+    letter-spacing:-.02em;text-wrap:balance;
+  }
+  h2{font-size:var(--s5);line-height:1.1;margin:0;font-weight:750;letter-spacing:-.015em;text-wrap:balance}
+  h3{font-size:var(--s3);margin:0;font-weight:700}
+  p{margin:0;max-width:62ch}
+  .lede{font-size:var(--s3);color:var(--muted);max-width:58ch}
+  .mono{font-family:var(--f-mono);font-size:.92em;font-variant-numeric:tabular-nums}
+  code{font-family:var(--f-mono);font-size:.88em;background:var(--surface-2);padding:.1em .38em;border-radius:3px;direction:ltr;display:inline-block}
+  strong{font-weight:750}
+  .ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+
+  /* ---------- title slide ---------- */
+  .title-slide{background:
+     radial-gradient(120% 80% at 88% 8%, var(--live-soft), transparent 60%),
+     radial-gradient(90% 70% at 6% 96%, var(--lag-soft), transparent 62%);
+  }
+  .title-meta{display:flex;flex-wrap:wrap;gap:.5rem .75rem;font-family:var(--f-mono);font-size:var(--s1);color:var(--muted);letter-spacing:.04em}
+  .title-meta span{border:1px solid var(--line);border-radius:2px;padding:.15rem .5rem}
+
+  /* ---------- generic cards ---------- */
+  .cards{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  .card{
+    background:var(--surface);border:1px solid var(--line);border-radius:6px;
+    padding:1.1rem 1.15rem;display:flex;flex-direction:column;gap:.45rem;box-shadow:var(--shadow);
+  }
+  .card .k{font-family:var(--f-mono);font-size:var(--s1);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+  .card p{font-size:var(--s2);color:var(--muted)}
+  .card.live{border-top:3px solid var(--live)}
+  .card.lag{border-top:3px solid var(--lag)}
+  .card.alarm{border-top:3px solid var(--alarm)}
+
+  /* ---------- two planes diagram ---------- */
+  .planes{display:grid;gap:.9rem;grid-template-columns:1fr 1fr}
+  @media(max-width:760px){.planes{grid-template-columns:1fr}}
+  .plane{
+    background:var(--surface);border:1px solid var(--line);border-radius:6px;
+    padding:1.1rem;display:flex;flex-direction:column;gap:.7rem;box-shadow:var(--shadow);
+  }
+  .plane-head{display:flex;align-items:baseline;justify-content:space-between;gap:.6rem}
+  .plane-tag{font-family:var(--f-mono);font-size:var(--s1);letter-spacing:.08em;text-transform:uppercase}
+  .plane.live .plane-tag{color:var(--live)}
+  .plane.lag .plane-tag{color:var(--lag)}
+  .plane h3{font-size:var(--s3)}
+  .flow{display:flex;flex-direction:column;gap:.35rem;font-family:var(--f-mono);font-size:var(--s1);direction:ltr;text-align:left}
+  .flow em{font-style:normal;color:var(--muted)}
+  .flow .step{border:1px dashed var(--line);border-radius:3px;padding:.35rem .5rem;background:var(--surface-2)}
+  .plane.live .flow .step{border-color:color-mix(in srgb,var(--live) 45%,var(--line))}
+  .plane.lag .flow .step{border-color:color-mix(in srgb,var(--lag) 45%,var(--line))}
+  .join{
+    text-align:center;font-family:var(--f-mono);font-size:var(--s1);letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);
+    border:1px solid var(--line);border-radius:6px;padding:.7rem;background:var(--surface-2);
+  }
+
+  /* ---------- latency timeline ---------- */
+  .timeline{
+    background:var(--surface);border:1px solid var(--line);border-radius:6px;
+    padding:1.6rem 1.3rem 1.1rem;box-shadow:var(--shadow);position:relative;
+  }
+  .axis{position:relative;height:2px;background:var(--line);margin:4.4rem 0 0}
+  .tick{position:absolute;top:-1px;transform:translateX(50%);display:flex;flex-direction:column;align-items:center;gap:.35rem}
+  .tick .dot{width:11px;height:11px;border-radius:50%;background:var(--muted);border:2px solid var(--surface);margin-top:-5px}
+  .tick .lab{font-family:var(--f-mono);font-size:var(--s1);color:var(--muted);white-space:nowrap}
+  .tick.t-live .dot{background:var(--live);box-shadow:0 0 0 4px var(--live-soft)}
+  .tick.t-live .lab{color:var(--live)}
+  .tick.t-lag .dot{background:var(--lag);box-shadow:0 0 0 4px var(--lag-soft)}
+  .tick.t-lag .lab{color:var(--lag)}
+  .burn{
+    position:absolute;height:34px;top:-36px;border-radius:3px;
+    background:repeating-linear-gradient(-45deg,var(--alarm-soft),var(--alarm-soft) 6px,transparent 6px,transparent 12px);
+    border:1px solid color-mix(in srgb,var(--alarm) 40%,transparent);
+  }
+  .burn-lab{
+    position:absolute;top:-72px;font-family:var(--f-mono);font-size:var(--s1);
+    color:var(--alarm);letter-spacing:.05em;white-space:nowrap;
+  }
+  .axis-note{display:flex;justify-content:space-between;font-family:var(--f-mono);font-size:var(--s1);color:var(--muted);margin-top:3.2rem}
+
+  /* ---------- tables ---------- */
+  .tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:6px;background:var(--surface);box-shadow:var(--shadow)}
+  table{border-collapse:collapse;width:100%;min-width:560px;font-size:var(--s2)}
+  th,td{text-align:right;padding:.62rem .9rem;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  thead th{
+    font-family:var(--f-mono);font-size:var(--s1);letter-spacing:.07em;text-transform:uppercase;
+    color:var(--muted);font-weight:500;background:var(--surface-2);border-bottom:1px solid var(--line);
+  }
+  tbody tr:last-child td{border-bottom:none}
+  td .mono{color:var(--muted)}
+  .pill{
+    display:inline-block;font-family:var(--f-mono);font-size:var(--s1);
+    padding:.1rem .45rem;border-radius:3px;white-space:nowrap;
+  }
+  .pill.live{color:var(--live);background:var(--live-soft);border:1px solid color-mix(in srgb,var(--live) 35%,transparent)}
+  .pill.lag{color:var(--lag);background:var(--lag-soft);border:1px solid color-mix(in srgb,var(--lag) 35%,transparent)}
+  .pill.alarm{color:var(--alarm);background:var(--alarm-soft);border:1px solid color-mix(in srgb,var(--alarm) 35%,transparent)}
+
+  /* ---------- formula ---------- */
+  .formula{
+    border:1px solid var(--line);border-right:3px solid var(--live);border-radius:6px;
+    background:var(--surface);padding:1.1rem 1.2rem;font-family:var(--f-mono);
+    direction:ltr;text-align:left;overflow-x:auto;box-shadow:var(--shadow);
+    font-size:var(--s3);
+  }
+
+  /* ---------- list ---------- */
+  ul.clean{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.55rem}
+  ul.clean li{display:flex;gap:.7rem;align-items:flex-start}
+  ul.clean li::before{
+    content:"";flex:0 0 auto;width:6px;height:6px;border-radius:50%;
+    background:var(--live);margin-top:.62rem;
+  }
+  ul.clean.warn li::before{background:var(--alarm);border-radius:1px;transform:rotate(45deg)}
+
+  .metrics{display:grid;gap:.7rem;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+  .metric{
+    background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:.85rem 1rem;
+    display:flex;flex-direction:column;gap:.15rem;box-shadow:var(--shadow);
+  }
+  .metric .n{font-family:var(--f-mono);font-size:var(--s1);color:var(--muted);font-variant-numeric:tabular-nums}
+  .metric .t{font-weight:700;font-size:var(--s2)}
+  .metric .d{font-size:var(--s1);color:var(--muted);line-height:1.45}
+
+  /* ---------- rollout ---------- */
+  .rollout{display:flex;flex-direction:column;gap:0}
+  .phase{
+    display:grid;grid-template-columns:minmax(88px,120px) 1fr;gap:1rem;
+    padding:.85rem 0;border-bottom:1px solid var(--line-soft);align-items:baseline;
+  }
+  .phase:last-child{border-bottom:none}
+  .phase .when{
+    font-family:var(--f-mono);font-size:var(--s1);letter-spacing:.06em;text-transform:uppercase;
+    color:var(--live);border-right:2px solid var(--live);padding-right:.7rem;
+  }
+  .phase:nth-child(n+4) .when{color:var(--lag);border-right-color:var(--lag)}
+  .phase .what{color:var(--muted)}
+
+  /* ---------- nav ---------- */
+  .nav{
+    position:fixed;inset-block-start:50%;inset-inline-end:clamp(.5rem,1.5vw,1.4rem);
+    transform:translateY(-50%);display:flex;flex-direction:column;gap:.5rem;z-index:20;
+  }
+  .nav a{
+    width:9px;height:9px;border-radius:50%;background:var(--line);
+    border:1px solid transparent;transition:background .18s,transform .18s;
+  }
+  .nav a:hover,.nav a:focus-visible{background:var(--live);transform:scale(1.35)}
+  .nav a:focus-visible{outline:2px solid var(--live);outline-offset:3px}
+  @media(max-width:700px){.nav{display:none}}
+
+  .footer{
+    position:absolute;inset-inline:clamp(1.6rem,1rem + 3vw,4.5rem);inset-block-end:1.2rem;
+    display:flex;justify-content:space-between;gap:1rem;
+    font-family:var(--f-mono);font-size:var(--s1);color:var(--muted);
+    border-top:1px solid var(--line-soft);padding-top:.6rem;
+  }
+  .footer .src{direction:ltr}
+  a{color:inherit}
+  :focus-visible{outline:2px solid var(--live);outline-offset:2px}
+</style>
+
+<nav class="nav" aria-label="ניווט בין שקפים">
+  <a href="#s1" aria-label="שקף 1"></a><a href="#s2" aria-label="שקף 2"></a>
+  <a href="#s3" aria-label="שקף 3"></a><a href="#s4" aria-label="שקף 4"></a>
+  <a href="#s5" aria-label="שקף 5"></a><a href="#s6" aria-label="שקף 6"></a>
+  <a href="#s7" aria-label="שקף 7"></a><a href="#s8" aria-label="שקף 8"></a>
+  <a href="#s9" aria-label="שקף 9"></a><a href="#s10" aria-label="שקף 10"></a>
+</nav>
+
+<main class="deck">
+
+  <!-- 1 -->
+  <section class="slide title-slide" id="s1">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">01</span><span>Azure&nbsp;·&nbsp;Elastic&nbsp;·&nbsp;FinOps</span><span class="bar"></span></div>
+      <h1>עלות שיושבת ליד<br>הטלמטריה</h1>
+      <p class="lede">ניהול עלויות של עומסי AI ב-<span class="ltr">Azure</span> על גבי ה-<span class="ltr">Elastic Stack</span> — לא עוד דשבורד עלויות, אלא היכולת לענות על שאלות ש-<span class="ltr">Cost Management</span> לא בנוי לענות עליהן.</p>
+      <div class="title-meta">
+        <span>Azure OpenAI</span><span>Azure AI Foundry</span><span>ES|QL</span><span>Kibana Alerting</span><span>ML Anomaly Detection</span>
+      </div>
+    </div>
+    <div class="footer"><span>מצגת יישום · 10 שקפים</span><span class="src">arielga5-code/Finops</span></div>
+  </section>
+
+  <!-- 2 -->
+  <section class="slide" id="s2">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">02</span><span>הנחת המוצא</span><span class="bar"></span></div>
+      <h2>למה בכלל להזרים נתוני עלות ל-Elastic?</h2>
+      <p class="lede">‏<span class="ltr">Azure Cost Management</span> כבר מציג לך כמה הוצאת. הוא לא יכול להגיד לך <strong>למה</strong>.</p>
+      <div class="cards">
+        <div class="card lag">
+          <span class="k">מה שיש היום</span>
+          <h3>הוצאה, מפולחת</h3>
+          <p>עלות לפי <span class="ltr">resource group</span>, מנוי, תג. מדויק, מאוחר, ומנותק מכל מה שהאפליקציה עשתה.</p>
+        </div>
+        <div class="card live">
+          <span class="k">מה שמתווסף</span>
+          <h3>הוצאה, ליד ההקשר</h3>
+          <p>עלות באותו מסך עם טוקנים, לטנציה, קצב בקשות וניצולת <span class="ltr">PTU</span> — באותו כלי, באותה שאילתה.</p>
+        </div>
+        <div class="card alarm">
+          <span class="k">השאלה שנפתחת</span>
+          <h3>„איזה מודל קפץ ולמה”</h3>
+          <p>איזה מודל, באיזו אפליקציה, העלה את החשבון ב-40% אתמול — והאם זה היה שווה את זה.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>הנחת המוצא</span><span class="src">README.md</span></div>
+  </section>
+
+  <!-- 3 -->
+  <section class="slide" id="s3">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">03</span><span>ארכיטקטורה</span><span class="bar"></span></div>
+      <h2>שני מישורי נתונים, נפגשים ב-Kibana</h2>
+      <p class="lede">הפרדה מושגית שחייבים לשמור עליה: לשני הצינורות יש לטנציה, גרנולריות ועלות שונות לגמרי.</p>
+      <div class="planes">
+        <div class="plane lag">
+          <div class="plane-head"><span class="plane-tag">מישור העלות</span><span class="mono">24h poll</span></div>
+          <h3>מפגר, נקוב בדולרים</h3>
+          <div class="flow">
+            <div class="step">Azure Cost Management API</div>
+            <em>↓ scope: subscription | dept | billing</em>
+            <div class="step">Elastic Agent · azure_billing</div>
+            <em>↓</em>
+            <div class="step">metrics-azure.billing-default</div>
+          </div>
+        </div>
+        <div class="plane live">
+          <div class="plane-head"><span class="plane-tag">מישור הטלמטריה</span><span class="mono">300s timegrain</span></div>
+          <h3>מקדים, נקוב בטוקנים</h3>
+          <div class="flow">
+            <div class="step">Azure Monitor + Event Hub</div>
+            <em>↓ Azure OpenAI / AI Foundry</em>
+            <div class="step">metrics-azure_openai.metrics-*</div>
+            <em>↓ EDOT / OpenTelemetry</em>
+            <div class="step">traces-* (per-tenant attribution)</div>
+          </div>
+        </div>
+      </div>
+      <div class="join">שני המישורים נחתכים רק במקום אחד — <span class="ltr">unit economics</span></div>
+    </div>
+    <div class="footer"><span>ארכיטקטורה</span><span class="src">docs/00-architecture.md</span></div>
+  </section>
+
+  <!-- 4 -->
+  <section class="slide" id="s4">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">04</span><span>אילוץ התכנון המרכזי</span><span class="bar"></span></div>
+      <h2>התראת עלות לא תציל אותך מ-job שיצא משליטה</h2>
+      <p class="lede">עד שהשדה <span class="ltr">actual_cost</span> זז — הכסף כבר יצא. זו הסיבה שרוב ההטמעות מפספסות, והיא מכתיבה כמעט כל החלטה בהמשך.</p>
+
+      <div class="timeline">
+        <div class="axis">
+          <div class="burn" style="inset-inline-start:5%;width:84%"></div>
+          <div class="burn-lab" style="inset-inline-start:16%">החלון שבו הכסף נשרף בלי שאיש יודע</div>
+          <div class="tick t-live" style="inset-inline-start:4%"><span class="dot"></span><span class="lab">‏~10 דק׳ · טוקנים</span></div>
+          <div class="tick t-lag" style="inset-inline-start:60%"><span class="dot"></span><span class="lab">‏24h · עלות</span></div>
+          <div class="tick t-lag" style="inset-inline-start:90%"><span class="dot"></span><span class="lab">‏48h · עלות סופית</span></div>
+        </div>
+        <div class="axis-note"><span>‏0 · האירוע</span><span>‏48 שעות אחרי</span></div>
+      </div>
+
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>אות</th><th>מקור</th><th>טריות</th><th>למה זה משמש</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">azure.billing.actual_cost</td><td>Cost Management API</td><td><span class="pill lag">24–48h</span></td><td>תקציב, <span class="ltr">chargeback</span>, סגירת חודש</td></tr>
+            <tr><td class="mono">azure.billing.forecast_cost</td><td>Cost Management API</td><td><span class="pill lag">24–48h</span></td><td>תחזית חריגה לסוף חודש</td></tr>
+            <tr><td class="mono">azure.open_ai.*_tokens.total</td><td>Azure Monitor</td><td><span class="pill live">5–10 דק׳</span></td><td><strong>זיהוי בריחה והתראת קצב שריפה</strong></td></tr>
+            <tr><td class="mono">provisioned_managed_utilization_v2</td><td>Azure Monitor</td><td><span class="pill live">5–10 דק׳</span></td><td>רוויית <span class="ltr">PTU</span> וסיכון ל-<span class="ltr">429</span></td></tr>
+            <tr><td class="mono">app spans (EDOT/OTel)</td><td>האפליקציה שלך</td><td><span class="pill live">שניות</span></td><td>ייחוס ללקוח, לפיצ׳ר, לפרומפט</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="footer"><span>בעיית הלטנציה</span><span class="src">docs/00-architecture.md#the-latency-problem</span></div>
+  </section>
+
+  <!-- 5 -->
+  <section class="slide" id="s5">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">05</span><span>פריסה</span><span class="bar"></span></div>
+      <h2>שלוש דרכים להריץ את זה</h2>
+      <div class="cards">
+        <div class="card live">
+          <span class="k">מומלץ · מישור העלות</span>
+          <h3>Agentless על Elastic Cloud</h3>
+          <p>אינטגרציית <span class="ltr">azure_billing</span> במצב <span class="ltr">Elastic Managed</span>. מזינים הרשאות ב-<span class="ltr">Fleet</span>, ואין תשתית לתחזק. מדובר ב-<span class="ltr">poll</span> בנפח זניח.</p>
+        </div>
+        <div class="card">
+          <span class="k">שיקול מסחרי</span>
+          <h3>Azure Native ISV</h3>
+          <p>‏<span class="ltr">Elastic</span> נמכר דרך ה-<span class="ltr">Marketplace</span>: ההוצאה נוחתת בחשבונית <span class="ltr">Azure</span> ומקזזת התחייבות <span class="ltr">MACC/EA</span>, ו-<span class="ltr">diagnostic settings</span> מתחווטים אוטומטית לפי תגיות.</p>
+        </div>
+        <div class="card">
+          <span class="k">כשאין ברירה</span>
+          <h3>Elastic Agent עצמאי</h3>
+          <p>לאשכול <span class="ltr">self-hosted</span> או כשמדיניות רשת חוסמת יציאה. סוכן אחד לכל <span class="ltr">billing scope</span> — שניים על אותו <span class="ltr">scope</span> יספרו עלות פעמיים.</p>
+        </div>
+      </div>
+      <div class="cards">
+        <div class="card alarm">
+          <span class="k">אל תדלג</span>
+          <h3>גם הניטור עולה כסף</h3>
+          <p>לוגים של <span class="ltr">Azure OpenAI</span> דרך <span class="ltr">Event Hub</span> הם הפריט היקר: הם גדלים עם נפח הבקשות, ואם מתעדים פרומפטים ותשובות המסמכים ענקיים. דגמו בצורה אגרסיבית, וקצרו את שלב ה-<span class="ltr">hot</span> ב-<span class="ltr">ILM</span>. כלי <span class="ltr">FinOps</span> שהופך בשקט לחמשת הסעיפים היקרים זה מראה רע.</p>
+        </div>
+      </div>
+    </div>
+    <div class="footer"><span>אפשרויות פריסה</span><span class="src">docs/00-architecture.md</span></div>
+  </section>
+
+  <!-- 6 -->
+  <section class="slide" id="s6">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">06</span><span>המדד</span><span class="bar"></span></div>
+      <h2>עלות למיליון טוקנים</h2>
+      <p class="lede">המדד היחיד שאף דשבורד מוכן לא ייתן לך — כי הוא דורש לחבר את שני המישורים. וזה גם המדד היחיד שעלייה בו היא תמיד חדשות רעות.</p>
+      <div class="formula">cost_per_million_tokens = daily_ai_cost / (daily_total_tokens / 1e6)</div>
+      <div class="cards">
+        <div class="card">
+          <span class="k">הוצאת AI עולה</span>
+          <h3>לא בהכרח בעיה</h3>
+          <p>יכול להיות שהמוצר פשוט מצליח. המספר המוחלט לבדו לא אומר כלום.</p>
+        </div>
+        <div class="card alarm">
+          <span class="k">עלות לטוקן עולה</span>
+          <h3>תמיד שווה בדיקה</h3>
+          <p>אחד משלושה: תמהיל המודלים נדד ליקר יותר, ה-<span class="ltr">caching</span> נשבר, או שמישהו שחרר פרומפט שניפח את ההקשר.</p>
+        </div>
+        <div class="card live">
+          <span class="k">איך מחשבים</span>
+          <h3>Transform לאינדקס סיכום</h3>
+          <p>‏<span class="ltr">pivot transform</span> יומי לעלות ולטוקנים לפי <span class="ltr">(usage_date, resource_id)</span>. חלופה ב-<span class="ltr">9.x</span>: <span class="ltr">LOOKUP JOIN</span> מול אינדקס במצב <span class="ltr">lookup</span>.</p>
+        </div>
+      </div>
+      <p>עוקבים אחריו כגרף קו עם רצועת יעד — לא כמספר בודד. המגמה היא האות‏.</p>
+    </div>
+    <div class="footer"><span>Unit economics</span><span class="src">docs/04-dashboards.md</span></div>
+  </section>
+
+  <!-- 7 -->
+  <section class="slide" id="s7">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">07</span><span>דשבורדים</span><span class="bar"></span></div>
+      <h2>שלושה דשבורדים, שלושה קהלים</h2>
+      <p class="lede">אופן הכישלון הקבוע של <span class="ltr">FinOps</span> הוא עמוד אחד עם 40 פאנלים שאיש לא פותח. אל תמזגו אותם.</p>
+      <div class="cards">
+        <div class="card lag">
+          <span class="k">A · חודשי</span>
+          <h3>הנהלה ופיננסים</h3>
+          <p>‏<span class="ltr">MTD</span> מול תקציב ותחזית, פילוח לפי <span class="ltr">cost center</span> כולל פרוסת <span class="ltr">unallocated</span> מפורשת, הוצאת <span class="ltr">AI</span> כאחוז מהענן, ומגמת עלות למיליון טוקנים.</p>
+        </div>
+        <div class="card">
+          <span class="k">B · שבועי</span>
+          <h3>צוותי פלטפורמה ופיתוח</h3>
+          <p>הוצאה יומית לפי <span class="ltr">resource group</span>, נפח טוקנים לפי <span class="ltr">deployment</span> בפילוח קלט/פלט, רצועת <span class="ltr">PTU</span>, שיעור <span class="ltr">cache</span>, ושיעור שגיאות מול הוצאה.</p>
+        </div>
+        <div class="card live">
+          <span class="k">C · בזמן אמת</span>
+          <h3>תורנות</h3>
+          <p>קצב שריפת טוקנים ב-6 השעות האחרונות מול הצפוי, ניצולת <span class="ltr">PTU</span> חיה, שיעור <span class="ltr">429</span>, והתראות אנומליה פעילות. זה המסך שנפתח כשמתקבלת התראה.</p>
+        </div>
+      </div>
+      <h3>ארבעה פאנלים ששווה לבנות לבד</h3>
+      <ul class="clean">
+        <li><span><strong>עלות למיליון טוקנים</strong> — מדד היעילות. קו עם רצועת יעד.</span></li>
+        <li><span><strong>טוקני קלט מול פלט לכל <span class="ltr">deployment</span></strong> — שתי סדרות, לעולם לא אחת. פלט עולה פי כמה מקלט, כך שגרף „סך טוקנים” יכול להישאר שטוח בזמן שהעלות מטפסת.</span></li>
+        <li><span><strong>רצועת ניצולת <span class="ltr">PTU</span></strong> — מעל 90% מתקרבים לחניקה ול-<span class="ltr">429</span>; מתחת ל-50% באופן מתמשך משלמים על קיבולת שמורה שיושבת בטלה.</span></li>
+        <li><span><strong>אפקטיביות <span class="ltr">cache</span></strong> — גלאי רגרסיות עלות. ירידת מדרגה כמעט תמיד מתחקה לגרסה שהכניסה תוכן משתנה בתחילת ה-<span class="ltr">system prompt</span>.</span></li>
+      </ul>
+    </div>
+    <div class="footer"><span>דשבורדים</span><span class="src">docs/04-dashboards.md · assets/esql/</span></div>
+  </section>
+
+  <!-- 8 -->
+  <section class="slide" id="s8">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">08</span><span>התראות</span><span class="bar"></span></div>
+      <h2>שלוש שכבות, לפי מה שהן באמת יכולות למנוע</h2>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>שכבה</th><th>מישור</th><th>לטנציה</th><th>תפקיד</th><th>יעד</th></tr></thead>
+          <tbody>
+            <tr><td><span class="pill live">מגן</span></td><td>טוקנים, <span class="ltr">PTU</span>, שגיאות</td><td class="mono">דקות</td><td>לעצור שריפת כסף <strong>עכשיו</strong></td><td>זימון תורן</td></tr>
+            <tr><td><span class="pill lag">תקציב</span></td><td>חיוב</td><td class="mono">24–48h</td><td>לתפוס חריגה בתוך החודש</td><td>ערוץ הצוות</td></tr>
+            <tr><td><span class="pill">ייעוץ</span></td><td>חיוב + תחזית</td><td class="mono">יומי</td><td>מגמה ורגרסיות יעילות</td><td>כרטיס לסקירה שבועית</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="cards">
+        <div class="card live">
+          <span class="k">01 · אם בונים רק אחת</span>
+          <h3>קצב שריפת טוקנים</h3>
+          <p>כלל <span class="ltr">.es-query</span> על חלון של 15 דקות לכל <span class="ltr">deployment</span>. קובעים סף מהאחוזון ה-99 של 30 יום כפול 2 — לא ממספר עגול.</p>
+        </div>
+        <div class="card live">
+          <span class="k">03 · הרוצח השקט</span>
+          <h3>סופת ניסיונות חוזרים</h3>
+          <p>בקשות שנכשלות ונשלחות שוב צורכות טוקנים ומחייבות. לקוח עם מדיניות <span class="ltr">retry</span> אגרסיבית מול קיר <span class="ltr">429</span> מכפיל הוצאה באפס ערך — ובלתי נראה בדשבורד עלויות עד שמגיעה החשבונית.</p>
+        </div>
+        <div class="card alarm">
+          <span class="k">08 · מגן על כל השאר</span>
+          <h3>שומר ההזנה</h3>
+          <p>נורה כשלא הגיעו מסמכי חיוב 48 שעות. סוד לקוח שפג, הרשאה שנשללה — וכל כללי התקציב משתתקים לנצח. דשבורד עלויות שקט נראה בדיוק כמו דשבורד בריא.</p>
+        </div>
+      </div>
+      <p>‏10 כללים מוכנים לשימוש יושבים ב-<code>assets/alerts/</code>, ללא <span class="ltr">actions</span> — כדי שאפשר יהיה להחיל ולבדוק אותם בבטחה לפני שמחברים <span class="ltr">connector</span>‏.</p>
+    </div>
+    <div class="footer"><span>התראות</span><span class="src">docs/05-alerting.md · assets/alerts/</span></div>
+  </section>
+
+  <!-- 9 -->
+  <section class="slide" id="s9">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">09</span><span>מודל תפעולי</span><span class="bar"></span></div>
+      <h2>כלים בלי תהליך מייצרים דשבורדים שאיש לא פותח</h2>
+      <div class="planes">
+        <div class="plane lag">
+          <div class="plane-head"><span class="plane-tag">תנאי סף</span><span class="mono">Azure Policy</span></div>
+          <h3>תיוג</h3>
+          <p style="color:var(--muted)">‏<span class="ltr">cost-center</span>, <span class="ltr">team</span>, <span class="ltr">environment</span>, <span class="ltr">workload</span> — נאכפים ב-<span class="ltr">deny</span> על יצירה. אחוז ההוצאה שנוחת ב-<span class="ltr">unallocated</span> הוא <span class="ltr">KPI</span> על דשבורד ההנהלה, ביעד של מתחת ל-5%.</p>
+          <p style="color:var(--muted)">אזהרה ספציפית ל-<span class="ltr">AI</span>: משאב <span class="ltr">Azure OpenAI</span> משותף לחמישה צוותים נושא סט תגיות אחד. ייחוס לצוות דורש מפתחות <span class="ltr">APIM</span> או תכונות <span class="ltr">finops.*</span> ברמת האפליקציה — להחליט לפני שמבטיחים למישהו <span class="ltr">chargeback</span>.</p>
+        </div>
+        <div class="plane live">
+          <div class="plane-head"><span class="plane-tag">קצב</span><span class="mono">cadence</span></div>
+          <h3>ארבע נקודות מפגש</h3>
+          <ul class="clean" style="font-size:var(--s2)">
+            <li><span><strong>בזמן אמת</strong> · תורן — התראות מגן בלבד.</span></li>
+            <li><span><strong>שבועי, 30 דק׳</strong> · פלטפורמה ופיתוח — דשבורד <span class="ltr">B</span>. זו הפגישה שבאמת קובעת, וזו שהכי מדלגים עליה.</span></li>
+            <li><span><strong>חודשי, 60 דק׳</strong> · בתוספת פיננסים — דשבורד <span class="ltr">A</span>.</span></li>
+            <li><span><strong>רבעוני</strong> · בתוספת הנהלה — החלטות התחייבות ו-<span class="ltr">PTU</span>.</span></li>
+          </ul>
+        </div>
+      </div>
+      <h3>שישה מספרים לדיווח חודשי</h3>
+      <div class="metrics">
+        <div class="metric"><span class="n">01</span><span class="t">הוצאת Azure כוללת</span><span class="d">מול תקציב ומול החודש הקודם</span></div>
+        <div class="metric"><span class="n">02</span><span class="t">הוצאת AI כאחוז</span><span class="d">קו המגמה שההנהלה תשאל עליו</span></div>
+        <div class="metric"><span class="n">03</span><span class="t">עלות למיליון טוקנים</span><span class="d">מדד היעילות</span></div>
+        <div class="metric"><span class="n">04</span><span class="t">ניצולת PTU</span><span class="d">ממוצע ושיא — יעילות ההתחייבות</span></div>
+        <div class="metric"><span class="n">05</span><span class="t">כיסוי הקצאה</span><span class="d">מדד איכות הנתונים</span></div>
+        <div class="metric"><span class="n">06</span><span class="t">חיסכון ממומש</span><span class="d">המספר שמממן את הפרקטיקה — וזה שהכי שוכחים</span></div>
+      </div>
+    </div>
+    <div class="footer"><span>מודל תפעולי</span><span class="src">docs/07-finops-operating-model.md</span></div>
+  </section>
+
+  <!-- 10 -->
+  <section class="slide" id="s10">
+    <div class="wrap">
+      <div class="eyebrow"><span class="num">10</span><span>הרצה</span><span class="bar"></span></div>
+      <h2>ההזנה היא שבוע. הפרקטיקה היא רבעון.</h2>
+      <div class="rollout">
+        <div class="phase"><span class="when">שבוע 1</span><span class="what">רישום אפליקציה, <span class="ltr">RBAC</span>, הזנת <span class="ltr">azure_billing</span> ומטריקות <span class="ltr">azure_openai</span>. דשבורדים מוכנים חיים. כלל שומר ההזנה נוצר.</span></div>
+        <div class="phase"><span class="when">שבוע 2</span><span class="what">כללי קצב שריפת טוקנים ורוויית <span class="ltr">PTU</span>. דשבורד <span class="ltr">C</span> לתורנות. עבודות <span class="ltr">ML</span> 1 ו-2 מתחילות לבנות בסיס.</span></div>
+        <div class="phase"><span class="when">שבוע 3–4</span><span class="what">אכיפת תיוג וקידום תגיות לשדות. דשבורדים <span class="ltr">A</span> ו-<span class="ltr">B</span>. כללי תקציב ותחזית. פגישת הסקירה השבועית הראשונה.</span></div>
+        <div class="phase"><span class="when">חודש 2</span><span class="what">אינסטרומנטציית <span class="ltr">EDOT</span> באפליקציה. אינדקס סיכום ל-<span class="ltr">unit economics</span> ועבודת <span class="ltr">ML</span> 3. הדיווח החודשי הראשון עם כל ששת המספרים.</span></div>
+        <div class="phase"><span class="when">חודש 3+</span><span class="what">‏<span class="ltr">Cost Management Exports</span> אם צריך רזולוציית שורות. <span class="ltr">AI Assistant</span>. ספרינטי אופטימיזציה שממומנים מהחיסכון שכעת אפשר להוכיח.</span></div>
+      </div>
+      <h3>ארבעה אנטי-פטרנים שמבטלים את כל המאמץ</h3>
+      <ul class="clean warn">
+        <li><span><strong>זימון תורן על התראת עלות.</strong> הכסף כבר יצא — מעירים מישהו כדי שירגיש רע. מזמנים על מישור הטוקנים, מודיעים על מישור העלות.</span></li>
+        <li><span><strong>דשבורד אחד לכל הקהלים.</strong> פיננסים ותורנות צריכים תצוגות שונות בקצבי רענון שונים.</span></li>
+        <li><span><strong>ספים במספרים עגולים.</strong> ‏<span class="ltr">$1000</span> ליום נבחר כי הוא עגול, לא כי הוא משמעותי‏.</span></li>
+        <li><span><strong>אופטימיזציה לפני מדידה.</strong> „בואו נעבור למודל זול יותר” בלי <span class="ltr">unit economics</span> לא מייצר ראיה לשום כיוון, והשינוי יתגלגל אחורה בפעם הראשונה שמישהו יתלונן על איכות.</span></li>
+      </ul>
+    </div>
+    <div class="footer"><span>תוכנית הרצה</span><span class="src">docs/07-finops-operating-model.md</span></div>
+  </section>
+
+</main>
+
+<script>
+  (function () {
+    var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+    var deck = document.querySelector('.deck');
+    function current() {
+      var top = deck.scrollTop, best = 0, dist = Infinity;
+      slides.forEach(function (s, i) {
+        var d = Math.abs(s.offsetTop - top);
+        if (d < dist) { dist = d; best = i; }
+      });
+      return best;
+    }
+    function go(i) {
+      i = Math.max(0, Math.min(slides.length - 1, i));
+      deck.scrollTo({ top: slides[i].offsetTop, behavior: 'smooth' });
+    }
+    document.addEventListener('keydown', function (e) {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      var k = e.key;
+      if (k === 'ArrowDown' || k === 'PageDown' || k === ' ' || k === 'ArrowLeft') { e.preventDefault(); go(current() + 1); }
+      else if (k === 'ArrowUp' || k === 'PageUp' || k === 'ArrowRight') { e.preventDefault(); go(current() - 1); }
+      else if (k === 'Home') { e.preventDefault(); go(0); }
+      else if (k === 'End') { e.preventDefault(); go(slides.length - 1); }
+    });
+  })();
+</script>
