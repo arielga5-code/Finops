@@ -642,11 +642,15 @@ const core = [
   },
 ];
 
-/** Sign-off, after the appendix: the words only, centred and large. */
+/**
+ * Sign-off, after the appendix: the words only, centred and large, in the
+ * deck's signature cyan rather than the body near-white.
+ */
 const closing = {
   kind: "closing",
   title: "Thank you",
   titleSize: 110,
+  titleColor: COLORS.cyan,
   accent: COLORS.cyan,
 };
 

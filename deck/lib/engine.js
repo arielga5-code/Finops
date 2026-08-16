@@ -186,7 +186,8 @@ const RENDER = {
     s.addText(spec.title, {
       x: 0, y: top + above, w: GEO.w, h: titleH,
       fontFace: FONTS.head, fontSize: spec.titleSize || 110, bold: true,
-      color: COLORS.text, margin: 0, align: "center", valign: "middle",
+      color: spec.titleColor || COLORS.text,
+      margin: 0, align: "center", valign: "middle",
     });
     if (spec.sub) {
       s.addText(spec.sub, {
