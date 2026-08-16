@@ -74,12 +74,29 @@ function changeLabel(ch, from, to) {
  * ------------------------------------------------------------------ */
 
 /**
+ * Paint the dark canvas.
+ *
+ * The slide-level background property alone is not enough: PowerPoint drops it
+ * when a slide is copied into another deck, leaving near-white text on the
+ * destination theme's white background. A full-bleed rectangle underneath
+ * everything travels with the slide, so it survives copy-paste.
+ */
+function paintBackground(pres, s) {
+  s.background = { color: COLORS.bg };
+  s.addShape(pres.ShapeType.rect, {
+    x: 0, y: 0, w: GEO.w, h: GEO.h,
+    fill: { color: COLORS.bg },
+    line: { color: COLORS.bg, width: 0 },
+  });
+}
+
+/**
  * The standard content slide: coloured dot + uppercase eyebrow, big title on
  * the left, an optional right-aligned note, and an optional footnote.
  */
 function slide(pres, opts = {}) {
   const s = pres.addSlide();
-  s.background = { color: COLORS.bg };
+  paintBackground(pres, s);
   const accent = opts.accent || COLORS.cyan;
 
   if (opts.eyebrow) {
@@ -164,7 +181,7 @@ function slide(pres, opts = {}) {
 /** Full-bleed divider that opens each part of the deck. */
 function sectionSlide(pres, { kicker, title, sub, accent = COLORS.aws }) {
   const s = pres.addSlide();
-  s.background = { color: COLORS.bg };
+  paintBackground(pres, s);
 
   // Two soft overlapping discs, bled off the right edge — the motif carried
   // from the CIO deck's cover.
@@ -471,6 +488,6 @@ function rankChart(pres, s, { x, y, w, h, cats, vals, color = COLORS.azure, valF
 
 module.exports = {
   usd, money, pct, sum, topSeries, totalsByPeriod, change, changeLabel,
-  slide, sectionSlide, card, statTile, noteList, table,
+  paintBackground, slide, sectionSlide, card, statTile, noteList, table,
   stackedChart, columnChart, lineChart, rankChart,
 };

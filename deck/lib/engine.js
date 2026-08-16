@@ -153,7 +153,7 @@ const RENDER = {
   /** Sign-off: the same disc motif, but everything centred and set large. */
   closing(pres, spec) {
     const s = pres.addSlide();
-    s.background = { color: COLORS.bg };
+    C.paintBackground(pres, s);
     const accent = spec.accent || COLORS.cyan;
 
     s.addShape(pres.ShapeType.ellipse, {
