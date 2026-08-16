@@ -209,7 +209,7 @@ function sectionSlide(pres, { kicker, title, sub, accent = COLORS.aws }) {
   if (sub) {
     s.addText(sub, {
       x: GEO.margin, y: 4.05, w: 8.6, h: 0.5,
-      fontFace: FONTS.body, fontSize: 13, color: COLORS.muted, margin: 0,
+      fontFace: FONTS.body, fontSize: 15, color: COLORS.muted, margin: 0,
     });
   }
   return s;
@@ -251,7 +251,7 @@ function card(pres, s, { x, y, w, h, title, sub, accent }) {
  * Label / big number / coloured note, on the card background. The workhorse of
  * the deck — every "TOTAL COST $584K" annotation from the source becomes one.
  */
-function statTile(pres, s, { x, y, w, h = 1.05, label, value, note, accent = COLORS.cyan, boxed = true, valueSize = SIZE.stat }) {
+function statTile(pres, s, { x, y, w, h = 1.18, label, value, note, accent = COLORS.cyan, boxed = true, valueSize = SIZE.stat }) {
   if (boxed) {
     s.addShape(pres.ShapeType.roundRect, {
       x, y, w, h,
@@ -264,9 +264,9 @@ function statTile(pres, s, { x, y, w, h = 1.05, label, value, note, accent = COL
   const pw = w - (boxed ? 0.44 : 0);
   // The label must stay on one line — if it wraps it pushes into the value.
   const lab = String(label).toUpperCase();
-  const labSize = Math.max(7.5, Math.min(SIZE.statLabel, (pw * 118) / Math.max(1, lab.length)));
+  const labSize = Math.max(9.5, Math.min(SIZE.statLabel, (pw * 112) / Math.max(1, lab.length)));
   s.addText(lab, {
-    x: px, y: y + 0.12, w: pw, h: 0.24,
+    x: px, y: y + 0.10, w: pw, h: 0.26,
     fontFace: FONTS.head, fontSize: labSize, bold: true,
     color: COLORS.muted, charSpacing: 1.2, margin: 0, valign: "middle",
   });
@@ -275,17 +275,17 @@ function statTile(pres, s, { x, y, w, h = 1.05, label, value, note, accent = COL
   // averages ~0.52em per character, i.e. pw*72/(0.52*chars) points to fit one
   // line; 130 is that constant with a little slack.
   const chars = String(value).length;
-  const size = Math.max(12, Math.min(valueSize, (pw * 118) / chars));
+  const size = Math.max(13, Math.min(valueSize, (pw * 118) / chars));
   s.addText(value, {
-    x: px, y: y + 0.32, w: pw, h: 0.5,
+    x: px, y: y + 0.32, w: pw, h: 0.48,
     fontFace: FONTS.head, fontSize: size, bold: true,
     color: COLORS.text, margin: 0, valign: "middle",
   });
   if (note) {
     s.addText(note, {
-      x: px, y: y + 0.78, w: pw, h: 0.24,
+      x: px, y: y + 0.76, w: pw, h: 0.36,
       fontFace: FONTS.body, fontSize: SIZE.statNote, bold: true,
-      color: accent, margin: 0, valign: "middle",
+      color: accent, margin: 0, valign: "top", lineSpacingMultiple: 1.05,
     });
   }
 }
@@ -304,7 +304,7 @@ function noteList(pres, s, { x, y, w, items, accent = COLORS.aws, title }) {
   // Advance by how many lines the text will actually take. Calibri at 10.5pt
   // fits roughly 13 characters per inch, so the wrap point scales with width
   // rather than being a fixed character count.
-  const perLine = Math.max(20, Math.floor((w - 0.19) * 13));
+  const perLine = Math.max(18, Math.floor((w - 0.19) * 11));
   items.forEach((it) => {
     const lines = Math.max(1, Math.ceil(it.length / perLine));
     s.addShape(pres.ShapeType.rect, {
@@ -316,7 +316,7 @@ function noteList(pres, s, { x, y, w, items, accent = COLORS.aws, title }) {
       fontFace: FONTS.body, fontSize: SIZE.body - 0.5, color: COLORS.text,
       margin: 0, valign: "top", lineSpacingMultiple: 1.1,
     });
-    cy += lines * 0.2 + 0.13;
+    cy += lines * 0.24 + 0.14;
   });
   return cy;
 }
@@ -330,7 +330,7 @@ function noteList(pres, s, { x, y, w, items, accent = COLORS.aws, title }) {
  * `cols`: [{ label, w, align, color }]  ·  `rows`: array of cell arrays.
  * A cell may be a string or { text, color, bold }.
  */
-function table(pres, s, { x, y, w, cols, rows, fontSize = SIZE.table, rowH = 0.235 }) {
+function table(pres, s, { x, y, w, cols, rows, fontSize = SIZE.table, rowH = 0.32 }) {
   const head = cols.map((c) => ({
     text: c.label,
     options: {
@@ -377,11 +377,11 @@ function table(pres, s, { x, y, w, cols, rows, fontSize = SIZE.table, rowH = 0.2
 
 const axisStyle = {
   catAxisLabelColor: COLORS.muted,
-  catAxisLabelFontSize: 9,
+  catAxisLabelFontSize: 12,
   catAxisLabelFontFace: FONTS.body,
   catAxisLineShow: false,
   valAxisLabelColor: COLORS.muted,
-  valAxisLabelFontSize: 9,
+  valAxisLabelFontSize: 12,
   valAxisLabelFontFace: FONTS.body,
   valAxisLineShow: false,
   valGridLine: { color: COLORS.border, size: 0.5 },
@@ -397,7 +397,7 @@ const legendStyle = {
   showLegend: true,
   legendPos: "b",
   legendColor: COLORS.muted,
-  legendFontSize: 8.5,
+  legendFontSize: 11,
   legendFontFace: FONTS.body,
 };
 
@@ -435,7 +435,7 @@ function columnChart(pres, s, { x, y, w, h, name, cats, vals, color = COLORS.azu
       showValue: true,
       dataLabelPosition: "outEnd",
       dataLabelColor: COLORS.text,
-      dataLabelFontSize: 9,
+      dataLabelFontSize: 11,
       dataLabelFontFace: FONTS.body,
       dataLabelFormatCode: valFmt,
       valAxisLabelFormatCode: valFmt,
@@ -476,7 +476,7 @@ function rankChart(pres, s, { x, y, w, h, cats, vals, color = COLORS.azure, valF
       showValue: true,
       dataLabelPosition: "outEnd",
       dataLabelColor: COLORS.text,
-      dataLabelFontSize: 8.5,
+      dataLabelFontSize: 11,
       dataLabelFontFace: FONTS.body,
       dataLabelFormatCode: valFmt,
       valAxisLabelFormatCode: valFmt,

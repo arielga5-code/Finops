@@ -55,22 +55,29 @@ const FONTS = {
   head: "Calibri",
 };
 
+/**
+ * Type scale, sized for a meeting-room flat panel rather than a laptop.
+ *
+ * Nothing here drops below 12pt. On a 65" screen 12pt is comfortable to about
+ * 1.9 m and legible to 2.5 m; 13pt reaches 2.0/2.7 m; titles at 28pt reach
+ * 4.4 m. Anything smaller is a document, not a slide — see README.
+ */
 const SIZE = {
-  eyebrow: 10.5,
-  title: 26,
-  titleSmall: 22,
-  deck: 11, // right-hand deck note under the title
-  cardTitle: 13,
-  cardSub: 9.5,
-  stat: 26,
-  statBig: 40,
-  statLabel: 10,
-  statNote: 9.5,
-  body: 11,
-  table: 9,
-  tableHead: 8.5,
-  caption: 9.5,
-  footnote: 9,
+  eyebrow: 13,
+  title: 28,
+  titleSmall: 23,
+  deck: 13, // right-hand deck note under the title
+  cardTitle: 15,
+  cardSub: 12,
+  stat: 28,
+  statBig: 42,
+  statLabel: 12,
+  statNote: 12,
+  body: 13,
+  table: 12,
+  tableHead: 12,
+  caption: 12,
+  footnote: 12,
 };
 
 /** Slide geometry, in inches. 13.333 x 7.5 (LAYOUT_WIDE). */

@@ -18,6 +18,30 @@ npm run build:cio -- /path/to/Somewhere_Else.pptx
 Both are 13.333" × 7.5", dark theme, native PowerPoint charts and tables
 (everything stays editable in PowerPoint — nothing is a picture).
 
+### Sized for a meeting-room screen
+
+The type scale in `lib/theme.js` is set for a wall-mounted flat panel, not a
+laptop. Nothing on a slide is below 12pt except two decorative chips. Reading
+distances, assuming the slide fills a 16:9 panel and cap height ≈ 0.7 × font
+size (comfortable ≈ 150 × cap height):
+
+| On-slide size | Used for | 55" panel | 65" | 75" | 85" |
+|---|---|---|---|---|---|
+| 12pt | table cells, footnotes, captions, chart axes | 1.6 m | 1.9 m | 2.2 m | 2.5 m |
+| 13pt | body text, bullets, eyebrows | 1.7 m | 2.0 m | 2.4 m | 2.7 m |
+| 15pt | card and chart headings | 2.0 m | 2.4 m | 2.8 m | 3.2 m |
+| 28pt | slide titles, stat values | 3.8 m | 4.4 m | 5.1 m | 5.8 m |
+| 42–110pt | hero figures, sign-off | 5.5 m+ | 6.5 m+ | 7.5 m+ | 8.5 m+ |
+
+So on a 65" screen the titles and the big numbers carry to the back of most
+meeting rooms; the supporting tables need viewers within roughly 2 m. That is
+the deliberate hierarchy — every slide is built so the title plus one stat
+tile makes the point on its own.
+
+If the room is deeper than about 4 m, raise `SIZE` in `lib/theme.js` and
+re-run the build, then re-check for overflow: `drawTable` and `statTile`
+adapt, but dense tables will need rows cut rather than type shrunk.
+
 ## How it is put together
 
 | File | What it owns |

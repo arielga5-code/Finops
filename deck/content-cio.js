@@ -491,10 +491,10 @@ const core = [
     stats: [
       { label: "Total annual savings", value: "$278,868", note: "already implemented", accent: COLORS.good, big: true },
       { label: "Against annualised spend", value: "9.4%", note: "of ~$3.0M consumption", accent: COLORS.cyan },
-      { label: "Largest action", value: "$70,452", note: "North Europe decommission — $5,871/mo removed", accent: AZURE },
+      { label: "Largest action", value: "$70,452", note: "North Europe — $5,871/mo removed", accent: AZURE },
       { label: "Commitment-based", value: "$132,118", note: "reservations and savings plans", accent: COLORS.muted },
     ],
-    foot: "This is the half of the story the previous briefing did not tell: the bill grew 23% in three months, and it would have grown considerably more without these.",
+    foot: "This is the half of the story the previous briefing did not tell: the bill grew 21% since January, and it would have grown considerably more without these.",
   },
 
   {
@@ -516,13 +516,10 @@ const core = [
           ["Schedule shutdown for 24/7 VMs", { text: "$36,741", color: COLORS.good }],
           ["VM reserved instance purchase", { text: "$26,758", color: COLORS.good }],
           ["VM right-size", { text: "$19,854", color: COLORS.good }],
-          ["RI — Azure Database for PostgreSQL", { text: "$17,037", color: COLORS.good }],
+          ["RI — PostgreSQL databases", { text: "$17,037", color: COLORS.good }],
           ["Idle reserved disks", { text: "$13,464", color: COLORS.good }],
           ["Remove unnecessary VMs", { text: "$13,147", color: COLORS.good }],
-          ["Idle unattached disks", { text: "$7,656", color: COLORS.good }],
-          ["RI — Redis Cache", { text: "$2,664", color: COLORS.good }],
-          ["SQL DB right-size", { text: "$2,129", color: COLORS.good }],
-          ["VPN gateway — check necessity", { text: "$794", color: COLORS.good }],
+          [{ text: "Four smaller items", color: COLORS.muted }, { text: "$13,243", color: COLORS.good }],
         ],
       },
       {
@@ -540,7 +537,7 @@ const core = [
     ],
     stats: [
       { label: "Total potential", value: "$193K", note: "annualised, both clouds", accent: COLORS.warn },
-      { label: "Plus the coverage gap", value: "~$91K", note: "Azure on-demand at AWS's discount rate", accent: COLORS.warn },
+      { label: "Plus the coverage gap", value: "~$91K", note: "Azure on-demand, at AWS rates", accent: COLORS.warn },
       { label: "Banked plus identified", value: "$563K", note: "≈ 19% of annualised consumption", accent: COLORS.good },
     ],
     foot: "None of this changes what runs — it changes how it is bought and how long it stays on. The ask is a decision on the top four items, which are 66% of the value.",
@@ -564,7 +561,7 @@ const core = [
     title: "One gateway for every AI request",
     note: "The enforcement point, not a reporting layer bolted on afterwards — its logs are the financial record.",
     left: {
-      heading: "Applications and developers",
+      heading: "Consumers",
       items: ["Business applications", "Copilots and assistants", "Autonomous agents", "Data science", "Third-party SaaS"],
     },
     centre: {
@@ -574,7 +571,7 @@ const core = [
       foot: "Unauthorised or over-budget requests are filtered out. Governed, cost-allocated requests pass through.",
     },
     right: {
-      heading: "Provider estate",
+      heading: "Providers",
       items: ["Microsoft Copilot", "Azure AI Foundry", "AWS Bedrock", "Google Vertex AI", "Claude / OpenAI"],
     },
     foot: "Today every business unit buys AI separately, on shared keys, with no owner per consumer — which is why 23.4% of the bill has no name against it.",
@@ -649,7 +646,7 @@ const core = [
       { label: "Available saving", value: "~60%", note: "on model token cost, routine work Opus → Sonnet", accent: COLORS.good },
       { label: "GitHub Copilot spend", value: "$57,177", note: "Jan–Jul, +593% Jan→Jul", accent: COLORS.danger },
       { label: "AWS Bedrock, Opus share", value: "82.1%", note: "of AWS AI spend is Opus-class", accent: COLORS.warn },
-      { label: "Promotional pricing ends", value: "31 Aug 2026", note: "reassess before the date, not after", accent: COLORS.muted },
+      { label: "Promo pricing ends", value: "31 Aug 2026", note: "reassess before the date", accent: COLORS.muted },
     ],
     foot: "The same policy applies to Bedrock: 82% of AWS AI spend is Opus-class, and the model mix changes month to month — Opus 4.8 ran and stopped, Opus 5 appeared in July. That is a policy gap, not a usage pattern.",
   },
@@ -673,8 +670,8 @@ const core = [
           { label: "Status", w: 1.15, align: "center" },
           { label: "Owner", w: 1.7 },
         ],
-        rowH: 0.42,
-        fontSize: 9.5,
+        rowH: 0.52,
+        fontSize: 12,
         rows: [
           ["1", "Savings and efficiency programme", "Deliver the Cloud FinOps savings plan — right-sizing, auto-shutdown, reserved instances", { text: "Planned", color: COLORS.warn }, "Infrastructure Division"],
           ["2", "WIV.AI rollout (free tier)", "Deploy the WIV.AI platform for governance, cost and usage monitoring", { text: "Planned", color: COLORS.warn }, "Ariel Oral"],
@@ -686,7 +683,7 @@ const core = [
     ],
     stats: [
       { label: "Decision needed", value: "4 items", note: "the $193K recommendation list", accent: COLORS.warn },
-      { label: "Dependency", value: "Tagging", note: "item 3 blocks chargeback and gateway quotas", accent: COLORS.cyan },
+      { label: "Dependency", value: "Tagging", note: "item 3 blocks chargeback", accent: COLORS.cyan },
       { label: "To confirm", value: "$16,100", note: "MAP credit, with Comm-IT", accent: AWS },
     ],
   },

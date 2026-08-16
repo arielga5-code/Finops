@@ -178,7 +178,7 @@ const RENDER = {
     if (spec.kicker) {
       s.addText(spec.kicker.toUpperCase(), {
         x: 0, y: top, w: GEO.w, h: 0.4,
-        fontFace: FONTS.head, fontSize: 12, bold: true,
+        fontFace: FONTS.head, fontSize: 14, bold: true,
         color: accent, charSpacing: 3, margin: 0,
         align: "center", valign: "middle",
       });
@@ -192,7 +192,7 @@ const RENDER = {
     if (spec.sub) {
       s.addText(spec.sub, {
         x: 0, y: top + above + titleH, w: GEO.w, h: 0.5,
-        fontFace: FONTS.body, fontSize: 13, color: COLORS.muted,
+        fontFace: FONTS.body, fontSize: 15, color: COLORS.muted,
         margin: 0, align: "center", valign: "middle",
       });
     }
@@ -217,17 +217,17 @@ const RENDER = {
       const inner = C.card(pres, s, { x, y, w, h });
       s.addText(String(i + 1).padStart(2, "0"), {
         x: inner.x, y: y + 0.18, w: inner.w, h: 0.32,
-        fontFace: FONTS.head, fontSize: 18, bold: true,
+        fontFace: FONTS.head, fontSize: 20, bold: true,
         color: it.accent, margin: 0, valign: "middle",
       });
       s.addText(it.label, {
         x: inner.x, y: y + 0.56, w: inner.w, h: 0.3,
-        fontFace: FONTS.head, fontSize: 13, bold: true,
+        fontFace: FONTS.head, fontSize: 15, bold: true,
         color: COLORS.text, margin: 0, valign: "middle",
       });
       s.addText(it.desc, {
         x: inner.x, y: y + 0.88, w: inner.w, h: 0.55,
-        fontFace: FONTS.body, fontSize: 9.5, color: COLORS.muted,
+        fontFace: FONTS.body, fontSize: 12, color: COLORS.muted,
         margin: 0, valign: "top", lineSpacingMultiple: 1.15,
       });
     });
@@ -249,8 +249,8 @@ const RENDER = {
     const railW = GEO.w - railX - GEO.margin;
     let y = GEO.bodyTop;
     resolveStats(spec.stats, spec.chart.id, spec.chart).forEach((st) => {
-      C.statTile(pres, s, { ...st, x: railX, y, w: railW, h: 1.1 });
-      y += 1.25;
+      C.statTile(pres, s, { ...st, x: railX, y, w: railW, h: 1.2 });
+      y += 1.34;
     });
     if (spec.notes) {
       C.noteList(pres, s, {
@@ -271,16 +271,16 @@ const RENDER = {
     const sw = (GEO.contentW - 0.25 * (n - 1)) / n;
     stats.forEach((st, i) => {
       C.statTile(pres, s, {
-        ...st, x: GEO.margin + i * (sw + 0.25), y: GEO.bodyTop - 0.05, w: sw, h: 1.05,
+        ...st, x: GEO.margin + i * (sw + 0.25), y: GEO.bodyTop - 0.05, w: sw, h: 1.18,
       });
     });
 
-    const top = GEO.bodyTop + 1.2;
+    const top = GEO.bodyTop + 1.3;
     const cw = (GEO.contentW - 0.35) / 2;
     spec.charts.forEach((ch, i) => {
       const x = GEO.margin + i * (cw + 0.35);
       chartHeading(s, ch.title, x, top, cw);
-      drawChart(pres, s, ch, { x: x - 0.05, y: top + 0.3, w: cw, h: 3.75 });
+      drawChart(pres, s, ch, { x: x - 0.05, y: top + 0.3, w: cw, h: 3.65 });
     });
   },
 
@@ -319,10 +319,10 @@ const RENDER = {
       // the two, not pinned to the floor, so short tables do not leave a hole.
       if (stats.length) {
         const sw = (GEO.contentW - 0.25 * (stats.length - 1)) / stats.length;
-        const sy = Math.min(Math.max(deepest + 0.5, 4.2), 5.7);
+        const sy = Math.min(Math.max(deepest + 0.4, 4.1), 5.55);
         stats.forEach((st, i) => {
           C.statTile(pres, s, {
-            ...st, x: GEO.margin + i * (sw + 0.25), y: sy, w: sw, h: 1.05,
+            ...st, x: GEO.margin + i * (sw + 0.25), y: sy, w: sw, h: 1.18,
           });
         });
       }
@@ -356,18 +356,18 @@ const RENDER = {
       let sy = GEO.bodyTop;
       stats.forEach((st) => {
         C.statTile(pres, s, {
-          ...st, x: railX, y: sy, w: railW, h: 1.1,
+          ...st, x: railX, y: sy, w: railW, h: 1.2,
           valueSize: st.big ? 30 : SIZE.stat,
         });
-        sy += 1.25;
+        sy += 1.34;
       });
     } else {
       // Full-width table: the rail has nowhere to go, so run the stats under it.
       const sw = (GEO.contentW - 0.25 * (stats.length - 1)) / stats.length;
-      const sy = Math.min(Math.max(y + 0.25, 4.2), 5.7);
+      const sy = Math.min(Math.max(y + 0.25, 4.1), 5.55);
       stats.forEach((st, i) => {
         C.statTile(pres, s, {
-          ...st, x: GEO.margin + i * (sw + 0.25), y: sy, w: sw, h: 1.05,
+          ...st, x: GEO.margin + i * (sw + 0.25), y: sy, w: sw, h: 1.18,
         });
       });
     }
@@ -391,13 +391,13 @@ const RENDER = {
     });
     s.addText(spec.valueLabel, {
       x: GEO.margin, y: 3.35, w: 6.2, h: 0.4,
-      fontFace: FONTS.body, fontSize: 13, color: COLORS.muted,
+      fontFace: FONTS.body, fontSize: 15, color: COLORS.muted,
       margin: 0, valign: "middle",
     });
     if (spec.delta) {
       s.addText(spec.delta, {
         x: GEO.margin, y: 3.78, w: 6.2, h: 0.4,
-        fontFace: FONTS.head, fontSize: 15, bold: true,
+        fontFace: FONTS.head, fontSize: 17, bold: true,
         color: spec.deltaColor || COLORS.danger, margin: 0, valign: "middle",
       });
     }
@@ -410,17 +410,17 @@ const RENDER = {
       C.card(pres, s, { x, y, w, h: 1.0 });
       s.addText(p.label, {
         x: x + 0.22, y: y + 0.14, w: w - 0.44, h: 0.3,
-        fontFace: FONTS.head, fontSize: 13, bold: true,
+        fontFace: FONTS.head, fontSize: 15, bold: true,
         color: p.accent, margin: 0, valign: "middle",
       });
       s.addText(p.value, {
         x: x + 0.22, y: y + 0.46, w: (w - 0.44) * 0.5, h: 0.38,
-        fontFace: FONTS.head, fontSize: 20, bold: true,
+        fontFace: FONTS.head, fontSize: 22, bold: true,
         color: COLORS.text, margin: 0, valign: "middle",
       });
       s.addText(p.note, {
         x: x + 0.22 + (w - 0.44) * 0.5, y: y + 0.46, w: (w - 0.44) * 0.5, h: 0.38,
-        fontFace: FONTS.body, fontSize: 10, color: COLORS.muted,
+        fontFace: FONTS.body, fontSize: 12, color: COLORS.muted,
         margin: 0, valign: "middle", align: "right",
       });
       y += 1.15;
@@ -457,18 +457,18 @@ const RENDER = {
       });
       s.addText(t.value, {
         x: x + 0.22, y: GEO.bodyTop + 0.46, w: w - 0.44, h: 0.5,
-        fontFace: FONTS.head, fontSize: 28, bold: true,
+        fontFace: FONTS.head, fontSize: 30, bold: true,
         color: t.accent || COLORS.text, margin: 0, valign: "middle",
       });
       s.addText(t.note || "", {
         x: x + 0.22, y: GEO.bodyTop + 0.94, w: w - 0.44, h: 0.26,
-        fontFace: FONTS.body, fontSize: 9.5, color: COLORS.muted,
+        fontFace: FONTS.body, fontSize: 12, color: COLORS.muted,
         margin: 0, valign: "middle",
       });
       if (t.op) {
         s.addText(t.op, {
           x: x - gap, y: GEO.bodyTop + 0.4, w: gap, h: 0.5,
-          fontFace: FONTS.head, fontSize: 22, bold: true,
+          fontFace: FONTS.head, fontSize: 24, bold: true,
           color: COLORS.muted, margin: 0, align: "center", valign: "middle",
         });
       }
@@ -484,10 +484,10 @@ const RENDER = {
     const stats = resolveStats(spec.stats, null, {});
     if (stats.length) {
       const sw = (GEO.contentW - 0.25 * (stats.length - 1)) / stats.length;
-      const sy = Math.min(Math.max(y + 0.45, 4.3), 5.7);
+      const sy = Math.min(Math.max(y + 0.45, 4.3), 5.55);
       stats.forEach((st, i) => {
         C.statTile(pres, s, {
-          ...st, x: GEO.margin + i * (sw + 0.25), y: sy, w: sw, h: 1.05,
+          ...st, x: GEO.margin + i * (sw + 0.25), y: sy, w: sw, h: 1.18,
         });
       });
     }
@@ -508,7 +508,7 @@ const RENDER = {
     const column = (x, heading, items, accent) => {
       s.addText(heading.toUpperCase(), {
         x, y: top - 0.38, w: colW, h: 0.26,
-        fontFace: FONTS.head, fontSize: 9.5, bold: true,
+        fontFace: FONTS.head, fontSize: 12, bold: true,
         color: COLORS.muted, charSpacing: 1.4, margin: 0, valign: "middle",
       });
       items.forEach((it, i) => {
@@ -516,7 +516,7 @@ const RENDER = {
         C.card(pres, s, { x, y, w: colW, h: 0.6 });
         s.addText(it, {
           x: x + 0.2, y, w: colW - 0.4, h: 0.6,
-          fontFace: FONTS.body, fontSize: 11, color: COLORS.text,
+          fontFace: FONTS.body, fontSize: 13, color: COLORS.text,
           margin: 0, valign: "middle",
         });
         void accent;
@@ -536,12 +536,12 @@ const RENDER = {
     });
     s.addText(spec.centre.title, {
       x: midX + 0.2, y: top + 0.18, w: midW - 0.4, h: 0.36,
-      fontFace: FONTS.head, fontSize: 15, bold: true,
+      fontFace: FONTS.head, fontSize: 17, bold: true,
       color: COLORS.text, margin: 0, valign: "middle", align: "center",
     });
     s.addText(spec.centre.sub, {
       x: midX + 0.2, y: top + 0.54, w: midW - 0.4, h: 0.28,
-      fontFace: FONTS.body, fontSize: 9.5, color: COLORS.muted,
+      fontFace: FONTS.body, fontSize: 12, color: COLORS.muted,
       margin: 0, valign: "middle", align: "center",
     });
 
@@ -559,7 +559,7 @@ const RENDER = {
       });
       s.addText(chip, {
         x: cx, y: cy, w: cw, h: 0.4,
-        fontFace: FONTS.body, fontSize: 9.5, color: COLORS.text,
+        fontFace: FONTS.body, fontSize: 12, color: COLORS.text,
         margin: 0, valign: "middle", align: "center",
       });
     });
@@ -567,7 +567,7 @@ const RENDER = {
     if (spec.centre.foot) {
       s.addText(spec.centre.foot, {
         x: midX + 0.2, y: top + midH - 0.62, w: midW - 0.4, h: 0.5,
-        fontFace: FONTS.body, fontSize: 9, color: COLORS.muted,
+        fontFace: FONTS.body, fontSize: 11.5, color: COLORS.muted,
         margin: 0, valign: "middle", align: "center", lineSpacingMultiple: 1.1,
       });
     }
@@ -592,7 +592,7 @@ const RENDER = {
 
       s.addText(String(i + 1).padStart(2, "0"), {
         x: x + 0.22, y: y + 0.16, w: 0.9, h: 0.36,
-        fontFace: FONTS.head, fontSize: 19, bold: true,
+        fontFace: FONTS.head, fontSize: 21, bold: true,
         color: it.gate ? spec.accent : COLORS.faint, margin: 0, valign: "middle",
       });
       if (it.gate) {
@@ -604,19 +604,19 @@ const RENDER = {
         });
         s.addText("GATE", {
           x: x + w - 0.92, y: y + 0.2, w: 0.7, h: 0.26,
-          fontFace: FONTS.head, fontSize: 7.5, bold: true,
+          fontFace: FONTS.head, fontSize: 11, bold: true,
           color: spec.accent, margin: 0, align: "center", valign: "middle",
           charSpacing: 0.8,
         });
       }
       s.addText(it.label, {
         x: x + 0.22, y: y + 0.58, w: w - 0.44, h: 0.5,
-        fontFace: FONTS.head, fontSize: 12, bold: true,
+        fontFace: FONTS.head, fontSize: 14, bold: true,
         color: COLORS.text, margin: 0, valign: "top",
       });
       s.addText(it.desc, {
         x: x + 0.22, y: y + 1.06, w: w - 0.44, h: h - 1.2,
-        fontFace: FONTS.body, fontSize: 9.5, color: COLORS.muted,
+        fontFace: FONTS.body, fontSize: 12, color: COLORS.muted,
         margin: 0, valign: "top", lineSpacingMultiple: 1.15,
       });
     });
@@ -645,17 +645,17 @@ const RENDER = {
       });
       s.addText(String(i + 1), {
         x, y: y + 0.08, w: 0.36, h: 0.36,
-        fontFace: FONTS.head, fontSize: 11, bold: true,
+        fontFace: FONTS.head, fontSize: 13, bold: true,
         color: spec.accent, margin: 0, align: "center", valign: "middle",
       });
       s.addText(it.label, {
         x: x + 0.5, y: y + 0.02, w: w - 0.5, h: 0.28,
-        fontFace: FONTS.head, fontSize: 12.5, bold: true,
+        fontFace: FONTS.head, fontSize: 14, bold: true,
         color: COLORS.text, margin: 0, valign: "middle",
       });
       s.addText(it.desc, {
         x: x + 0.5, y: y + 0.3, w: w - 0.5, h: 0.4,
-        fontFace: FONTS.body, fontSize: 10, color: COLORS.muted,
+        fontFace: FONTS.body, fontSize: 12, color: COLORS.muted,
         margin: 0, valign: "top", lineSpacingMultiple: 1.1,
       });
     });
@@ -665,12 +665,12 @@ const RENDER = {
       C.card(pres, s, { x: GEO.margin, y, w: GEO.contentW, h: 1.0, accent: spec.accent });
       s.addText(spec.banner.title, {
         x: GEO.margin + 0.25, y: y + 0.14, w: GEO.contentW - 0.5, h: 0.32,
-        fontFace: FONTS.head, fontSize: 14, bold: true,
+        fontFace: FONTS.head, fontSize: 16, bold: true,
         color: COLORS.text, margin: 0, valign: "middle",
       });
       s.addText(spec.banner.text, {
         x: GEO.margin + 0.25, y: y + 0.46, w: GEO.contentW - 0.5, h: 0.44,
-        fontFace: FONTS.body, fontSize: 10.5, color: COLORS.muted,
+        fontFace: FONTS.body, fontSize: 12.5, color: COLORS.muted,
         margin: 0, valign: "top", lineSpacingMultiple: 1.15,
       });
     }
@@ -688,7 +688,7 @@ const RENDER = {
       const sw = (GEO.contentW - 0.25 * (stats.length - 1)) / stats.length;
       stats.forEach((st, i) => {
         C.statTile(pres, s, {
-          ...st, x: GEO.margin + i * (sw + 0.25), y: GEO.bodyTop, w: sw, h: 1.05,
+          ...st, x: GEO.margin + i * (sw + 0.25), y: GEO.bodyTop, w: sw, h: 1.18,
         });
       });
     }
@@ -702,7 +702,7 @@ const RENDER = {
     });
     s.addText(spec.text, {
       x: GEO.margin + 3.9, y: y + 0.28, w: GEO.contentW - 4.3, h: 1.3,
-      fontFace: FONTS.body, fontSize: 14, color: COLORS.text,
+      fontFace: FONTS.body, fontSize: 15.5, color: COLORS.text,
       margin: 0, valign: "middle", lineSpacingMultiple: 1.25,
     });
 
@@ -715,18 +715,43 @@ const RENDER = {
   },
 };
 
-/** Draws one table block; returns the y coordinate just below it. */
+/**
+ * Draws one table block; returns the y coordinate just below it.
+ *
+ * The returned height accounts for cells that wrap. PowerPoint grows a row to
+ * fit its content, so assuming every row is exactly `rowH` tall understates a
+ * table with long labels — and whatever is placed underneath then lands on top
+ * of it.
+ */
 function drawTable(pres, s, t, x, y) {
-  const rowH = t.rowH || 0.235;
+  const rowH = t.rowH || 0.32;
+  const fontSize = t.fontSize || SIZE.table;
   C.table(pres, s, {
     x, y,
     w: C.sum(t.cols.map((c) => c.w)),
     cols: t.cols,
     rows: t.rtl ? t.rows.map(rtlRow) : t.rows,
     rowH,
-    fontSize: t.fontSize || SIZE.table,
+    fontSize,
   });
-  return y + rowH * (t.rows.length + 1);
+
+  // ~12 characters per inch at 12pt Calibri, scaling with the font size.
+  const perInch = 144 / fontSize;
+  const lineH = (fontSize / 72) * 1.25;
+  const heightOf = (row) => {
+    const lines = Math.max(
+      1,
+      ...row.map((cell, j) => {
+        const text = String((cell && cell.text !== undefined ? cell.text : cell) ?? "");
+        const cap = Math.max(6, (t.cols[j].w - 0.18) * perInch);
+        return Math.ceil(text.length / cap);
+      })
+    );
+    return Math.max(rowH, lines * lineH + 0.14);
+  };
+
+  const header = Math.max(rowH, lineH + 0.14);
+  return y + header + C.sum(t.rows.map(heightOf));
 }
 
 /** Hebrew tables: mark every cell right-to-left so bidi text lays out correctly. */
