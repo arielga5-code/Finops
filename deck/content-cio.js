@@ -642,5 +642,13 @@ const core = [
   },
 ];
 
-module.exports = [...core, ...APPENDIX_PICKS.map((i) => operational[i])];
+/** Sign-off, after the appendix. */
+const closing = {
+  kind: "closing",
+  kicker: "Harel Insurance · Cloud FinOps",
+  title: "Thank you",
+  accent: COLORS.cyan,
+};
+
+module.exports = [...core, ...APPENDIX_PICKS.map((i) => operational[i]), closing];
 module.exports.coreLength = core.length;
