@@ -150,8 +150,43 @@ const RENDER = {
     C.sectionSlide(pres, spec);
   },
 
+  /** Sign-off: the same disc motif, but everything centred and set large. */
   closing(pres, spec) {
-    const s = C.sectionSlide(pres, { ...spec, title: spec.title, sub: spec.sub });
+    const s = pres.addSlide();
+    s.background = { color: COLORS.bg };
+    const accent = spec.accent || COLORS.cyan;
+
+    s.addShape(pres.ShapeType.ellipse, {
+      x: 8.6, y: -1.4, w: 6.4, h: 6.4,
+      fill: { color: accent, transparency: 92 },
+      line: { color: accent, width: 0, transparency: 100 },
+    });
+    s.addShape(pres.ShapeType.ellipse, {
+      x: 10.0, y: 2.6, w: 5.2, h: 5.2,
+      fill: { color: COLORS.cyan, transparency: 93 },
+      line: { color: COLORS.cyan, width: 0, transparency: 100 },
+    });
+
+    if (spec.kicker) {
+      s.addText(spec.kicker.toUpperCase(), {
+        x: 0, y: 2.5, w: GEO.w, h: 0.34,
+        fontFace: FONTS.head, fontSize: 12, bold: true,
+        color: accent, charSpacing: 3, margin: 0,
+        align: "center", valign: "middle",
+      });
+    }
+    s.addText(spec.title, {
+      x: 0, y: 2.9, w: GEO.w, h: 1.7,
+      fontFace: FONTS.head, fontSize: spec.titleSize || 80, bold: true,
+      color: COLORS.text, margin: 0, align: "center", valign: "middle",
+    });
+    if (spec.sub) {
+      s.addText(spec.sub, {
+        x: 0, y: 4.7, w: GEO.w, h: 0.5,
+        fontFace: FONTS.body, fontSize: 13, color: COLORS.muted,
+        margin: 0, align: "center", valign: "middle",
+      });
+    }
     return s;
   },
 
