@@ -167,22 +167,30 @@ const RENDER = {
       line: { color: COLORS.cyan, width: 0, transparency: 100 },
     });
 
+    // Centre the whole block on the slide. With no kicker and no subtitle the
+    // title alone sits dead centre; each optional line shifts it up to keep the
+    // group balanced rather than the title itself.
+    const titleH = 2.0;
+    const above = spec.kicker ? 0.5 : 0;
+    const below = spec.sub ? 0.55 : 0;
+    const top = (GEO.h - (above + titleH + below)) / 2;
+
     if (spec.kicker) {
       s.addText(spec.kicker.toUpperCase(), {
-        x: 0, y: 2.5, w: GEO.w, h: 0.34,
+        x: 0, y: top, w: GEO.w, h: 0.4,
         fontFace: FONTS.head, fontSize: 12, bold: true,
         color: accent, charSpacing: 3, margin: 0,
         align: "center", valign: "middle",
       });
     }
     s.addText(spec.title, {
-      x: 0, y: 2.9, w: GEO.w, h: 1.7,
-      fontFace: FONTS.head, fontSize: spec.titleSize || 80, bold: true,
+      x: 0, y: top + above, w: GEO.w, h: titleH,
+      fontFace: FONTS.head, fontSize: spec.titleSize || 110, bold: true,
       color: COLORS.text, margin: 0, align: "center", valign: "middle",
     });
     if (spec.sub) {
       s.addText(spec.sub, {
-        x: 0, y: 4.7, w: GEO.w, h: 0.5,
+        x: 0, y: top + above + titleH, w: GEO.w, h: 0.5,
         fontFace: FONTS.body, fontSize: 13, color: COLORS.muted,
         margin: 0, align: "center", valign: "middle",
       });

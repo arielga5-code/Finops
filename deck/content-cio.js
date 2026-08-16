@@ -642,11 +642,11 @@ const core = [
   },
 ];
 
-/** Sign-off, after the appendix. */
+/** Sign-off, after the appendix: the words only, centred and large. */
 const closing = {
   kind: "closing",
-  kicker: "Harel Insurance · Cloud FinOps",
   title: "Thank you",
+  titleSize: 110,
   accent: COLORS.cyan,
 };
 
