@@ -752,6 +752,12 @@ function buildDeck(content, outFile, meta = {}) {
     const fn = RENDER[spec.kind];
     if (!fn) throw new Error(`Slide ${i + 1}: unknown kind "${spec.kind}"`);
     fn(pres, spec);
+
+    // Presenter notes. Named `speakerNotes` because the `chart` kind already
+    // uses `notes` for the bullet list drawn on the slide itself.
+    if (spec.speakerNotes) {
+      pres.slides[pres.slides.length - 1].addNotes(spec.speakerNotes);
+    }
   });
 
   return pres.writeFile({ fileName: outFile }).then(() => {
