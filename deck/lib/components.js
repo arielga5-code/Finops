@@ -107,13 +107,18 @@ function slide(pres, opts = {}) {
   }
 
   if (opts.title) {
+    // Keep the headline on one line: a wrapped title overruns into the body,
+    // which starts at a fixed height on every slide.
+    const tw = opts.note ? 8.4 : GEO.contentW;
+    const base = opts.titleSize || SIZE.title;
+    const tSize = Math.max(18, Math.min(base, (tw * 100) / String(opts.title).length));
     s.addText(opts.title, {
       x: GEO.margin,
       y: GEO.titleY,
-      w: opts.note ? 8.4 : GEO.contentW,
+      w: tw,
       h: 0.62,
       fontFace: FONTS.head,
-      fontSize: opts.titleSize || SIZE.title,
+      fontSize: tSize,
       bold: true,
       color: COLORS.text,
       margin: 0,
@@ -240,9 +245,12 @@ function statTile(pres, s, { x, y, w, h = 1.05, label, value, note, accent = COL
   }
   const px = boxed ? x + 0.22 : x;
   const pw = w - (boxed ? 0.44 : 0);
-  s.addText(String(label).toUpperCase(), {
+  // The label must stay on one line — if it wraps it pushes into the value.
+  const lab = String(label).toUpperCase();
+  const labSize = Math.max(7.5, Math.min(SIZE.statLabel, (pw * 118) / Math.max(1, lab.length)));
+  s.addText(lab, {
     x: px, y: y + 0.12, w: pw, h: 0.24,
-    fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
+    fontFace: FONTS.head, fontSize: labSize, bold: true,
     color: COLORS.muted, charSpacing: 1.2, margin: 0, valign: "middle",
   });
   // Values are not always short figures — "Direct Connect - Port Hours" also
@@ -250,7 +258,7 @@ function statTile(pres, s, { x, y, w, h = 1.05, label, value, note, accent = COL
   // averages ~0.52em per character, i.e. pw*72/(0.52*chars) points to fit one
   // line; 130 is that constant with a little slack.
   const chars = String(value).length;
-  const size = Math.max(12, Math.min(valueSize, (pw * 130) / chars));
+  const size = Math.max(12, Math.min(valueSize, (pw * 118) / chars));
   s.addText(value, {
     x: px, y: y + 0.32, w: pw, h: 0.5,
     fontFace: FONTS.head, fontSize: size, bold: true,
@@ -276,17 +284,22 @@ function noteList(pres, s, { x, y, w, items, accent = COLORS.aws, title }) {
     });
     cy += 0.32;
   }
+  // Advance by how many lines the text will actually take. Calibri at 10.5pt
+  // fits roughly 13 characters per inch, so the wrap point scales with width
+  // rather than being a fixed character count.
+  const perLine = Math.max(20, Math.floor((w - 0.19) * 13));
   items.forEach((it) => {
+    const lines = Math.max(1, Math.ceil(it.length / perLine));
     s.addShape(pres.ShapeType.rect, {
       x, y: cy + 0.09, w: 0.07, h: 0.07,
       fill: { color: accent }, line: { color: accent, width: 0 },
     });
     s.addText(it, {
-      x: x + 0.19, y: cy, w: w - 0.19, h: 0.26,
+      x: x + 0.19, y: cy, w: w - 0.19, h: lines * 0.2,
       fontFace: FONTS.body, fontSize: SIZE.body - 0.5, color: COLORS.text,
       margin: 0, valign: "top", lineSpacingMultiple: 1.1,
     });
-    cy += 0.24 + 0.2 * Math.max(0, Math.ceil(it.length / 46) - 1) + 0.12;
+    cy += lines * 0.2 + 0.13;
   });
   return cy;
 }
@@ -416,7 +429,7 @@ function columnChart(pres, s, { x, y, w, h, name, cats, vals, color = COLORS.azu
 }
 
 /** Trend line, used where the story is the slope rather than the mix. */
-function lineChart(pres, s, { x, y, w, h, series, cats, legend = true, valFmt = '"$"#,##0' }) {
+function lineChart(pres, s, { x, y, w, h, series, cats, legend = true, colors, valFmt = '"$"#,##0' }) {
   s.addChart(
     pres.ChartType.line,
     series.map((ser) => ({ name: ser.name, labels: cats, values: ser.vals })),
@@ -427,6 +440,7 @@ function lineChart(pres, s, { x, y, w, h, series, cats, legend = true, valFmt = 
       lineSize: 2.5,
       valAxisLabelFormatCode: valFmt,
       ...axisStyle,
+      chartColors: colors || SERIES,
       ...(legend ? legendStyle : { showLegend: false }),
     }
   );

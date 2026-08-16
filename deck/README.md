@@ -1,28 +1,34 @@
-# Cloud FinOps deck — Harel, 2026
+# Cloud FinOps decks — Harel, 2026
 
-Rebuilds the *Cloud FinOps Harel July 26* review (slides 2 → 42) in the visual
-language of the *Harel Cloud Cost — CIO v33* deck, so the operational review and
-the executive briefing read as one document.
+Two decks, one design system, one set of source data.
+
+| Deck | Build | Slides | For |
+|---|---|---|---|
+| **Operational review** | `npm run build` → `Cloud_FinOps_Harel_2026.pptx` | 40 | The monthly FinOps walkthrough, Jan–Jul 2026 |
+| **CIO briefing (v34)** | `npm run build:cio` → `Harel_Cloud_Cost_CIO_v34.pptx` | 37 | The combined executive deck: v33's narrative plus the operational findings |
 
 ```bash
 cd deck
-npm install          # pptxgenjs only
-npm run build        # -> Cloud_FinOps_Harel_2026.pptx
-npm run build -- /path/to/Somewhere_Else.pptx
+npm install                # pptxgenjs only
+npm run build              # operational review
+npm run build:cio          # combined CIO briefing
+npm run build:cio -- /path/to/Somewhere_Else.pptx
 ```
 
-Output: 40 slides, 13.333" × 7.5", dark theme, native PowerPoint charts and
-tables (everything stays editable in PowerPoint — nothing is a picture).
+Both are 13.333" × 7.5", dark theme, native PowerPoint charts and tables
+(everything stays editable in PowerPoint — nothing is a picture).
 
 ## How it is put together
 
 | File | What it owns |
 |---|---|
-| `lib/theme.js` | Colours, fonts, type scale, slide geometry. **Restyle the whole deck here.** |
-| `lib/components.js` | Slide chrome, cards, stat tiles, tables, chart wrappers. Change how a *kind* of slide is laid out. |
-| `content.js` | Every headline, callout, table row and slide order. Change what the deck *says*. |
+| `lib/theme.js` | Colours, fonts, type scale, slide geometry. **Restyle both decks here.** |
+| `lib/components.js` | Slide chrome, cards, stat tiles, tables, chart wrappers. |
+| `lib/engine.js` | The renderers — one per slide `kind` — and the `auto:` resolver. Shared by both decks. |
+| `content.js` | The operational review: every headline, callout, table row and slide order. |
+| `content-cio.js` | The combined CIO briefing. Its appendix imports slides straight from `content.js`. |
 | `data/charts.json` | The numeric series, extracted from the source `.pptx` chart parts. |
-| `build.js` | Assembles the above. One renderer per slide `kind`. |
+| `build.js` / `build-cio.js` | Thin wrappers that hand a content array to the engine. |
 
 ### Customising it
 
@@ -49,10 +55,19 @@ a slide can never drift away from the chart beside it. Hard-coded strings
 - `chart` — one chart plus a right-hand stat rail and optional bullet notes
 - `dualChart` — stat strip across the top, two charts below
 - `table` — one or two tables plus stats (side by side if they fit, otherwise a right-hand rail)
+- `hero` — one dominant figure, contributor cards, optional bullets
+- `reconcile` — A − B = C across the top, variance table below, stats under that
+- `flow` — consumers → control point → providers
+- `steps` — numbered process cards, optionally badged as gates
+- `criteria` — numbered requirements in two columns, with a closing banner
+- `bigStat` — one very large figure with a paragraph beside it
 - `closing` — sign-off
 
+A chart spec can carry `inline: { cats, series }` instead of an `id`, for
+figures that do not come from the extracted workbooks.
+
 If you need a layout none of those covers, add a new renderer to the `RENDER`
-map in `build.js` rather than special-casing an existing one.
+map in `lib/engine.js` rather than special-casing an existing one.
 
 **Wide charts.** Source workbooks carry up to 38 series per chart. Each chart
 spec takes `top: n` — the n largest series are kept and the rest are rolled into
@@ -104,3 +119,50 @@ likely the captions are stale text left over from an earlier data refresh.
   visible rather than clipped.
 - Marketplace purchases are excluded from every consumption figure and reported
   on their own slides, matching the source deck's convention.
+
+
+## The combined CIO briefing (v34)
+
+`content-cio.js` merges the *Harel Cloud Cost · CIO v33* deck with this
+operational review. The two were on different clocks — v33 covers May–July on an
+invoiced basis, the operational review covers January–July on a consumption
+basis — so the merge follows three rules, stated at the top of that file: one
+spine, no story told twice, and every repeated number must reconcile or explain
+itself.
+
+### What the merge produced that neither deck had
+
+**The $16,100.27 credit is identified.** v33 flagged an undocumented charge on
+`ai-factory-dev` that was reversed, and concluded it was "not a discount on
+Claude consumption". Cross-referencing July Bedrock consumption line by line:
+
+| Claude model, July 2026 | Operational (gross) | v33 (net) | Difference |
+|---|---:|---:|---:|
+| Claude Opus 4.8 | $11,361.86 | — | $11,361.86 |
+| Claude Opus 4.6 | $9,873.22 | $5,134.81 | $4,738.41 |
+| All other Claude models | $3,362.97 | $3,362.97 | — |
+| **Total** | **$25,288.33** | **$9,188.06** | **$16,100.27** |
+
+That matches the credit to the cent, and the operational deck names the reason:
+a MAP contract credit. Confirm with the reseller before treating it as closed.
+
+**The December projection is a range, not a number.** v33 projects $5.8M by
+December from Azure growing 13.3% a month, measured May→July. Over the full
+seven months Azure has grown 3.0% a month — May was a local low. The combined
+deck shows all three readings ($3.4M flat / $4.0M seven-month trend / $5.8M
+three-month trend) rather than only the steepest one.
+
+**The savings story exists.** v33 contains no optimisation programme at all.
+The combined deck carries $278,868 implemented, $193K identified, and the
+purchase-option coverage gap (AWS buys 93% of compute at a discount, Azure 59%).
+
+**Databricks is a decision, not a footnote.** v33 mentions the 600,000 DBCU
+pre-purchase; it does not mention that it cost $504,000 in April and is 18%
+utilised.
+
+### What moved to the appendix
+
+Per-cost-centre and per-project detail — SAP, Cloud IT, Actuary, ITSec,
+Basasach, Investments, Opswat, Risk Agility, the smaller AI projects and the
+sandbox. `APPENDIX_PICKS` in `content-cio.js` selects them by index from
+`content.js`, so they are the same slide objects and cannot drift.

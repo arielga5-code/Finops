@@ -2,9 +2,10 @@
   "name": "harel-cloud-finops-deck",
   "version": "1.0.0",
   "private": true,
-  "description": "Generates the Harel Cloud FinOps 2026 review deck in the CIO briefing design",
+  "description": "Generates the Harel Cloud FinOps 2026 decks \u2014 operational review and combined CIO briefing",
   "scripts": {
-    "build": "node build.js"
+    "build": "node build.js",
+    "build:cio": "node build-cio.js"
   },
   "dependencies": {
     "pptxgenjs": "^4.0.1"
