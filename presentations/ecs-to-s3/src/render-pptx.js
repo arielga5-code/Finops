@@ -33,11 +33,11 @@ function drawChart(slide, op) {
     });
   } else if (op.kind === 'cost') {
     slide.addChart(pres.ChartType.bar, [
-      { name: 'עלות', labels: ['Dell ECS On-Prem', 'AWS S3 Standard', 'AWS S3 + API'], values: [115.8, 146.5, 155.0] },
+      { name: 'עלות', labels: ['Dell ECS On-Prem', 'AWS S3 + API'], values: [115.8, 155.0] },
     ], {
       x: op.x, y: op.y, w: op.w, h: op.h,
-      barDir: 'col', barGapWidthPct: 120,
-      chartColors: [C.green, C.cyan, C.purple], varyColors: true,
+      barDir: 'col', barGapWidthPct: 240,
+      chartColors: [C.green, C.cyan], varyColors: true,
       showLegend: false, showTitle: false,
       showValue: true, dataLabelPosition: 'outEnd',
       dataLabelColor: C.text, dataLabelFontSize: 13, dataLabelFontBold: true,

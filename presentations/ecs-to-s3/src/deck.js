@@ -226,7 +226,7 @@ slides.push({ ops: S(o => {
 
 // -------------------------------------------------- 5 · Cost comparison
 slides.push({ ops: S(o => {
-  header(o, 'השוואת עלויות', '100 TB ל-5 שנים: $116K ב-On-Prem מול $138K–165K ב-AWS S3 Standard', C.green, 24);
+  header(o, 'השוואת עלויות', '100 TB ל-5 שנים: $116K ב-On-Prem מול $145K–165K ב-AWS S3 + API', C.green, 25);
 
   const cx = 4.28, cw = 8.15;
   txt(o, he('עלות 100 TB לחמש שנים · אלפי דולרים'), { x: cx, y: 2.02, w: cw, h: 0.26, size: 11, bold: true, color: C.muted, align: 'right', rtl: true, cs: 0.8, valign: 'middle' });
@@ -234,9 +234,9 @@ slides.push({ ops: S(o => {
 
   const railW = 3.05, railX = G.M;
   const rows = [
-    { v: '$1,158',      l: 'לכל TB לוגי · Dell ECS',   s: 'כולל Replica x3 בין שלושה אתרים',    a: C.green },
-    { v: '$1,380–1,650', l: 'לכל TB · AWS S3 Standard', s: 'עמידות מובנית, ללא כפל אחסון מצידנו', a: C.cyan },
-    { v: '16%–30%',      l: 'יתרון ל-Dell ECS',         s: 'מול S3 Standard בלבד — ראו השקף הבא', a: C.orange },
+    { v: '$1,158',       l: 'לכל TB לוגי · Dell ECS',  s: 'כולל Replica x3 בין שלושה אתרים',        a: C.green },
+    { v: '$1,450–1,650', l: 'לכל TB · AWS S3 + API',   s: 'אחסון ופעילות שוטפת, ללא כפל אחסון מצידנו', a: C.cyan },
+    { v: '20%–30%',      l: 'יתרון ל-Dell ECS',        s: 'בשכבה החמה בלבד — ראו השקף הבא',          a: C.orange },
   ];
   rows.forEach((r, i) => {
     const y = 2.26 + i * 1.46;
@@ -251,7 +251,7 @@ slides.push({ ops: S(o => {
 
 // -------------------------------------------------- 6 · Tier correction
 slides.push({ ops: S(o => {
-  header(o, 'מה שההשוואה מפספסת', 'השוואנו מול S3 Standard — אבל דימות ו-Verint הם דאטה ארכיוני', C.purple, 25);
+  header(o, 'מה שההשוואה מפספסת', 'תמחרנו לפי שכבה חמה — אבל דימות ו-Verint הם דאטה ארכיוני', C.purple, 26);
 
   // Tier ladder on the right
   const tx = 6.95, tw = 5.48;

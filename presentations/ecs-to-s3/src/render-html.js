@@ -42,7 +42,7 @@ function forecastSvg(w, h) {
 function costSvg(w, h) {
   const pl = 44, pr = 8, pt = 26, pb = 34;
   const iw = w - pl - pr, ih = h - pt - pb;
-  const cats = [['Dell ECS On-Prem', 115.8, C.green], ['AWS S3 Standard', 146.5, C.cyan], ['AWS S3 + API', 155.0, C.purple]];
+  const cats = [['Dell ECS On-Prem', 115.8, C.green], ['AWS S3 + API', 155.0, C.cyan]];
   const max = 180;
   let g = '';
   for (let v = 0; v <= 180; v += 60) {
@@ -50,7 +50,7 @@ function costSvg(w, h) {
     g += `<line x1="${pl}" y1="${y}" x2="${pl + iw}" y2="${y}" stroke="#1C2740"/>`;
     g += `<text x="${pl - 6}" y="${y + 3.5}" fill="#${C.dim}" font-size="10" text-anchor="end">${v}</text>`;
   }
-  const slot = iw / cats.length, bw = slot * 0.42;
+  const slot = iw / cats.length, bw = slot * 0.29;
   cats.forEach(([n, v, col], i) => {
     const cx = pl + slot * (i + 0.5);
     const bh = (ih * v) / max;
