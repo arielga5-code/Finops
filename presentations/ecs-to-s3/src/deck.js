@@ -110,7 +110,7 @@ slides.push({ ops: S(o => {
   // run the full height of the body band so each option reads as a full brief:
   // what it is, then cost / time / upside / catch, then what it needs from the
   // forum.
-  const w = 5.62, h = 4.0, y = 2.26;
+  const w = 5.62, h = 4.1, y = 2.22;
   const xR = G.W - G.M - w;            // right card = first in RTL
   const xL = G.M;
 
@@ -120,21 +120,22 @@ slides.push({ ops: S(o => {
     txt(o, num, { x: x + w - 1.28, y: y + 0.34, w: 0.74, h: 0.48, size: 24, bold: true, color: accent, align: 'right', rtl: false, valign: 'middle' });
     txt(o, he(title), { x: x + 0.38, y: y + 0.32, w: w - 1.78, h: 0.52, size: 19, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
     rect(o, x + 0.38, y + 1.0, w - 0.76, 0.012, { fill: C.border });
-    txt(o, he(lead), { x: x + 0.38, y: y + 1.14, w: w - 0.76, h: 0.66, size: 14, color: C.text, align: 'right', rtl: true, valign: 'top', lh: 1.32 });
+    txt(o, he(lead), { x: x + 0.38, y: y + 1.12, w: w - 0.76, h: 0.52, size: 14, color: C.text, align: 'right', rtl: true, valign: 'top', lh: 1.32 });
     facts.forEach((f, i) => {
-      const fy = y + 1.9 + i * 0.44;
+      const fy = y + 1.68 + i * 0.42;
       rect(o, x + w - 0.44, fy + 0.14, 0.1, 0.1, { fill: f[1] ? accent : C.dim });
-      txt(o, he(f[0]), { x: x + 0.38, y: fy, w: w - 0.94, h: 0.42, size: 13, color: f[1] ? C.text : C.muted, align: 'right', rtl: true, valign: 'middle' });
+      txt(o, he(f[0]), { x: x + 0.38, y: fy, w: w - 0.94, h: 0.4, size: 13, color: f[1] ? C.text : C.muted, align: 'right', rtl: true, valign: 'middle' });
     });
     rect(o, x + 0.38, y + h - 0.66, w - 0.76, 0.5, { fill: chipFill, r: 0.16 });
     txt(o, he(chipText), { x: x + 0.54, y: y + h - 0.66, w: w - 1.08, h: 0.5, size: 13, bold: true, color: accent, align: 'right', rtl: true, valign: 'middle' });
   }
 
   option(xR, '01', 'הרחבת דיסקים ב-Dell ECS',
-    'הרחבת המערך הקיים: רכש תוספת דיסקים מ-Dell, באותה ארכיטקטורה ובאותם ממשקים.',
+    'הרחבת המערך הקיים — באותה ארכיטקטורה ובאותם ממשקים.',
     [
       ['עלות: $695,520 · 600 TB לוגי · Replica x3', true],
       ['זמן: PO באוקטובר, אספקה תוך כחודשיים', true],
+      ['תוספת דיסקים ל-nodes קיימים · תחזוקה ל-5 שנים', true],
       ['ללא שינוי באפליקציות, אך הוצאה הונית מלאה', false],
     ],
     'נדרש: אישור תקציב ויציאה ל-PO באוקטובר', C.orange, '5A4222', '3A2A12');
@@ -144,6 +145,7 @@ slides.push({ ops: S(o => {
     [
       ['עלות: תשלום לפי צריכה, ללא הוצאה הונית', true],
       ['זמן: שבועות — ללא PO וללא זמן אספקה', true],
+      ['ניתן להתחיל בקורפוס אחד ולהרחיב בהדרגה', true],
       ['מפנה שטח מיד, אך נדרשת שכבת API באפליקציה', false],
     ],
     'נדרש: אישור עקרוני + תקציב POC', C.cyan, '2E5F6B', '13303A');
