@@ -30,7 +30,7 @@ function forecastSvg(w, h) {
     g += `<text x="${X(i)}" y="${pt + ih + 12}" fill="#${C.dim}" font-size="8.5" text-anchor="end" transform="rotate(-60 ${X(i)} ${pt + ih + 12})">${l}</text>`;
   });
   const series = [
-    [D.CAPACITY, C.blue], [D.THRESHOLD, C.red], [D.FAST, C.purple],
+    [D.CAPACITY, C.blue], [D.THRESHOLD, C.red],
     [D.TREND, C.cyan], [D.ACTUAL, C.orange],
   ];
   series.forEach(([arr, col]) => {

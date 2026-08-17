@@ -5,19 +5,18 @@ const D = require('./deck');
 const pres = new pptxgen();
 pres.layout = 'LAYOUT_WIDE';           // 13.333 x 7.5
 pres.author = 'Harel IT Infrastructure';
-pres.title = 'העתקת מסמכי דימות ושיחות לענן';
+pres.title = 'העתקת מסמכי דימות ו-Verint לענן';
 
 function drawChart(slide, op) {
   if (op.kind === 'forecast') {
     slide.addChart(pres.ChartType.line, [
       { name: 'קיבולת',      labels: D.FC_LABELS, values: D.CAPACITY },
       { name: 'סף 80%',      labels: D.FC_LABELS, values: D.THRESHOLD },
-      { name: 'תרחיש מואץ',  labels: D.FC_LABELS, values: D.FAST },
-      { name: 'תחזית מגמה',  labels: D.FC_LABELS, values: D.TREND },
+      { name: 'תחזית',       labels: D.FC_LABELS, values: D.TREND },
       { name: 'בשימוש',      labels: D.FC_LABELS, values: D.ACTUAL },
     ], {
       x: op.x, y: op.y, w: op.w, h: op.h,
-      chartColors: [C.blue, C.red, C.purple, C.cyan, C.orange],
+      chartColors: [C.blue, C.red, C.cyan, C.orange],
       lineDataSymbol: 'none',
       lineSize: 2.5,
       showLegend: false, showTitle: false,

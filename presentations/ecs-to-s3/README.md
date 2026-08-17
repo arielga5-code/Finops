@@ -45,23 +45,32 @@ checked 95 adjacent embedding pairs with 0 violations.
 - `ECS_to_S3_Migration_Decision.pptx` — original 8-slide Hebrew deck
 - Dell quote: $695,520 for 1,800 TB net (3,024 TB gross), $386/TB net
 
+## The deck's spine
+
+Three dates carry the whole argument, and every slide is aligned to them:
+
+| | |
+|---|---|
+| **Today, Aug 2026** | 75% utilisation — 687 TB of 916 TB usable, 46 TB of headroom |
+| **October 2026** | Last date a PO can be issued. Dell lead time is ~2 months. |
+| **December 2026** | 80% threshold (733 TB) is crossed, and the disks land — just in time |
+
+80% is framed as an availability risk, not a budget event: above it performance
+degrades and downtime exposure rises. The crossing date is not ours to control; the
+PO date is. A PO issued after October arrives after the threshold is already breached.
+
 ## Corrections applied to the source material
 
-1. **80% breach date.** The dashboard labels Oct-2026. Its own forecast series reaches
-   only 695 TB (75.9%) that month; 80% = 733 TB. Restated as a three-scenario range:
-   Nov-2026 (accelerated) → Jan-2027 (dashboard slope) → Mar-2027 (12-month trend).
-   October is the *procurement* target, not the breach date.
-2. **Current utilisation.** 668/916 = 72.9%, not the dashboard's "~75%".
-3. **December forecast.** Dashboard tile says 710 TB; its own series says 725 TB.
-4. **Growth rate.** 12-month actual is 9.9 TB/month, not "~11". The last three months
-   (Jun–Aug 26) are flat.
-5. **Slide 2 vs slide 3 of the original deck** disagreed on the breach month
-   (November vs October). Resolved to the scenario range above.
-6. **Cost comparison tier.** The original compares On-Prem only against S3 Standard.
+1. **Current utilisation is 75%** (687 TB of 916 TB), per the business. An earlier
+   revision of this deck used 668 TB / 72.9% taken from the dashboard's used figure —
+   that used figure was stale.
+2. **Cost comparison tier.** The original compares On-Prem only against S3 Standard.
    For write-once, rarely-read archival data the correct tier is Glacier Instant
    Retrieval (~$25K/100 TB/5yr) or Standard-IA (~$77K), against On-Prem's $116K —
-   which reverses the "Dell is 16–30% cheaper" conclusion. Both sides are now shown,
+   which reverses the "Dell is 16-30% cheaper" conclusion. Both sides are shown,
    with the egress/retrieval/minimum-object-size counterweights.
+3. **Corpus naming.** The migrated corpus is the imaging (dimut) and Verint
+   call-recording data. An earlier revision carried "Commit" over from the source deck.
 
 Pricing is AWS list price and needs re-quoting for `il-central-1` if data residency
 in Israel is required.

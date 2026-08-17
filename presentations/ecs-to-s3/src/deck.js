@@ -4,19 +4,18 @@ const { C, F, G, he } = require('./theme');
 const FC_LABELS = [
   'Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25',
   'Jan-26','Feb-26','Mar-26','Apr-26','May-26','Jun-26','Jul-26','Aug-26',
-  'Sep-26','Oct-26','Nov-26','Dec-26','Jan-27','Feb-27','Mar-27',
+  'Sep-26','Oct-26','Nov-26','Dec-26','Jan-27','Feb-27',
 ];
-const N = FC_LABELS.length;         // 24
+const N = FC_LABELS.length;         // 23
 const IDX_AUG26 = 16;               // last actual
 
-const ACTUAL = [516,520,526,530,549,560,569,577,605,628,642,650,660,668,680,679,668]
+// Aug-26 = 687 TB of 916 TB usable = 75.0%
+const ACTUAL = [516,520,526,530,549,560,569,577,605,628,642,650,660,668,680,679,687]
   .concat(Array(N - 17).fill(null));
 
+// 687 → 733 TB (80%) by Dec-26 = ~11.5 TB/month, then carried on
 const TREND = Array(IDX_AUG26).fill(null)
-  .concat([668, 678, 688, 698, 708, 718, 727, 737]);
-
-const FAST = Array(IDX_AUG26).fill(null)
-  .concat([668, 691, 714, 737, 760, 783, 806, 829]);
+  .concat([687, 698, 710, 721, 733, 744, 756]);
 
 const CAPACITY  = Array(N).fill(916);
 const THRESHOLD = Array(N).fill(733);
@@ -96,9 +95,9 @@ slides.push({ bg: C.bgDeep, ops: S(o => {
     x: G.M, y: 3.0, w: G.CW, h: 0.42, size: 15, color: C.muted, align: 'right', rtl: true, valign: 'middle' });
 
   const tiles = [
-    { v: '72.9%',      l: 'ניצולת האחסון היום',    s: '668 TB מתוך 916 TB',       a: C.orange },
-    { v: '65 TB',      l: 'המרווח עד סף 80%',      s: 'כ-6 חודשים בקצב המגמה',    a: C.cyan },
-    { v: '$116K–141K', l: 'עלות 100 TB ל-5 שנים',  s: 'On-Prem מול AWS S3 Standard', a: C.green },
+    { v: '75%',           l: 'ניצולת האחסון היום',      s: '687 TB מתוך 916 TB',        a: C.orange },
+    { v: 'דצמבר 2026',    l: 'חציית סף 80%',            s: '733 TB · סיכון לזמינות',    a: C.red },
+    { v: 'אוקטובר 2026',  l: 'מועד אחרון להוצאת PO',    s: 'חודשיים אספקה מ-Dell',      a: C.cyan },
   ];
   // RTL: first tile on the right
   tiles.forEach((t, i) => {
@@ -106,7 +105,7 @@ slides.push({ bg: C.bgDeep, ops: S(o => {
     const x = G.W - G.M - w - i * (w + gap);
     rect(o, x, 4.32, w, 1.28, { fill: C.card, line: C.border, r: 0.05 });
     txt(o, he(t.l), { x: x + 0.28, y: 4.46, w: w - 0.56, h: 0.24, size: 10.5, bold: true, color: C.muted, align: 'right', rtl: true, cs: 0.8, valign: 'middle' });
-    txt(o, t.v,     { x: x + 0.28, y: 4.72, w: w - 0.56, h: 0.46, size: 26, bold: true, color: t.a, align: 'right', rtl: false, valign: 'middle' });
+    txt(o, he(t.v), { x: x + 0.28, y: 4.72, w: w - 0.56, h: 0.46, size: 26, bold: true, color: t.a, align: 'right', rtl: true, valign: 'middle' });
     txt(o, he(t.s), { x: x + 0.28, y: 5.19, w: w - 0.56, h: 0.28, size: 11, color: C.dim, align: 'right', rtl: true, valign: 'middle' });
   });
 
@@ -117,49 +116,62 @@ slides.push({ bg: C.bgDeep, ops: S(o => {
 
 // -------------------------------------------------- 2 · The decision
 slides.push({ ops: S(o => {
-  header(o, 'ההחלטה הנדרשת', 'שתי החלטות נפרדות — ורק אחת מהן דחופה היום', C.cyan);
+  header(o, 'ההחלטה הנדרשת', 'ה-PO חייב לצאת באוקטובר 2026 — אחרת נגיע ל-80% בדצמבר בלי דיסקים', C.red, 25);
 
-  const w = 5.62, h = 2.48, y = 2.3;
+  // The chain: today → PO → delivery. RTL, so the first step sits on the right.
+  const steps = [
+    { k: 'היום · אוגוסט 2026',      v: '75%',          s: '687 TB מתוך 916 TB בשימוש',        a: C.orange },
+    { k: 'אוקטובר 2026',            v: 'הוצאת PO',     s: 'חודשיים זמן אספקה מ-Dell',          a: C.cyan },
+    { k: 'דצמבר 2026',              v: '80% ואספקה',  s: 'הדיסקים מגיעים בדיוק בזמן',        a: C.red },
+  ];
+  const sw = 3.5, sgap = 0.52, sy = 2.24, sh = 1.28;
+  steps.forEach((t, i) => {
+    const x = G.W - G.M - sw - i * (sw + sgap);
+    rect(o, x, sy, sw, sh, { fill: C.card, line: i === 2 ? '5A2A38' : C.border, r: 0.05 });
+    txt(o, he(t.k), { x: x + 0.28, y: sy + 0.18, w: sw - 0.56, h: 0.26, size: 10.5, bold: true, color: C.muted, align: 'right', rtl: true, cs: 0.8, valign: 'middle' });
+    txt(o, he(t.v), { x: x + 0.28, y: sy + 0.46, w: sw - 0.56, h: 0.46, size: 24, bold: true, color: t.a, align: 'right', rtl: true, valign: 'middle' });
+    txt(o, he(t.s), { x: x + 0.28, y: sy + 0.94, w: sw - 0.56, h: 0.26, size: 11, color: C.dim, align: 'right', rtl: true, valign: 'middle' });
+    if (i < 2) txt(o, '←', { x: x - sgap, y: sy + 0.44, w: sgap, h: 0.4, size: 19, bold: true, color: C.dim, align: 'center', rtl: false, valign: 'middle' });
+  });
+
+  const w = 5.62, h = 1.86, y = 3.86;
   const xR = G.W - G.M - w;        // right card = first in RTL
   const xL = G.M;
 
-  rect(o, xR, y, w, h, { fill: C.card, line: '2E5F6B', r: 0.05 });
-  txt(o, '01', { x: xR + w - 1.0, y: y + 0.26, w: 0.7, h: 0.44, size: 22, bold: true, color: C.cyan, align: 'right', rtl: false, valign: 'middle' });
-  txt(o, he('העתקת מסמכי דימות ו-Verint ל-AWS S3'), { x: xR + 0.34, y: y + 0.28, w: w - 1.44, h: 0.42, size: 16.5, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
-  txt(o, he('מפנה שטח ב-ECS תוך שבועות, ללא PO וללא זמן אספקה. זה המנוף היחיד שזמין לפני דצמבר 2026, והוא אינו תלוי בשרשרת האספקה של Dell. החשיפה התקציבית המיידית מוגבלת ל-POC בהיקף 1–2 TB בלבד.'), {
-    x: xR + 0.34, y: y + 0.82, w: w - 0.68, h: 1.16, size: 12.5, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.24 });
-  rect(o, xR + 0.34, y + 1.82, w - 0.68, 0.5, { fill: '13303A', r: 0.12 });
-  txt(o, he('נדרש היום: אישור עקרוני + תקציב POC'), { x: xR + 0.5, y: y + 1.82, w: w - 1.0, h: 0.5, size: 12.5, bold: true, color: C.cyan, align: 'right', rtl: true, valign: 'middle' });
+  rect(o, xR, y, w, h, { fill: C.card, line: '5A4222', r: 0.05 });
+  txt(o, '01', { x: xR + w - 1.0, y: y + 0.22, w: 0.7, h: 0.42, size: 21, bold: true, color: C.orange, align: 'right', rtl: false, valign: 'middle' });
+  txt(o, he('הרחבת דיסקים ב-Dell ECS On-Prem'), { x: xR + 0.34, y: y + 0.24, w: w - 1.44, h: 0.4, size: 16, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
+  txt(o, he('חציית 80% מסכנת את זמינות המערכת. חודשיים אספקה מ-Dell פירושם שהחלון להוצאת PO נסגר באוקטובר. הצעת Dell עומדת על $695,520 עבור 600 TB לוגי.'), {
+    x: xR + 0.34, y: y + 0.7, w: w - 0.68, h: 0.66, size: 12, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.22 });
+  rect(o, xR + 0.34, y + 1.36, w - 0.68, 0.36, { fill: '3A2A12', r: 0.16 });
+  txt(o, he('נדרש: אישור תקציב ויציאה ל-PO באוקטובר'), { x: xR + 0.5, y: y + 1.36, w: w - 1.0, h: 0.36, size: 12, bold: true, color: C.orange, align: 'right', rtl: true, valign: 'middle' });
 
-  rect(o, xL, y, w, h, { fill: C.card, line: '5A4222', r: 0.05 });
-  txt(o, '02', { x: xL + w - 1.0, y: y + 0.26, w: 0.7, h: 0.44, size: 22, bold: true, color: C.orange, align: 'right', rtl: false, valign: 'middle' });
-  txt(o, he('הרחבת דיסקים ב-Dell ECS On-Prem'), { x: xL + 0.34, y: y + 0.28, w: w - 1.44, h: 0.42, size: 16.5, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
-  txt(o, he('זמן אספקה כחודשיים. אינה דחופה השבוע — אך אסור שתיקבע לפי תאריך בלוח השנה, אלא לפי טריגר ניצולת שמבטיח חודשיים אספקה בכל תרחיש. הצעת Dell הנוכחית עומדת על $695,520 עבור 600 TB לוגי.'), {
-    x: xL + 0.34, y: y + 0.82, w: w - 0.68, h: 1.16, size: 12.5, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.24 });
-  rect(o, xL + 0.34, y + 1.82, w - 0.68, 0.5, { fill: '3A2A12', r: 0.12 });
-  txt(o, he('נדרש היום: אישור טריגר רכש בניצולת 75%'), { x: xL + 0.5, y: y + 1.82, w: w - 1.0, h: 0.5, size: 12.5, bold: true, color: C.orange, align: 'right', rtl: true, valign: 'middle' });
+  rect(o, xL, y, w, h, { fill: C.card, line: '2E5F6B', r: 0.05 });
+  txt(o, '02', { x: xL + w - 1.0, y: y + 0.22, w: 0.7, h: 0.42, size: 21, bold: true, color: C.cyan, align: 'right', rtl: false, valign: 'middle' });
+  txt(o, he('העתקת מסמכי דימות ו-Verint ל-AWS S3'), { x: xL + 0.34, y: y + 0.24, w: w - 1.44, h: 0.4, size: 16, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
+  txt(o, he('מפנה שטח ב-ECS תוך שבועות, ללא PO וללא זמן אספקה. רץ במקביל לרכש ומקטין את הלחץ על הסף — אך אינו מחליף את הדיסקים ואינו עוצר את השעון.'), {
+    x: xL + 0.34, y: y + 0.7, w: w - 0.68, h: 0.66, size: 12, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.22 });
+  rect(o, xL + 0.34, y + 1.36, w - 0.68, 0.36, { fill: '13303A', r: 0.16 });
+  txt(o, he('נדרש: אישור עקרוני + תקציב POC'), { x: xL + 0.5, y: y + 1.36, w: w - 1.0, h: 0.36, size: 12, bold: true, color: C.cyan, align: 'right', rtl: true, valign: 'middle' });
 
-  txt(o, he('שתי ההחלטות אינן חלופיות. ההעתקה לענן דוחה ומקטינה את הרכש — היא אינה מבטלת אותו.'), {
-    x: G.M, y: 5.15, w: G.CW, h: 0.5, size: 15, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
-
-  footnote(o, 'אין צורך באישור תקציב סופי לרכש בישיבה זו. הנתון החסר להחלטה מלאה הוא גודל קורפוס הדימות ו-Verint — כמה TB באמת יפונו.', C.cyan);
+  footnote(o, 'כל חודש עיכוב בהוצאת ה-PO דוחה את האספקה בחודש — אך אינו דוחה את חציית 80%. עיכוב לנובמבר פירושו הגעה ל-80% לפני שהדיסקים בבית.', C.red);
 })});
 
 // -------------------------------------------------- 3 · Situation + forecast chart
 slides.push({ ops: S(o => {
-  header(o, 'המצב היום', '668 TB מתוך 916 TB — והגידול נעצר בשלושת החודשים האחרונים', C.orange, 25);
+  header(o, 'המצב היום', '75% ניצולת — ובקצב הנוכחי הסף נחצה בדצמבר 2026', C.orange, 26);
 
   // stat rail on the LEFT (mirrored for RTL); chart on the RIGHT
   const railW = 3.05, railX = G.M;
   const rows = [
-    { v: '72.9%',      l: 'ניצולת נוכחית',        s: 'אוגוסט 2026 · 668 TB מתוך 916 TB', a: C.orange },
-    { v: '65 TB',      l: 'מרווח עד סף 80%',      s: 'הסף עומד על 733 TB',               a: C.cyan },
-    { v: '9.9 TB',     l: 'גידול חודשי · 12 חודשים', s: 'אך מאי–אוגוסט 2026: ללא גידול נטו', a: C.green },
+    { v: '75%',         l: 'ניצולת נוכחית',       s: 'אוגוסט 2026 · 687 TB מתוך 916 TB', a: C.orange, ltr: true },
+    { v: '46 TB',       l: 'מרווח עד סף 80%',     s: 'הסף עומד על 733 TB',               a: C.cyan,   ltr: true },
+    { v: 'דצמבר 2026',  l: 'חציית 80% צפויה',     s: 'בקצב של כ-11.5 TB לחודש',          a: C.red,    ltr: false },
   ];
   rows.forEach((r, i) => {
     const y = 2.26 + i * 1.46;
     rect(o, railX + railW - 0.06, y + 0.02, 0.055, 1.16, { fill: r.a });
-    txt(o, r.v,     { x: railX, y, w: railW - 0.22, h: 0.5, size: 30, bold: true, color: r.a, align: 'right', rtl: false, valign: 'middle' });
+    txt(o, r.ltr ? r.v : he(r.v), { x: railX, y, w: railW - 0.22, h: 0.5, size: r.ltr ? 30 : 25, bold: true, color: r.a, align: 'right', rtl: !r.ltr, valign: 'middle' });
     txt(o, he(r.l), { x: railX, y: y + 0.5, w: railW - 0.22, h: 0.26, size: 10.5, bold: true, color: C.muted, align: 'right', rtl: true, cs: 0.8, valign: 'middle' });
     txt(o, he(r.s), { x: railX, y: y + 0.78, w: railW - 0.22, h: 0.44, size: 11, color: C.dim, align: 'right', rtl: true, valign: 'top', lh: 1.15 });
   });
@@ -170,43 +182,46 @@ slides.push({ ops: S(o => {
 
   const legend = [
     { c: C.orange, l: 'בשימוש בפועל' },
-    { c: C.cyan,   l: 'תחזית מגמה' },
-    { c: C.purple, l: 'תרחיש מואץ' },
+    { c: C.cyan,   l: 'תחזית' },
     { c: C.red,    l: 'סף 80%' },
     { c: C.blue,   l: 'קיבולת' },
   ];
-  legend.forEach((g, i) => chip(o, G.W - G.M - 0.16 - i * 1.62, 5.94, g.c, g.l));
+  legend.forEach((g, i) => chip(o, G.W - G.M - 0.16 - i * 1.72, 5.94, g.c, g.l));
 
-  footnote(o, 'ההרחבה הקודמת העלתה את הקיבולת מ-696 TB ל-916 TB באפריל 2025 — 220 TB, כלומר כ-22 חודשי מרווח בקצב המגמה הנוכחי.', C.orange);
+  footnote(o, 'קו התחזית חוצה את סף 80% בדצמבר 2026. מכיוון שזמן האספקה מ-Dell הוא כחודשיים, ה-PO חייב לצאת באוקטובר כדי שהדיסקים יגיעו לפני החצייה.', C.red);
 })});
 
-// -------------------------------------------------- 4 · Forecast correction
+// -------------------------------------------------- 4 · The two critical dates
 slides.push({ ops: S(o => {
-  header(o, 'תיקון לתחזית', 'סף 80% לא ייחצה באוקטובר 2026 — אלא בין נובמבר 2026 למרץ 2027', C.red, 25);
+  header(o, 'לוח הזמנים הקריטי', 'שני תאריכים שונים — ואוקטובר הוא זה שתלוי בנו', C.red, 27);
 
-  const w = 3.55, gap = 0.44, y = 2.26;
+  const w = 3.55, gap = 0.44, y = 2.22, ch = 2.24;
   const sc = [
-    { a: C.purple, n: 'תרחיש מואץ',       r: 'כ-23 TB לחודש', d: 'נובמבר 2026', s: 'גבול אי-הוודאות העליון של הדשבורד' },
-    { a: C.orange, n: 'תחזית הדשבורד',    r: 'כ-14 TB לחודש', d: 'ינואר 2027',  s: 'שיפוע סדרת התחזית הקיימת' },
-    { a: C.green,  n: 'תרחיש מגמה',       r: '9.9 TB לחודש', d: 'מרץ 2027',    s: 'ממוצע 12 החודשים האחרונים בפועל' },
+    { a: C.orange, n: 'היום', d: 'אוגוסט 2026', v: '75%',
+      s: '687 TB מתוך 916 TB. נותרו 46 TB עד לסף.' },
+    { a: C.cyan,   n: 'החלון להחלטה', d: 'אוקטובר 2026', v: 'הוצאת PO',
+      s: 'חודשיים זמן אספקה מ-Dell. זהו המועד האחרון שעדיין מביא דיסקים לפני דצמבר.' },
+    { a: C.red,    n: 'הסף', d: 'דצמבר 2026', v: '80%',
+      s: '733 TB. מעל הסף הביצועים נפגעים והסיכון לזמינות המערכת עולה.' },
   ];
   sc.forEach((t, i) => {
     const x = G.W - G.M - w - i * (w + gap);
-    rect(o, x, y, w, 2.12, { fill: C.card, line: C.border, r: 0.05 });
+    rect(o, x, y, w, ch, { fill: C.card, line: i === 1 ? '2E5F6B' : (i === 2 ? '5A2A38' : C.border), r: 0.05 });
     rect(o, x + w - 0.5, y + 0.3, 0.13, 0.13, { fill: t.a });
-    txt(o, he(t.n), { x: x + 0.3, y: y + 0.22, w: w - 0.9, h: 0.3, size: 13, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
-    txt(o, he(t.r), { x: x + 0.3, y: y + 0.54, w: w - 0.6, h: 0.26, size: 11.5, color: C.muted, align: 'right', rtl: true, valign: 'middle' });
-    txt(o, he(t.d), { x: x + 0.3, y: y + 0.9, w: w - 0.6, h: 0.56, size: 27, bold: true, color: t.a, align: 'right', rtl: true, valign: 'middle' });
-    txt(o, he(t.s), { x: x + 0.3, y: y + 1.5, w: w - 0.6, h: 0.5, size: 11, color: C.dim, align: 'right', rtl: true, valign: 'top', lh: 1.15 });
+    txt(o, he(t.n), { x: x + 0.3, y: y + 0.22, w: w - 0.9, h: 0.3, size: 11, bold: true, color: C.muted, align: 'right', rtl: true, cs: 0.8, valign: 'middle' });
+    txt(o, he(t.d), { x: x + 0.3, y: y + 0.56, w: w - 0.6, h: 0.4, size: 19, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
+    txt(o, he(t.v), { x: x + 0.3, y: y + 1.0, w: w - 0.6, h: 0.5, size: 26, bold: true, color: t.a, align: 'right', rtl: true, valign: 'middle' });
+    txt(o, he(t.s), { x: x + 0.3, y: y + 1.54, w: w - 0.6, h: 0.6, size: 11, color: C.dim, align: 'right', rtl: true, valign: 'top', lh: 1.18 });
+    if (i < 2) txt(o, '←', { x: x - gap, y: y + 1.0, w: gap, h: 0.5, size: 18, bold: true, color: C.dim, align: 'center', rtl: false, valign: 'middle' });
   });
 
-  rect(o, G.M, 4.66, G.CW, 1.36, { fill: '2A1620', line: '5A2A38', r: 0.05 });
-  rect(o, G.W - G.M - 0.48, 4.9, 0.13, 0.13, { fill: C.red });
-  txt(o, he('מה שהדשבורד מציג כיום — ומה שגוי בו'), { x: G.M + 0.3, y: 4.82, w: G.CW - 0.9, h: 0.28, size: 12.5, bold: true, color: C.red, align: 'right', rtl: true, valign: 'middle' });
-  txt(o, he('הדשבורד מסמן את אוקטובר 2026 כמועד חציית 80% ומציין 733 TB. סדרת התחזית שבתוכו מגיעה באוקטובר ל-695 TB בלבד — 75.9% ניצולת. אוקטובר הוא מועד היעד להוצאת הרכש, לא מועד חציית הסף; שני הקווים מצוירים על אותו חודש וזה מקור הבלבול. בנוסף, הדשבורד מציג ניצולת של 75% במקום 72.9%, ומציג תחזית של 710 TB לדצמבר בעוד סדרת הנתונים שלו עצמה נותנת 725 TB.'), {
-    x: G.M + 0.3, y: 5.1, w: G.CW - 0.6, h: 0.84, size: 12, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.2 });
+  rect(o, G.M, 4.72, G.CW, 1.3, { fill: '2A1620', line: '5A2A38', r: 0.05 });
+  rect(o, G.W - G.M - 0.48, 4.96, 0.13, 0.13, { fill: C.red });
+  txt(o, he('למה אי אפשר לחכות'), { x: G.M + 0.3, y: 4.88, w: G.CW - 0.9, h: 0.28, size: 13, bold: true, color: C.red, align: 'right', rtl: true, valign: 'middle' });
+  txt(o, he('חציית 80% אינה אירוע תקציבי אלא אירוע תפעולי: מעל הסף ביצועי המערכת נפגעים והחשיפה להשבתה עולה. את מועד החצייה איננו שולטים בו — הוא נגזר מקצב הגידול. את מועד הרכש כן. הוצאת PO באוקטובר היא הפעולה היחידה שמבטיחה שהדיסקים יהיו בבית ברגע שהסף נחצה; כל דחייה מעבירה אותנו לדצמבר עם 80% ובלי קיבולת נוספת.'), {
+    x: G.M + 0.3, y: 5.16, w: G.CW - 0.6, h: 0.78, size: 12, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.2 });
 
-  footnote(o, 'המלצה: להחליף יעד-תאריך בטריגר ניצולת. הוצאת PO כאשר הניצולת מגיעה ל-75% (687 TB) משאירה לפחות חודשיים אספקה גם בתרחיש המואץ. היום חסרים 19 TB לטריגר.', C.green);
+  footnote(o, 'ההעתקה ל-AWS S3 רצה במקביל ומקטינה את קצב ההתקרבות לסף, אך היא אינה תחליף לרכש ואינה מבטלת את מועד האוקטובר.', C.cyan);
 })});
 
 // -------------------------------------------------- 5 · Cost comparison
@@ -275,7 +290,7 @@ slides.push({ ops: S(o => {
     { a: C.red,    t: 'רגולציה · ריבונות',   r: 'מידע רפואי ופיננסי מזוהה היוצא משליטת הארגון.', m: 'אזור il-central-1 (תל אביב), הצפנה ב-KMS עם מפתח בבעלותנו, ואישור DPO ורגולטור לפני ההעתקה הראשונה.', blocking: true },
     { a: C.orange, t: 'טכני · שלמות',        r: 'אין כלי העתקה ייעודי; חלק מהקבצים עלולים להיכשל בהעברה.', m: 'AWS DataSync עם ולידציה מובנית, דוח חריגים לכל ריצה, ומחיקה מ-ECS רק לאחר ולידציה מלאה.' },
     { a: C.orange, t: 'ביצועים',             r: 'זמני אחזור בענן נמוכים יותר; למערכת הדימות אין ניסיון מול ענן.', m: 'POC על 1–2 TB לפני התחייבות, חיבור Direct Connect ולא אינטרנט, ומדידת זמני אחזור מול ה-SLA הקיים.' },
-    { a: C.cyan,   t: 'לוחות זמנים',         r: 'ההעתקה אורכת שבועות ותלויה בפס רוחב.', m: 'העברה ראשונית ב-AWS Snowball. ההעתקה אינה על הנתיב הקריטי של הרכש — שני המסלולים רצים במקביל.' },
+    { a: C.red,    t: 'לוחות זמנים',         r: 'זמן אספקה של חודשיים מ-Dell; PO שיוצא אחרי אוקטובר מגיע אחרי חציית 80%.', m: 'אישור תקציב בספטמבר, PO באוקטובר. ההעתקה לענן רצה במקביל ומקטינה את הלחץ אם האספקה תתעכב.', blocking: true },
     { a: C.cyan,   t: 'כלכלי · Lock-in',     r: 'יציאה מהענן עולה $0.09 ל-GB; מעבר ממודל capex למודל opex.', m: 'תמחור תרחיש יציאה מראש, התחלה בקורפוס אחד בלבד, ואישור תקציב opex רב-שנתי.' },
   ];
   const w = 3.55, gap = 0.44, h = 1.86;
@@ -299,8 +314,8 @@ slides.push({ ops: S(o => {
   header(o, 'מה זה נותן', 'המנוף היחיד על השולחן שאינו תלוי בזמן אספקה של חודשיים', C.green, 26);
 
   const bens = [
-    { a: C.green,  t: 'פינוי שטח מיידי',   b: 'העתקת קורפוס הדימות ו-Verint מפנה שטח ב-ECS תוך שבועות. זו האפשרות היחידה שמשפיעה על הניצולת לפני דצמבר 2026.' },
-    { a: C.green,  t: 'דחיית והקטנת capex', b: 'כל TB שמפונה דוחה את מועד הרכש ומקטין את היקפו. הצעת Dell הנוכחית עומדת על $695,520 עבור 600 TB לוגי.' },
+    { a: C.green,  t: 'פינוי שטח מיידי',   b: 'העתקת קורפוס הדימות ו-Verint מפנה שטח ב-ECS תוך שבועות, ומאטה את ההתקרבות לסף 80% בדצמבר — בלי להמתין לאספקה.' },
+    { a: C.green,  t: 'דחיית והקטנת capex', b: 'כל TB שמפונה מקטין את היקף ההרחבה הנדרשת. הצעת Dell הנוכחית עומדת על $695,520 עבור 600 TB לוגי.' },
     { a: C.cyan,   t: 'ללא זמן אספקה',     b: 'אין PO, אין דיסקים, אין חלון התקנה. הקיבולת זמינה ביום הראשון, ומשלמים רק על מה שנצרך בפועל — בלי לרכוש מראש קיבולת לשלוש שנים.' },
     { a: C.cyan,   t: 'Lifecycle אוטומטי', b: 'מדיניות שכבות מעבירה דאטה מתקרר לשכבה זולה יותר לאורך זמן — הוזלה שנמשכת ללא התערבות תפעולית ובלי פרויקט נוסף.' },
     { a: C.blue,   t: 'עמידות מובנית',     b: '11 תשיעיות עמידות ופיזור בין אזורי זמינות, במקום שכפול משולש שאנחנו מתחזקים ומשלמים עליו פי שלושה בשלושה אתרים.' },
@@ -322,7 +337,7 @@ slides.push({ ops: S(o => {
 
 // -------------------------------------------------- 9 · Timeline
 slides.push({ ops: S(o => {
-  header(o, 'ציר זמן', 'שני מסלולים במקביל: העתקה לענן מתחילה מיד, רכש נקבע לפי טריגר', C.cyan, 25);
+  header(o, 'ציר זמן', 'שני מסלולים במקביל — והרכש נעול על אוקטובר', C.red, 27);
 
   const y0 = 2.86;
   const months = ['אוגוסט 26', 'ספטמבר 26', 'אוקטובר 26', 'נוב׳–דצמ׳ 26', 'ינואר–מרץ 27'];
@@ -336,9 +351,9 @@ slides.push({ ops: S(o => {
   const items = [
     { m: 'אישור עקרוני להעתקה\nפילוח קורפוס הדימות ו-Verint\nהגדרת קריטריוני קבילות', a: C.cyan },
     { m: 'POC על 1–2 TB\nאישור DPO ורגולטור\nהקמת Direct Connect', a: C.cyan },
-    { m: 'תחילת העתקה לייצור\nולידציה ראשונה ודוח חריגים\nמדידת ניצולת מול טריגר 75%', a: C.green },
-    { m: 'המשך העתקה ומחיקה מ-ECS\nטריגר רכש צפוי · PO ל-Dell\nדוח שלמות מסכם', a: C.orange },
-    { m: 'אספקת דיסקים והתקנה\nצפי חציית 80% בתרחיש המגמה\nהחלטה על היקף הרחבה נוסף', a: C.purple },
+    { m: 'הוצאת PO ל-Dell — מועד אחרון\nתחילת העתקה לייצור\nולידציה ראשונה ודוח חריגים', a: C.red },
+    { m: 'ייצור והובלה אצל Dell\nהמשך העתקה ומחיקה מ-ECS\nדוח שלמות מסכם', a: C.orange },
+    { m: 'אספקת דיסקים והתקנה\nחציית סף 80% — 733 TB\nהקיבולת הנוספת נכנסת בזמן', a: C.purple },
   ];
   months.forEach((mn, i) => {
     const x = startR - cw - i * (cw + gap);
@@ -348,28 +363,28 @@ slides.push({ ops: S(o => {
     txt(o, he(items[i].m), { x: x + 0.22, y: y0 + 0.86, w: cw - 0.44, h: 1.08, size: 11.5, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.22 });
   });
 
-  rect(o, G.M, 5.26, G.CW, 0.62, { fill: '13303A', r: 0.08 });
-  rect(o, G.W - G.M - 0.44, 5.5, 0.13, 0.13, { fill: C.cyan });
-  txt(o, he('טריגר הרכש אינו תאריך: PO יוצא כאשר הניצולת מגיעה ל-75% (687 TB). היום 72.9% — מרחק של 19 TB.'), {
-    x: G.M + 0.3, y: 5.26, w: G.CW - 0.9, h: 0.62, size: 13, bold: true, color: C.cyan, align: 'right', rtl: true, valign: 'middle' });
+  rect(o, G.M, 5.26, G.CW, 0.62, { fill: '2A1620', line: '5A2A38', r: 0.08 });
+  rect(o, G.W - G.M - 0.44, 5.5, 0.13, 0.13, { fill: C.red });
+  txt(o, he('אוקטובר הוא נקודת האל-חזור: חודשיים אספקה פירושם שכל PO שיוצא אחריו מגיע אחרי חציית 80%.'), {
+    x: G.M + 0.3, y: 5.26, w: G.CW - 0.9, h: 0.62, size: 13, bold: true, color: C.red, align: 'right', rtl: true, valign: 'middle' });
 
-  footnote(o, 'המסלולים אינם תלויים זה בזה. עיכוב ב-POC אינו מעכב את הרכש, ועיכוב ברכש אינו מעכב את ההעתקה.', C.cyan);
+  footnote(o, 'המסלולים אינם תלויים זה בזה: עיכוב ב-POC אינו מעכב את הרכש, ועיכוב ברכש אינו מעכב את ההעתקה. רק מסלול הרכש נעול על תאריך.', C.red);
 })});
 
 // -------------------------------------------------- 10 · Recommendation
 slides.push({ ops: S(o => {
-  header(o, 'המלצה', 'לאשר את ההעתקה עכשיו, ולקשור את הרכש לניצולת ולא לתאריך', C.green, 27);
+  header(o, 'המלצה', 'להוציא PO באוקטובר, ולהתניע את ההעתקה לענן במקביל', C.red, 27);
 
   const recs = [
-    { n: '01', a: C.cyan,   t: 'אישור עקרוני להעתקת מסמכי דימות ו-Verint ל-AWS S3',
+    { n: '01', a: C.red, t: 'הוצאת PO ל-Dell עד סוף אוקטובר 2026',
+      b: 'חודשיים זמן אספקה מחייבים יציאה באוקטובר כדי שהדיסקים יהיו מותקנים בדצמבר, במועד חציית 80%. אישור התקציב נדרש בספטמבר.',
+      o: 'תשתיות IT ורכש' },
+    { n: '02', a: C.cyan,   t: 'אישור עקרוני להעתקת מסמכי דימות ו-Verint ל-AWS S3',
       b: 'התנעה באוגוסט. תקציב POC על 1–2 TB, וסגירת חסמי הקבילות המשפטית והריבונות בספטמבר במקביל.',
-      o: 'תשתיות IT + יועץ משפטי + DPO' },
-    { n: '02', a: C.orange, t: 'טריגר רכש בניצולת 75% במקום תאריך יעד',
-      b: 'PO ל-Dell יוצא כאשר הניצולת מגיעה ל-687 TB. זה מבטיח חודשיים אספקה גם בתרחיש המואץ, ואינו מקדים רכש שאולי לא יידרש.',
-      o: 'תשתיות IT + רכש' },
+      o: 'תשתיות IT, יועץ משפטי ו-DPO' },
     { n: '03', a: C.purple, t: 'תמחור מחדש של חלופת הענן לפי שכבת אחסון נכונה',
       b: 'פילוח גודל-אובייקט ותדירות אחזור של הקורפוס, ותמחור מול Glacier Instant Retrieval באזור תל אביב — לא מול S3 Standard.',
-      o: 'תשתיות IT + FinOps' },
+      o: 'תשתיות IT ו-FinOps' },
   ];
   recs.forEach((r, i) => {
     const y = 2.22 + i * 1.15;
@@ -381,12 +396,12 @@ slides.push({ ops: S(o => {
     txt(o, he(r.o), { x: G.M + 0.28, y: y + 0.42, w: 2.3, h: 0.44, size: 11, color: r.a, align: 'right', rtl: true, valign: 'top', lh: 1.15 });
   });
 
-  rect(o, G.M, 5.66, G.CW, 0.6, { fill: '14302A', line: '2A6A52', r: 0.08 });
-  rect(o, G.W - G.M - 0.44, 5.89, 0.13, 0.13, { fill: C.green });
-  txt(o, he('נדרש היום: אישור עקרוני להעתקה, תקציב POC, ואישור טריגר הרכש ב-75%.'), {
-    x: G.M + 0.3, y: 5.66, w: G.CW - 0.9, h: 0.6, size: 14, bold: true, color: C.green, align: 'right', rtl: true, valign: 'middle' });
+  rect(o, G.M, 5.66, G.CW, 0.6, { fill: '2A1620', line: '5A2A38', r: 0.08 });
+  rect(o, G.W - G.M - 0.44, 5.89, 0.13, 0.13, { fill: C.red });
+  txt(o, he('נדרש היום: אישור תקציב הרכש כדי שה-PO יצא באוקטובר, ואישור עקרוני להעתקה.'), {
+    x: G.M + 0.3, y: 5.66, w: G.CW - 0.9, h: 0.6, size: 14, bold: true, color: C.red, align: 'right', rtl: true, valign: 'middle' });
 
-  footnote(o, 'החלטת התקציב המלאה לרכש תובא לאישור כאשר הטריגר ייחצה, עם הצעת מחיר מעודכנת מ-Dell ותמחור ענן מעודכן לצידה.', C.green);
+  footnote(o, 'אישור התקציב נדרש בספטמבר כדי שתהליך הרכש יסתיים בהוצאת PO באוקטובר. הצעת המחיר של Dell תרוענן לקראת האישור.', C.red);
 })});
 
-module.exports = { slides, FC_LABELS, ACTUAL, TREND, FAST, CAPACITY, THRESHOLD };
+module.exports = { slides, FC_LABELS, ACTUAL, TREND, CAPACITY, THRESHOLD };
