@@ -83,9 +83,10 @@ const slides = [];
 // -------------------------------------------------- 1 · Cover
 slides.push({ bg: C.bgDeep, ops: S(o => {
   rect(o, 0, 0, G.W, G.H, { fill: C.bgDeep });
-  // quiet geometric motif — on the left, away from the RTL text column
-  rect(o, -1.8, -1.1, 5.2, 5.2, { fill: '0C1322' });
-  rect(o, -1.4, 3.3, 3.4, 3.4, { fill: '0A101C' });
+  // Single hairline frame — top and bottom. No tinted blocks: on a projector the
+  // near-black fills band badly and read as smudges.
+  rect(o, G.M, 0.62, G.CW, 0.012, { fill: C.hair });
+  rect(o, G.W - G.M - 0.13, 0.56, 0.13, 0.13, { fill: C.cyan });
 
   txt(o, he('הראל · תשתיות IT'), {
     x: G.M, y: 2.42, w: G.CW, h: 0.3, size: 12, bold: true, color: C.cyan, align: 'right', rtl: true, cs: 1.2, valign: 'middle' });
@@ -110,17 +111,25 @@ slides.push({ ops: S(o => {
     { k: 'אוקטובר 2026',            v: 'הוצאת PO',     s: 'חודשיים זמן אספקה מ-Dell',          a: C.cyan },
     { k: 'דצמבר 2026',              v: '80% ואספקה',  s: 'הדיסקים מגיעים בדיוק בזמן',        a: C.red },
   ];
-  const sw = 3.5, sgap = 0.52, sy = 2.24, sh = 1.28;
+  // The middle step is the ask, so it carries the weight: lit card + cyan rule.
+  // The two flanking steps sit back on the darker fill.
+  const sw = 3.5, sgap = 0.52, sy = 2.14, sh = 1.5;
   steps.forEach((t, i) => {
     const x = G.W - G.M - sw - i * (sw + sgap);
-    rect(o, x, sy, sw, sh, { fill: C.card, line: i === 2 ? '5A2A38' : C.border, r: 0.05 });
-    txt(o, he(t.k), { x: x + 0.28, y: sy + 0.18, w: sw - 0.56, h: 0.26, size: 10.5, bold: true, color: C.muted, align: 'right', rtl: true, cs: 0.8, valign: 'middle' });
-    txt(o, he(t.v), { x: x + 0.28, y: sy + 0.46, w: sw - 0.56, h: 0.46, size: 24, bold: true, color: t.a, align: 'right', rtl: true, valign: 'middle' });
-    txt(o, he(t.s), { x: x + 0.28, y: sy + 0.94, w: sw - 0.56, h: 0.26, size: 11, color: C.dim, align: 'right', rtl: true, valign: 'middle' });
-    if (i < 2) txt(o, '←', { x: x - sgap, y: sy + 0.44, w: sgap, h: 0.4, size: 19, bold: true, color: C.dim, align: 'center', rtl: false, valign: 'middle' });
+    const lead = i === 1;
+    rect(o, x, sy, sw, sh, {
+      fill: lead ? C.card : C.cardAlt,
+      line: lead ? C.cyan : C.border, lw: lead ? 1.5 : 1, r: 0.05,
+    });
+    // RTL start-edge accent bar
+    rect(o, x + sw - 0.055, sy + 0.2, 0.055, sh - 0.4, { fill: t.a });
+    txt(o, he(t.k), { x: x + 0.3, y: sy + 0.2, w: sw - 0.62, h: 0.26, size: 10.5, bold: true, color: C.muted, align: 'right', rtl: true, cs: 0.8, valign: 'middle' });
+    txt(o, he(t.v), { x: x + 0.3, y: sy + 0.52, w: sw - 0.62, h: 0.5, size: 25, bold: true, color: t.a, align: 'right', rtl: true, valign: 'middle' });
+    txt(o, he(t.s), { x: x + 0.3, y: sy + 1.08, w: sw - 0.62, h: 0.28, size: 11, color: C.dim, align: 'right', rtl: true, valign: 'middle' });
+    if (i < 2) txt(o, '←', { x: x - sgap, y: sy + 0.55, w: sgap, h: 0.4, size: 21, bold: true, color: C.dim, align: 'center', rtl: false, valign: 'middle' });
   });
 
-  const w = 5.62, h = 1.86, y = 3.86;
+  const w = 5.62, h = 2.02, y = 4.0;
   const xR = G.W - G.M - w;        // right card = first in RTL
   const xL = G.M;
 
@@ -128,17 +137,17 @@ slides.push({ ops: S(o => {
   txt(o, '01', { x: xR + w - 1.0, y: y + 0.22, w: 0.7, h: 0.42, size: 21, bold: true, color: C.orange, align: 'right', rtl: false, valign: 'middle' });
   txt(o, he('הרחבת דיסקים ב-Dell ECS On-Prem'), { x: xR + 0.34, y: y + 0.24, w: w - 1.44, h: 0.4, size: 16, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
   txt(o, he('חציית 80% מסכנת את זמינות המערכת. חודשיים אספקה מ-Dell פירושם שהחלון להוצאת PO נסגר באוקטובר. הצעת Dell עומדת על $695,520 עבור 600 TB לוגי.'), {
-    x: xR + 0.34, y: y + 0.7, w: w - 0.68, h: 0.66, size: 12, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.22 });
-  rect(o, xR + 0.34, y + 1.36, w - 0.68, 0.36, { fill: '3A2A12', r: 0.16 });
-  txt(o, he('נדרש: אישור תקציב ויציאה ל-PO באוקטובר'), { x: xR + 0.5, y: y + 1.36, w: w - 1.0, h: 0.36, size: 12, bold: true, color: C.orange, align: 'right', rtl: true, valign: 'middle' });
+    x: xR + 0.34, y: y + 0.76, w: w - 0.68, h: 0.86, size: 12.5, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.26 });
+  rect(o, xR + 0.34, y + 1.46, w - 0.68, 0.4, { fill: '3A2A12', r: 0.16 });
+  txt(o, he('נדרש: אישור תקציב ויציאה ל-PO באוקטובר'), { x: xR + 0.5, y: y + 1.46, w: w - 1.0, h: 0.4, size: 12, bold: true, color: C.orange, align: 'right', rtl: true, valign: 'middle' });
 
   rect(o, xL, y, w, h, { fill: C.card, line: '2E5F6B', r: 0.05 });
   txt(o, '02', { x: xL + w - 1.0, y: y + 0.22, w: 0.7, h: 0.42, size: 21, bold: true, color: C.cyan, align: 'right', rtl: false, valign: 'middle' });
   txt(o, he('העתקת מסמכי דימות ו-Verint ל-AWS S3'), { x: xL + 0.34, y: y + 0.24, w: w - 1.44, h: 0.4, size: 16, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
   txt(o, he('מפנה שטח ב-ECS תוך שבועות, ללא PO וללא זמן אספקה. רץ במקביל לרכש ומקטין את הלחץ על הסף — אך אינו מחליף את הדיסקים ואינו עוצר את השעון.'), {
-    x: xL + 0.34, y: y + 0.7, w: w - 0.68, h: 0.66, size: 12, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.22 });
-  rect(o, xL + 0.34, y + 1.36, w - 0.68, 0.36, { fill: '13303A', r: 0.16 });
-  txt(o, he('נדרש: אישור עקרוני + תקציב POC'), { x: xL + 0.5, y: y + 1.36, w: w - 1.0, h: 0.36, size: 12, bold: true, color: C.cyan, align: 'right', rtl: true, valign: 'middle' });
+    x: xL + 0.34, y: y + 0.76, w: w - 0.68, h: 0.86, size: 12.5, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.26 });
+  rect(o, xL + 0.34, y + 1.46, w - 0.68, 0.4, { fill: '13303A', r: 0.16 });
+  txt(o, he('נדרש: אישור עקרוני + תקציב POC'), { x: xL + 0.5, y: y + 1.46, w: w - 1.0, h: 0.4, size: 12, bold: true, color: C.cyan, align: 'right', rtl: true, valign: 'middle' });
 
   footnote(o, 'כל חודש עיכוב בהוצאת ה-PO דוחה את האספקה בחודש — אך אינו דוחה את חציית 80%. עיכוב לנובמבר פירושו הגעה ל-80% לפני שהדיסקים בבית.', C.red);
 })});
