@@ -87,27 +87,13 @@ slides.push({ bg: C.bgDeep, ops: S(o => {
   rect(o, -1.8, -1.1, 5.2, 5.2, { fill: '0C1322' });
   rect(o, -1.4, 3.3, 3.4, 3.4, { fill: '0A101C' });
 
-  txt(o, he('הראל · תשתיות IT · ניהול קיבולת אחסון'), {
-    x: G.M, y: 1.62, w: G.CW, h: 0.3, size: 12, bold: true, color: C.cyan, align: 'right', rtl: true, cs: 1.2, valign: 'middle' });
+  txt(o, he('הראל · תשתיות IT'), {
+    x: G.M, y: 2.42, w: G.CW, h: 0.3, size: 12, bold: true, color: C.cyan, align: 'right', rtl: true, cs: 1.2, valign: 'middle' });
   txt(o, he('העתקת מסמכי דימות ו-Verint לענן'), {
-    x: G.M, y: 2.0, w: G.CW, h: 0.95, size: 40, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
-  txt(o, he('מ-ECS On-Prem ל-AWS S3 · מצגת לקבלת החלטה · אוגוסט 2026'), {
-    x: G.M, y: 3.0, w: G.CW, h: 0.42, size: 15, color: C.muted, align: 'right', rtl: true, valign: 'middle' });
-
-  const tiles = [
-    { v: '75%',           l: 'ניצולת האחסון היום',      s: '687 TB מתוך 916 TB',        a: C.orange },
-    { v: 'דצמבר 2026',    l: 'חציית סף 80%',            s: '733 TB · סיכון לזמינות',    a: C.red },
-    { v: 'אוקטובר 2026',  l: 'מועד אחרון להוצאת PO',    s: 'חודשיים אספקה מ-Dell',      a: C.cyan },
-  ];
-  // RTL: first tile on the right
-  tiles.forEach((t, i) => {
-    const gap = 0.42, w = (G.CW - 2 * gap) / 3;
-    const x = G.W - G.M - w - i * (w + gap);
-    rect(o, x, 4.32, w, 1.28, { fill: C.card, line: C.border, r: 0.05 });
-    txt(o, he(t.l), { x: x + 0.28, y: 4.46, w: w - 0.56, h: 0.24, size: 10.5, bold: true, color: C.muted, align: 'right', rtl: true, cs: 0.8, valign: 'middle' });
-    txt(o, he(t.v), { x: x + 0.28, y: 4.72, w: w - 0.56, h: 0.46, size: 26, bold: true, color: t.a, align: 'right', rtl: true, valign: 'middle' });
-    txt(o, he(t.s), { x: x + 0.28, y: 5.19, w: w - 0.56, h: 0.28, size: 11, color: C.dim, align: 'right', rtl: true, valign: 'middle' });
-  });
+    x: G.M, y: 2.82, w: G.CW, h: 1.0, size: 40, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
+  rect(o, G.W - G.M - 2.6, 3.94, 2.6, 0.03, { fill: C.cyan });
+  txt(o, he('מ-ECS On-Prem ל-AWS S3 · מצגת לקבלת החלטה'), {
+    x: G.M, y: 4.12, w: G.CW, h: 0.42, size: 16, color: C.muted, align: 'right', rtl: true, valign: 'middle' });
 
   rect(o, 0.9, 6.42, 11.53, 0.012, { fill: C.hair });
   txt(o, he('Harel IT Infrastructure · חסוי · הנתונים נכונים לאוגוסט 2026'), {
