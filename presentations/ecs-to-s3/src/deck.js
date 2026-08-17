@@ -106,28 +106,46 @@ slides.push({ ops: S(o => {
   header(o, 'ההחלטה הנדרשת', 'שני מסלולים על השולחן — ושניהם צריכים תשובה עוד באוקטובר', C.red, 26);
 
   // Only the two options live on this slide — the utilisation / threshold /
-  // lead-time chain belongs to slides 3-4 and is not repeated here.
-  const w = 5.62, h = 3.02, y = 2.8;   // centred in the 2.16 → 6.46 body band
+  // lead-time chain belongs to slides 3-4 and is not repeated here. Both cards
+  // run the full height of the body band so each option reads as a full brief:
+  // what it is, then cost / time / upside / catch, then what it needs from the
+  // forum.
+  const w = 5.62, h = 4.0, y = 2.26;
   const xR = G.W - G.M - w;            // right card = first in RTL
   const xL = G.M;
 
-  function option(x, num, title, body, chipText, accent, line, chipFill) {
+  function option(x, num, title, lead, facts, chipText, accent, line, chipFill) {
     rect(o, x, y, w, h, { fill: C.card, line, r: 0.05 });
-    rect(o, x + w - 0.17, y + 0.34, 0.055, 0.42, { fill: accent });
-    txt(o, num, { x: x + w - 1.24, y: y + 0.32, w: 0.72, h: 0.46, size: 23, bold: true, color: accent, align: 'right', rtl: false, valign: 'middle' });
-    txt(o, he(title), { x: x + 0.36, y: y + 0.3, w: w - 1.72, h: 0.5, size: 18, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
-    rect(o, x + 0.36, y + 0.96, w - 0.72, 0.012, { fill: C.border });
-    txt(o, he(body), { x: x + 0.36, y: y + 1.12, w: w - 0.72, h: 1.12, size: 14, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.34 });
-    rect(o, x + 0.36, y + h - 0.76, w - 0.72, 0.46, { fill: chipFill, r: 0.16 });
-    txt(o, he(chipText), { x: x + 0.52, y: y + h - 0.76, w: w - 1.04, h: 0.46, size: 12.5, bold: true, color: accent, align: 'right', rtl: true, valign: 'middle' });
+    rect(o, x + w - 0.17, y + 0.36, 0.055, 0.44, { fill: accent });
+    txt(o, num, { x: x + w - 1.28, y: y + 0.34, w: 0.74, h: 0.48, size: 24, bold: true, color: accent, align: 'right', rtl: false, valign: 'middle' });
+    txt(o, he(title), { x: x + 0.38, y: y + 0.32, w: w - 1.78, h: 0.52, size: 19, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
+    rect(o, x + 0.38, y + 1.0, w - 0.76, 0.012, { fill: C.border });
+    txt(o, he(lead), { x: x + 0.38, y: y + 1.14, w: w - 0.76, h: 0.66, size: 14, color: C.text, align: 'right', rtl: true, valign: 'top', lh: 1.32 });
+    facts.forEach((f, i) => {
+      const fy = y + 1.9 + i * 0.44;
+      rect(o, x + w - 0.44, fy + 0.14, 0.1, 0.1, { fill: f[1] ? accent : C.dim });
+      txt(o, he(f[0]), { x: x + 0.38, y: fy, w: w - 0.94, h: 0.42, size: 13, color: f[1] ? C.text : C.muted, align: 'right', rtl: true, valign: 'middle' });
+    });
+    rect(o, x + 0.38, y + h - 0.66, w - 0.76, 0.5, { fill: chipFill, r: 0.16 });
+    txt(o, he(chipText), { x: x + 0.54, y: y + h - 0.66, w: w - 1.08, h: 0.5, size: 13, bold: true, color: accent, align: 'right', rtl: true, valign: 'middle' });
   }
 
-  option(xR, '01', 'הרחבת דיסקים ב-Dell ECS On-Prem',
-    'רכש תוספת קיבולת מ-Dell. הצעה קיימת: $695,520 עבור 600 TB לוגי, כולל Replica x3 בין שלושה אתרים. פתרון מוכר, בתוך המרכז שלנו — אך כרוך ב-PO, בזמן אספקה ובהוצאה הונית מלאה.',
+  option(xR, '01', 'הרחבת דיסקים ב-Dell ECS',
+    'הרחבת המערך הקיים: רכש תוספת דיסקים מ-Dell, באותה ארכיטקטורה ובאותם ממשקים.',
+    [
+      ['עלות: $695,520 · 600 TB לוגי · Replica x3', true],
+      ['זמן: PO באוקטובר, אספקה תוך כחודשיים', true],
+      ['ללא שינוי באפליקציות, אך הוצאה הונית מלאה', false],
+    ],
     'נדרש: אישור תקציב ויציאה ל-PO באוקטובר', C.orange, '5A4222', '3A2A12');
 
-  option(xL, '02', 'העתקת מסמכי דימות ו-Verint ל-AWS S3',
-    'העברת הארכיון לאחסון אובייקטים בענן. מפנה שטח ב-ECS תוך שבועות, ללא PO וללא זמן אספקה, בתשלום לפי צריכה. רץ במקביל לרכש — אך אינו מחליף את הדיסקים.',
+  option(xL, '02', 'העתקת דימות ו-Verint לענן',
+    'העברת הארכיון לאחסון אובייקטים ב-AWS, ופינוי השטח שהוא תופס היום ב-ECS.',
+    [
+      ['עלות: תשלום לפי צריכה, ללא הוצאה הונית', true],
+      ['זמן: שבועות — ללא PO וללא זמן אספקה', true],
+      ['מפנה שטח מיד, אך נדרשת שכבת API באפליקציה', false],
+    ],
     'נדרש: אישור עקרוני + תקציב POC', C.cyan, '2E5F6B', '13303A');
 
   footnote(o, 'שני המסלולים אינם חלופיים: 01 מוסיף קיבולת, 02 מקטין את הצריכה. ה-PO של 01 חייב לצאת באוקטובר — הרציונל והנתונים בשקפים הבאים.', C.red);
@@ -233,13 +251,12 @@ slides.push({ ops: S(o => {
   const tx = 6.95, tw = 5.48;
   txt(o, he('עלות 100 TB לחמש שנים לפי שכבת אחסון'), { x: tx, y: 2.12, w: tw, h: 0.26, size: 11, bold: true, color: C.muted, align: 'right', rtl: true, cs: 0.8, valign: 'middle' });
   const tiers = [
-    { n: 'S3 Standard',                  p: '$0.023 / GB', v: '$141K', f: 1.00, a: C.red },
-    { n: 'Dell ECS On-Prem',             p: 'capex דיסקים', v: '$116K', f: 0.82, a: C.orange },
-    { n: 'S3 Standard-IA',               p: '$0.0125 / GB', v: '$77K',  f: 0.54, a: C.cyan },
-    { n: 'S3 Glacier Instant Retrieval', p: '$0.004 / GB',  v: '$25K',  f: 0.17, a: C.green },
+    { n: 'Dell ECS On-Prem',             p: 'capex דיסקים', v: '$116K', f: 1.00, a: C.orange },
+    { n: 'S3 Standard-IA',               p: '$0.0125 / GB', v: '$77K',  f: 0.66, a: C.cyan },
+    { n: 'S3 Glacier Instant Retrieval', p: '$0.004 / GB',  v: '$25K',  f: 0.22, a: C.green },
   ];
   tiers.forEach((t, i) => {
-    const y = 2.46 + i * 0.82;
+    const y = 2.52 + i * 1.06;
     txt(o, he(t.n), { x: tx + 1.62, y, w: tw - 1.62, h: 0.26, size: 12.5, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
     txt(o, he(t.p), { x: tx + 1.62, y: y + 0.26, w: tw - 1.62, h: 0.24, size: 10.5, color: C.dim, align: 'right', rtl: true, valign: 'middle' });
     const barMax = tw - 1.78;
@@ -359,7 +376,7 @@ slides.push({ ops: S(o => {
       b: 'התנעה באוגוסט. תקציב POC על 1–2 TB, וסגירת חסמי הקבילות המשפטית והריבונות בספטמבר במקביל.',
       o: 'תשתיות IT, יועץ משפטי ו-DPO' },
     { n: '03', a: C.purple, t: 'תמחור מחדש של חלופת הענן לפי שכבת אחסון נכונה',
-      b: 'פילוח גודל-אובייקט ותדירות אחזור של הקורפוס, ותמחור מול Glacier Instant Retrieval באזור תל אביב — לא מול S3 Standard.',
+      b: 'פילוח גודל-אובייקט ותדירות אחזור של הקורפוס, ותמחור מול Glacier Instant Retrieval ו-Standard-IA באזור תל אביב.',
       o: 'תשתיות IT ו-FinOps' },
   ];
   recs.forEach((r, i) => {

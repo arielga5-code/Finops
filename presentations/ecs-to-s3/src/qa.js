@@ -7,8 +7,22 @@ const { chromium } = require('playwright');
   await p.goto('file://' + __dirname + '/preview.html');
 
   const res = await p.evaluate(() => {
-    const out = { overflows: [], pairs: 0, violations: [] };
+    const out = { overflows: [], pairs: 0, violations: [], collisions: [] };
     document.querySelectorAll('.slide').forEach((sl, si) => {
+      // Two text boxes must never share space — that is always a layout bug.
+      const boxes = Array.from(sl.querySelectorAll('.t')).map((el) => ({
+        r: el.getBoundingClientRect(), s: el.textContent.slice(0, 34),
+      }));
+      for (let i = 0; i < boxes.length; i++) {
+        for (let j = i + 1; j < boxes.length; j++) {
+          const a = boxes[i].r, b = boxes[j].r;
+          const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+          const oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+          if (ox > 2 && oy > 2) {
+            out.collisions.push({ slide: si + 1, a: boxes[i].s, b: boxes[j].s, ox: +ox.toFixed(0), oy: +oy.toFixed(0) });
+          }
+        }
+      }
       sl.querySelectorAll('.t').forEach((el) => {
         const box = el.getBoundingClientRect();
         const inner = el.querySelector('span').getBoundingClientRect();
@@ -47,6 +61,8 @@ const { chromium } = require('playwright');
 
   console.log('OVERFLOWS:', res.overflows.length);
   res.overflows.forEach(o => console.log('  s' + o.slide, JSON.stringify(o.text), o.need + '>' + o.have));
+  console.log('COLLISIONS:', res.collisions.length);
+  res.collisions.forEach(c => console.log('  s' + c.slide, JSON.stringify(c.a), 'X', JSON.stringify(c.b), c.ox + 'x' + c.oy + 'px'));
   console.log('BIDI PAIRS:', res.pairs, 'VIOLATIONS:', res.violations.length);
   res.violations.forEach(v => console.log('  s' + v.slide, JSON.stringify(v.a), '->', JSON.stringify(v.b)));
   await b.close();
