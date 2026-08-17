@@ -103,53 +103,34 @@ slides.push({ bg: C.bgDeep, ops: S(o => {
 
 // -------------------------------------------------- 2 · The decision
 slides.push({ ops: S(o => {
-  header(o, 'ההחלטה הנדרשת', 'ה-PO חייב לצאת באוקטובר 2026 — אחרת נגיע ל-80% בדצמבר בלי דיסקים', C.red, 25);
+  header(o, 'ההחלטה הנדרשת', 'שני מסלולים על השולחן — ושניהם צריכים תשובה עוד באוקטובר', C.red, 26);
 
-  // The chain: today → PO → delivery. RTL, so the first step sits on the right.
-  const steps = [
-    { k: 'היום · אוגוסט 2026',      v: '75%',          s: '687 TB מתוך 916 TB בשימוש',        a: C.orange },
-    { k: 'אוקטובר 2026',            v: 'הוצאת PO',     s: 'חודשיים זמן אספקה מ-Dell',          a: C.cyan },
-    { k: 'דצמבר 2026',              v: '80% ואספקה',  s: 'הדיסקים מגיעים בדיוק בזמן',        a: C.red },
-  ];
-  // The middle step is the ask, so it carries the weight: lit card + cyan rule.
-  // The two flanking steps sit back on the darker fill.
-  const sw = 3.5, sgap = 0.52, sy = 2.14, sh = 1.5;
-  steps.forEach((t, i) => {
-    const x = G.W - G.M - sw - i * (sw + sgap);
-    const lead = i === 1;
-    rect(o, x, sy, sw, sh, {
-      fill: lead ? C.card : C.cardAlt,
-      line: lead ? C.cyan : C.border, lw: lead ? 1.5 : 1, r: 0.05,
-    });
-    // RTL start-edge accent bar
-    rect(o, x + sw - 0.055, sy + 0.2, 0.055, sh - 0.4, { fill: t.a });
-    txt(o, he(t.k), { x: x + 0.3, y: sy + 0.2, w: sw - 0.62, h: 0.26, size: 10.5, bold: true, color: C.muted, align: 'right', rtl: true, cs: 0.8, valign: 'middle' });
-    txt(o, he(t.v), { x: x + 0.3, y: sy + 0.52, w: sw - 0.62, h: 0.5, size: 25, bold: true, color: t.a, align: 'right', rtl: true, valign: 'middle' });
-    txt(o, he(t.s), { x: x + 0.3, y: sy + 1.08, w: sw - 0.62, h: 0.28, size: 11, color: C.dim, align: 'right', rtl: true, valign: 'middle' });
-    if (i < 2) txt(o, '←', { x: x - sgap, y: sy + 0.55, w: sgap, h: 0.4, size: 21, bold: true, color: C.dim, align: 'center', rtl: false, valign: 'middle' });
-  });
-
-  const w = 5.62, h = 2.02, y = 4.0;
-  const xR = G.W - G.M - w;        // right card = first in RTL
+  // Only the two options live on this slide — the utilisation / threshold /
+  // lead-time chain belongs to slides 3-4 and is not repeated here.
+  const w = 5.62, h = 3.02, y = 2.8;   // centred in the 2.16 → 6.46 body band
+  const xR = G.W - G.M - w;            // right card = first in RTL
   const xL = G.M;
 
-  rect(o, xR, y, w, h, { fill: C.card, line: '5A4222', r: 0.05 });
-  txt(o, '01', { x: xR + w - 1.0, y: y + 0.22, w: 0.7, h: 0.42, size: 21, bold: true, color: C.orange, align: 'right', rtl: false, valign: 'middle' });
-  txt(o, he('הרחבת דיסקים ב-Dell ECS On-Prem'), { x: xR + 0.34, y: y + 0.24, w: w - 1.44, h: 0.4, size: 16, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
-  txt(o, he('חציית 80% מסכנת את זמינות המערכת. חודשיים אספקה מ-Dell פירושם שהחלון להוצאת PO נסגר באוקטובר. הצעת Dell עומדת על $695,520 עבור 600 TB לוגי.'), {
-    x: xR + 0.34, y: y + 0.76, w: w - 0.68, h: 0.86, size: 12.5, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.26 });
-  rect(o, xR + 0.34, y + 1.46, w - 0.68, 0.4, { fill: '3A2A12', r: 0.16 });
-  txt(o, he('נדרש: אישור תקציב ויציאה ל-PO באוקטובר'), { x: xR + 0.5, y: y + 1.46, w: w - 1.0, h: 0.4, size: 12, bold: true, color: C.orange, align: 'right', rtl: true, valign: 'middle' });
+  function option(x, num, title, body, chipText, accent, line, chipFill) {
+    rect(o, x, y, w, h, { fill: C.card, line, r: 0.05 });
+    rect(o, x + w - 0.17, y + 0.34, 0.055, 0.42, { fill: accent });
+    txt(o, num, { x: x + w - 1.24, y: y + 0.32, w: 0.72, h: 0.46, size: 23, bold: true, color: accent, align: 'right', rtl: false, valign: 'middle' });
+    txt(o, he(title), { x: x + 0.36, y: y + 0.3, w: w - 1.72, h: 0.5, size: 18, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
+    rect(o, x + 0.36, y + 0.96, w - 0.72, 0.012, { fill: C.border });
+    txt(o, he(body), { x: x + 0.36, y: y + 1.12, w: w - 0.72, h: 1.12, size: 14, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.34 });
+    rect(o, x + 0.36, y + h - 0.76, w - 0.72, 0.46, { fill: chipFill, r: 0.16 });
+    txt(o, he(chipText), { x: x + 0.52, y: y + h - 0.76, w: w - 1.04, h: 0.46, size: 12.5, bold: true, color: accent, align: 'right', rtl: true, valign: 'middle' });
+  }
 
-  rect(o, xL, y, w, h, { fill: C.card, line: '2E5F6B', r: 0.05 });
-  txt(o, '02', { x: xL + w - 1.0, y: y + 0.22, w: 0.7, h: 0.42, size: 21, bold: true, color: C.cyan, align: 'right', rtl: false, valign: 'middle' });
-  txt(o, he('העתקת מסמכי דימות ו-Verint ל-AWS S3'), { x: xL + 0.34, y: y + 0.24, w: w - 1.44, h: 0.4, size: 16, bold: true, color: C.text, align: 'right', rtl: true, valign: 'middle' });
-  txt(o, he('מפנה שטח ב-ECS תוך שבועות, ללא PO וללא זמן אספקה. רץ במקביל לרכש ומקטין את הלחץ על הסף — אך אינו מחליף את הדיסקים ואינו עוצר את השעון.'), {
-    x: xL + 0.34, y: y + 0.76, w: w - 0.68, h: 0.86, size: 12.5, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.26 });
-  rect(o, xL + 0.34, y + 1.46, w - 0.68, 0.4, { fill: '13303A', r: 0.16 });
-  txt(o, he('נדרש: אישור עקרוני + תקציב POC'), { x: xL + 0.5, y: y + 1.46, w: w - 1.0, h: 0.4, size: 12, bold: true, color: C.cyan, align: 'right', rtl: true, valign: 'middle' });
+  option(xR, '01', 'הרחבת דיסקים ב-Dell ECS On-Prem',
+    'רכש תוספת קיבולת מ-Dell. הצעה קיימת: $695,520 עבור 600 TB לוגי, כולל Replica x3 בין שלושה אתרים. פתרון מוכר, בתוך המרכז שלנו — אך כרוך ב-PO, בזמן אספקה ובהוצאה הונית מלאה.',
+    'נדרש: אישור תקציב ויציאה ל-PO באוקטובר', C.orange, '5A4222', '3A2A12');
 
-  footnote(o, 'כל חודש עיכוב בהוצאת ה-PO דוחה את האספקה בחודש — אך אינו דוחה את חציית 80%. עיכוב לנובמבר פירושו הגעה ל-80% לפני שהדיסקים בבית.', C.red);
+  option(xL, '02', 'העתקת מסמכי דימות ו-Verint ל-AWS S3',
+    'העברת הארכיון לאחסון אובייקטים בענן. מפנה שטח ב-ECS תוך שבועות, ללא PO וללא זמן אספקה, בתשלום לפי צריכה. רץ במקביל לרכש — אך אינו מחליף את הדיסקים.',
+    'נדרש: אישור עקרוני + תקציב POC', C.cyan, '2E5F6B', '13303A');
+
+  footnote(o, 'שני המסלולים אינם חלופיים: 01 מוסיף קיבולת, 02 מקטין את הצריכה. ה-PO של 01 חייב לצאת באוקטובר — הרציונל והנתונים בשקפים הבאים.', C.red);
 })});
 
 // -------------------------------------------------- 3 · Situation + forecast chart
