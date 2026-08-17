@@ -276,45 +276,83 @@ slides.push({ ops: S(o => {
   footnote(o, 'הנתון שחסר להכרעה: פילוח גודל-אובייקט ותדירות אחזור של קורפוס הדימות ו-Verint. הוא שקובע איזו שכבה נכונה, והוא אינו קיים היום. המחירים הם מחירון רשימה, ללא הנחות נפח או התחייבות.', C.purple);
 })});
 
-// -------------------------------------------------- 7 · Risks
+// -------------------------------------------------- 7 · Blocking risks
 slides.push({ ops: S(o => {
-  header(o, 'סיכונים', 'כל סיכון מהותי ניתן להפחתה — אך שניים מהם חוסמים התחלה', C.red, 26);
+  header(o, 'סיכונים · חלק א', 'שני חוסמים שחייבים להיסגר לפני ההעתקה הראשונה', C.red, 26);
 
-  // Ordered by who has to act: legal first (blocking), then the application
-  // teams, then the technical validation. The lock-in card was dropped — it is
-  // a commercial argument, not a risk to executing this migration.
-  const risks = [
-    { a: C.red,    t: 'משפטי · קבילות',    r: 'שם הקובץ ותאריך היצירה משתנים בהעתקה. בית משפט עשוי לדרוש אסמכתא שהתוכן לא שונה.', m: 'manifest חתום SHA-256 לכל אובייקט — שם מקורי, שם יעד ותאריך מקור — עם S3 Object Lock. נדרש אישור מפורש של הלשכה המשפטית לפני ההעתקה.', blocking: true },
-    { a: C.red,    t: 'רגולציה · ריבונות', r: 'מידע רפואי ופיננסי מזוהה היוצא משליטת הארגון.', m: 'אזור il-central-1 בתל אביב, הצפנה ב-KMS עם מפתח בבעלותנו, ואישור DPO ורגולטור לפני ההעתקה.', blocking: true },
-    { a: C.orange, t: 'אפליקציה · מצביעים', r: 'האפליקציות מצביעות לנתיב ב-ECS. מעבר ל-S3 מחייב פיתוח בצד היישום, לא רק העברת דאטה.', m: 'אפיון מול צוותי הדימות ו-Verint, הערכת מאמץ פיתוח, ותקופת ביניים ששתי הכתובות פעילות בה.' },
-    { a: C.orange, t: 'מיליוני קבצים',     r: 'מיליוני קבצים קטנים. שמות ומבנה התיקיות ב-S3 שונים, ואין מיפוי אחד-לאחד.', m: 'מיפוי שמות ומבנה מוסכם מראש, ואימות של צוותי האפליקציה שכל מסמך נגיש בשמו החדש. נדרש זמן צוות ייעודי.' },
-    { a: C.orange, t: 'ביצועים · לטנציה',  r: 'אחזור מהענן איטי מאחזור מ-ECS מקומי, ועלול לפגוע בשירות למשתמש הקצה.', m: 'מדידת זמני אחזור מול ה-SLA הקיים לפני התחייבות, חיבור Direct Connect ולא אינטרנט, וקאשינג לפריטים חמים.' },
-    { a: C.orange, t: 'כלי ההעברה · POC',  r: 'אין כלי העתקה מוכח בסדר גודל כזה; קבצים עלולים להיכשל בלי שהדבר יתגלה.', m: 'POC קצר על 1–2 TB עם AWS DataSync: ולידציה מובנית, דוח חריגים לכל ריצה, ומחיקה מ-ECS רק לאחר אימות.' },
-  ];
-  // Blocking risks sit on the lit fill with a red rule and a status pill; the
-  // rest drop back to the darker fill. At this type size the text has to earn
-  // its room, so every line was cut to fit without shrinking.
-  const w = 3.55, gap = 0.44, h = 1.98;
-  risks.forEach((k, i) => {
-    const col = i % 3, row = Math.floor(i / 3);
-    const x = G.W - G.M - w - col * (w + gap);
-    const y = 2.16 + row * (h + 0.22);
-    rect(o, x, y, w, h, {
-      fill: k.blocking ? C.card : C.cardAlt,
-      line: k.blocking ? k.a : C.border, lw: k.blocking ? 1.5 : 1, r: 0.05,
+  const bw = 5.55, bgap = G.CW - 2 * 5.55, bh = 4.06, by = 2.2;
+
+  function blocker(x, title, risk, steps, ask) {
+    rect(o, x, by, bw, bh, { fill: C.card, line: C.red, lw: 1.5, r: 0.05 });
+    rect(o, x + bw - 0.055, by + 0.2, 0.055, bh - 0.4, { fill: C.red });
+    rect(o, x + 0.34, by + 0.3, 1.18, 0.3, { fill: '3A1620', r: 0.3 });
+    txt(o, he('חוסם התחלה'), { x: x + 0.34, y: by + 0.3, w: 1.18, h: 0.3, size: 10, bold: true, color: C.red, align: 'center', rtl: true, valign: 'middle' });
+    txt(o, he(title), { x: x + 1.66, y: by + 0.26, w: bw - 2.06, h: 0.38, size: 20, bold: true, color: C.red, align: 'right', rtl: true, valign: 'middle' });
+    rect(o, x + 0.34, by + 0.78, bw - 0.68, 0.012, { fill: '3A2430' });
+    txt(o, he(risk), { x: x + 0.34, y: by + 0.92, w: bw - 0.68, h: 0.86, size: 14, color: C.text, align: 'right', rtl: true, valign: 'top', lh: 1.3 });
+    txt(o, he('מיטיגציה'), { x: x + 0.34, y: by + 1.84, w: bw - 0.68, h: 0.26, size: 10.5, bold: true, color: C.dim, align: 'right', rtl: true, cs: 1.1, valign: 'middle' });
+    steps.forEach((s, i) => {
+      const sy = by + 2.14 + i * 0.42;
+      rect(o, x + bw - 0.44, sy + 0.13, 0.1, 0.1, { fill: C.red });
+      txt(o, he(s), { x: x + 0.34, y: sy, w: bw - 0.9, h: 0.38, size: 13, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.2 });
     });
-    rect(o, x + w - 0.055, y + 0.16, 0.055, h - 0.32, { fill: k.a });
-    txt(o, he(k.t), { x: x + 1.42, y: y + 0.14, w: w - 1.78, h: 0.34, size: 14, bold: true, color: k.a, align: 'right', rtl: true, valign: 'middle' });
-    if (k.blocking) {
-      rect(o, x + 0.28, y + 0.18, 1.02, 0.26, { fill: '3A1620', r: 0.3 });
-      txt(o, he('חוסם התחלה'), { x: x + 0.28, y: y + 0.18, w: 1.02, h: 0.26, size: 9.5, bold: true, color: k.a, align: 'center', rtl: true, valign: 'middle' });
-    }
-    txt(o, he(k.r), { x: x + 0.28, y: y + 0.54, w: w - 0.62, h: 0.5, size: 12.5, color: C.text, align: 'right', rtl: true, valign: 'top', lh: 1.2 });
-    rect(o, x + 0.28, y + 1.08, w - 0.62, 0.01, { fill: '2C3A54' });
-    txt(o, he('מיטיגציה: ' + k.m), { x: x + 0.28, y: y + 1.16, w: w - 0.62, h: 0.72, size: 11.5, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.2 });
+    rect(o, x + 0.34, by + bh - 0.62, bw - 0.68, 0.5, { fill: '3A1620', r: 0.16 });
+    txt(o, he(ask), { x: x + 0.5, y: by + bh - 0.62, w: bw - 1.0, h: 0.5, size: 13, bold: true, color: C.red, align: 'right', rtl: true, valign: 'middle' });
+  }
+
+  blocker(G.W - G.M - bw, 'משפטי · קבילות המסמך',
+    'בהעתקה משתנים שם הקובץ, הנתיב ותאריך היצירה. במחלוקת משפטית ייתכן שנידרש להוכיח שהמסמך שהוצג הוא בדיוק המסמך המקורי, ושלא שונה מאז נוצר.',
+    [
+      'manifest חתום SHA-256 לכל אובייקט: שם מקורי, נתיב ותאריך מקור',
+      'S3 Object Lock במצב Compliance — אין שינוי ואין מחיקה',
+      'שימור ה-metadata המקורי לצד הקובץ ביעד',
+    ],
+    'נדרש: אישור הלשכה המשפטית לפני ההעתקה הראשונה');
+
+  blocker(G.M, 'רגולציה · ריבונות הנתונים',
+    'דימות והקלטות Verint מכילים מידע רפואי ופיננסי מזוהה. העברתם לספק ענן מוציאה אותם משליטת הארגון ונכנסת לתחום הרגולציה על מידע רגיש.',
+    [
+      'אחסון באזור il-central-1 בתל אביב — הדאטה אינו יוצא מישראל',
+      'הצפנה ב-KMS עם מפתח בבעלותנו; ל-AWS אין גישה לתוכן',
+      'הרשאות מינימום ותיעוד גישה מלא ב-CloudTrail',
+    ],
+    'נדרש: אישור DPO והרגולטור לפני ההעתקה הראשונה');
+
+  footnote(o, 'שני אלה אינם ניתנים לעקיפה ואינם נסגרים ב-POC. יש להתניע אותם בספטמבר, במקביל לבדיקות הטכניות ולא אחריהן.', C.red);
+})});
+
+// -------------------------------------------------- 8 · Executional risks
+slides.push({ ops: S(o => {
+  header(o, 'סיכונים · חלק ב', 'ארבעה סיכוני ביצוע — כולם נסגרים ב-POC ובאפיון מול הפיתוח', C.orange, 26);
+
+  const risks = [
+    { t: 'אפליקציה · שינוי מצביעים',
+      r: 'האפליקציות מצביעות היום לנתיב ב-ECS. מעבר ל-S3 מחייב פיתוח בצד היישום — זו אינה העברת דאטה בלבד.',
+      m: 'אפיון מול צוותי הדימות ו-Verint, הערכת מאמץ פיתוח, ותקופת ביניים שבה שתי הכתובות פעילות במקביל.' },
+    { t: 'מיליוני קבצים קטנים',
+      r: 'הקורפוס הוא מיליוני קבצים קטנים. השמות ומבנה התיקיות ב-S3 שונים, ואין מיפוי אחד-לאחד מהמצב היום.',
+      m: 'מיפוי שמות ומבנה מוסכם מראש, ואימות של צוותי האפליקציה שכל מסמך נגיש בשמו החדש. נדרש זמן צוות ייעודי.' },
+    { t: 'ביצועים · זמני אחזור',
+      r: 'אחזור מהענן איטי מאחזור מ-ECS מקומי. לטנציה בשליפה עלולה לפגוע בשירות למשתמש הקצה.',
+      m: 'מדידת זמני אחזור מול ה-SLA הקיים לפני התחייבות, חיבור Direct Connect ולא אינטרנט, וקאשינג מקומי לפריטים חמים.' },
+    { t: 'כלי ההעברה · POC',
+      r: 'אין כלי העתקה מוכח בסדר גודל כזה. קבצים עלולים להיכשל בהעברה בלי שהדבר יתגלה.',
+      m: 'POC קצר על 1–2 TB עם AWS DataSync: ולידציה מובנית, דוח חריגים לכל ריצה, ומחיקה מ-ECS רק לאחר אימות מלא.' },
+  ];
+  const w = 5.55, gapX = G.CW - 2 * 5.55, h = 1.96, gapY = 0.24;
+  risks.forEach((k, i) => {
+    const col = i % 2, row = Math.floor(i / 2);
+    const x = G.W - G.M - w - col * (w + gapX);
+    const y = 2.2 + row * (h + gapY);
+    rect(o, x, y, w, h, { fill: C.card, line: C.border, r: 0.05 });
+    rect(o, x + w - 0.055, y + 0.16, 0.055, h - 0.32, { fill: C.orange });
+    txt(o, he(k.t), { x: x + 0.3, y: y + 0.16, w: w - 0.64, h: 0.32, size: 15, bold: true, color: C.orange, align: 'right', rtl: true, valign: 'middle' });
+    txt(o, he(k.r), { x: x + 0.3, y: y + 0.56, w: w - 0.64, h: 0.44, size: 13, color: C.text, align: 'right', rtl: true, valign: 'top', lh: 1.2 });
+    rect(o, x + 0.3, y + 1.04, w - 0.64, 0.01, { fill: '2C3A54' });
+    txt(o, he('מיטיגציה: ' + k.m), { x: x + 0.3, y: y + 1.12, w: w - 0.64, h: 0.72, size: 12, color: C.muted, align: 'right', rtl: true, valign: 'top', lh: 1.2 });
   });
 
-  footnote(o, 'שני הסיכונים המסומנים "חוסם התחלה" אינם ניתנים לעקיפה: בלי אישור הלשכה המשפטית ובלי אישור DPO ורגולטור אין העתקה ראשונה. ארבעת הנותרים נסגרים ב-POC ובאפיון מול צוותי האפליקציה.', C.red);
+  footnote(o, 'ארבעת אלה אינם חוסמים החלטה — הם מגדירים את היקף ה-POC ואת עומס העבודה על צוותי האפליקציה. אומדן המאמץ יתקבל בסיום האפיון.', C.orange);
 })});
 
 // -------------------------------------------------- 8 · Benefits

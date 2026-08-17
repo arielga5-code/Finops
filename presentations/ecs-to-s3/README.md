@@ -1,6 +1,6 @@
 # ECS → AWS S3 — CIO decision deck
 
-`Harel_ECS_to_S3_CIO.pptx` — 10 slides, Hebrew (RTL), 13.333" × 7.5".
+`Harel_ECS_to_S3_CIO.pptx` — 11 slides, Hebrew (RTL), 13.333" × 7.5".
 
 Design system matches `Harel_Cloud_Cost_CIO_v16.pptx`: dark `0E1422` canvas, `182133`
 cards, Calibri, ALL-CAPS eyebrow → claim headline → hairline, KPI stat rails, and the
@@ -34,10 +34,17 @@ the hard way:
    intact. Sentence punctuation (leading `-`, trailing `.` `,` `·`) is trimmed back out
    of the span so it stays in the RTL run.
 
-Verify after any text change — do not eyeball RTL from a screenshot, it is very easy to
-misread. Render `preview.html`, then assert that within each RTL text box every
-successive LRE…PDF embedding sits further left than the previous one. The last full run
-checked 95 adjacent embedding pairs with 0 violations.
+3. **Never let a bracket open inside an embedding and close outside it.**
+   `il-central-1 (תל אביב)` puts `(` inside the LTR span and `)` in the RTL run, and
+   the two render mirrored. Keep brackets wholly inside one embedding or wholly
+   outside every embedding — in practice, reword to avoid the pattern.
+
+Verify after any change with `node src/qa.js`, which renders `preview.html` and checks
+four things: unbalanced bracket spans, text overflow, text-box collisions, and bidi
+embedding order (within each RTL box every successive LRE…PDF embedding must sit
+further left than the last). Do not eyeball RTL from a screenshot — it is very easy to
+misread, and the overflow check alone will not catch two boxes drawn on top of each
+other.
 
 ## Source data
 
