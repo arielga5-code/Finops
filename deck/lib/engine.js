@@ -583,7 +583,7 @@ const RENDER = {
     const cols = spec.cols || 4;
     const rows = Math.ceil(spec.items.length / cols);
     const w = (GEO.contentW - 0.28 * (cols - 1)) / cols;
-    const h = rows > 1 ? 2.05 : 2.6;
+    const h = rows > 1 ? 2.05 : 3.0;
 
     spec.items.forEach((it, i) => {
       const x = GEO.margin + (i % cols) * (w + 0.28);
@@ -610,12 +610,12 @@ const RENDER = {
         });
       }
       s.addText(it.label, {
-        x: x + 0.22, y: y + 0.58, w: w - 0.44, h: 0.5,
+        x: x + 0.22, y: y + 0.58, w: w - 0.44, h: 0.56,
         fontFace: FONTS.head, fontSize: 14, bold: true,
         color: COLORS.text, margin: 0, valign: "top",
       });
       s.addText(it.desc, {
-        x: x + 0.22, y: y + 1.06, w: w - 0.44, h: h - 1.2,
+        x: x + 0.22, y: y + 1.2, w: w - 0.44, h: h - 1.34,
         fontFace: FONTS.body, fontSize: 12, color: COLORS.muted,
         margin: 0, valign: "top", lineSpacingMultiple: 1.15,
       });

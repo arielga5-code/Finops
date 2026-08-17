@@ -5,7 +5,8 @@
   "description": "Generates the Harel Cloud FinOps 2026 decks \u2014 operational review and combined CIO briefing",
   "scripts": {
     "build": "node build.js",
-    "build:cio": "node build-cio.js"
+    "build:cio": "node build-cio.js",
+    "build:ai": "node build-ai.js"
   },
   "dependencies": {
     "pptxgenjs": "^4.0.1"

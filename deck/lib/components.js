@@ -271,7 +271,7 @@ function statTile(pres, s, { x, y, w, h = 1.18, label, value, note, accent = COL
   const pw = w - (boxed ? 0.44 : 0);
   // The label must stay on one line — if it wraps it pushes into the value.
   const lab = String(label).toUpperCase();
-  const labSize = Math.max(9.5, Math.min(SIZE.statLabel, (pw * 112) / Math.max(1, lab.length)));
+  const labSize = Math.max(10, Math.min(SIZE.statLabel, (pw * 88) / Math.max(1, lab.length)));
   s.addText(lab, {
     x: px, y: y + 0.10, w: pw, h: 0.26,
     fontFace: FONTS.head, fontSize: labSize, bold: true,
