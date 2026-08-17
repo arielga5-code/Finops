@@ -161,11 +161,18 @@ function slide(pres, opts = {}) {
   }
 
   if (opts.foot) {
+    // Lift the footnote when it runs to more than two lines, so a long one
+    // grows upward into the empty band instead of off the bottom edge.
+    const footLines = Math.max(
+      1,
+      Math.ceil(String(opts.foot).length / (GEO.contentW * 11.4))
+    );
+    const footH = footLines * 0.19 + 0.06;
     s.addText(opts.foot, {
       x: GEO.margin,
-      y: GEO.footY,
+      y: Math.min(GEO.footY, GEO.h - 0.12 - footH),
       w: GEO.contentW,
-      h: 0.4,
+      h: footH,
       fontFace: FONTS.body,
       fontSize: SIZE.footnote,
       color: COLORS.faint,

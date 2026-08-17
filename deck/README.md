@@ -5,7 +5,7 @@ Two decks, one design system, one set of source data.
 | Deck | Build | Slides | For |
 |---|---|---|---|
 | **Operational review** | `npm run build` → `Cloud_FinOps_Harel_2026.pptx` | 40 | The monthly FinOps walkthrough, Jan–Jul 2026 |
-| **CIO briefing (v34)** | `npm run build:cio` → `Harel_Cloud_Cost_CIO_v34.pptx` | 39 | The combined executive deck: v33's narrative plus the operational findings |
+| **CIO briefing (v34)** | `npm run build:cio` → `Harel_Cloud_Cost_CIO_v34.pptx` | 40 | The combined executive deck: v33's narrative plus the operational findings |
 
 ```bash
 cd deck
