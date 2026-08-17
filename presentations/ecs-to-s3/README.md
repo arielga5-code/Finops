@@ -18,10 +18,26 @@ node src/render-pptx.js Harel_ECS_to_S3_CIO.pptx
 mirror of the same ops for visual QA (screenshot it with Chromium — LibreOffice cannot
 render in the build sandbox).
 
-`src/theme.js` carries the design tokens and the `he()` helper, which wraps embedded
-Latin/numeric runs in Unicode isolates (U+2066/U+2069) so the bidi algorithm does not
-scramble terms like `AWS S3` or `$695,520` inside Hebrew sentences. Parentheses are
-deliberately left outside the isolates — inside one they render mirrored.
+### Hebrew bidi — read before editing any string
+
+`src/theme.js` carries the design tokens and the `he()` helper. Two rules, both learned
+the hard way:
+
+1. **Use the classic embeddings (U+202A LRE / U+202B RLE / U+202C PDF), never the
+   Unicode 6.3 isolates (U+2066 LRI / U+2069 PDI).** PowerPoint has no glyph for the
+   isolates, so every marked number renders wrapped in tofu boxes. The embeddings are
+   what the hand-authored Harel decks use and what PowerPoint's bidi engine handles.
+2. **Mark whole non-Hebrew spans, not individual tokens.** Marking tokens leaves two
+   LTR islands separated only by neutrals — `2025 — 220 TB`, `75% (687 TB)` — and when
+   the surrounding RTL run is reversed the two islands swap, so it reads
+   `220 TB — 2025`. Keeping the neutrals inside a single embedding keeps the span
+   intact. Sentence punctuation (leading `-`, trailing `.` `,` `·`) is trimmed back out
+   of the span so it stays in the RTL run.
+
+Verify after any text change — do not eyeball RTL from a screenshot, it is very easy to
+misread. Render `preview.html`, then assert that within each RTL text box every
+successive LRE…PDF embedding sits further left than the previous one. The last full run
+checked 95 adjacent embedding pairs with 0 violations.
 
 ## Source data
 

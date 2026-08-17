@@ -74,7 +74,8 @@ D.slides.forEach((sl) => {
         x: op.x, y: op.y, w: op.w, h: op.h,
         fontFace: F, fontSize: op.size, bold: !!op.bold, italic: !!op.italic,
         color: op.color, align: op.align || 'right', valign: op.valign || 'top',
-        rtlMode: !!op.rtl, margin: 0, charSpacing: op.cs || 0,
+        rtlMode: !!op.rtl, lang: op.rtl ? 'he-IL' : 'en-US',
+        margin: 0, charSpacing: op.cs || 0,
         lineSpacingMultiple: op.lh || 1.0,
         wrap: true, shrinkText: false,
       });

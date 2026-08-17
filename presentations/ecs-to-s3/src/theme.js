@@ -33,25 +33,48 @@ const G = {
 };
 
 // --- RTL helpers -------------------------------------------------------
-const RLM = '‏', LRI = '⁦', PDI = '⁩';
+// PowerPoint does NOT render the Unicode 6.3 isolates (U+2066 LRI / U+2069 PDI):
+// Calibri has no glyph for them, so every marked number shows up wrapped in tofu
+// boxes. Use the classic embeddings (U+202A/U+202B/U+202C) instead — the same
+// family the hand-authored Harel decks use, which PowerPoint's bidi engine
+// handles correctly.
+//
+// The embedding around each LTR token is still required. Plain bidi inside an
+// RTL paragraph mis-orders "220 TB": the digits and "TB" both resolve to an LTR
+// level, but the space between them falls back to the paragraph's RTL level, so
+// the two halves swap and it renders "TB 220". (The source deck dodges this by
+// writing "668TB" with no space.) Wrapping the whole token in LRE…PDF keeps it
+// on one level and fixes the order.
+const RLE = '‫';   // right-to-left embedding  (U+202B)
+const LRE = '‪';   // left-to-right embedding  (U+202A)
+const PDF = '‬';   // pop directional formatting (U+202C)
 
-// Isolate embedded LTR runs (Latin, digits, currency) inside a Hebrew string
-// so the bidi algorithm keeps them intact and correctly placed.
-// Parens are deliberately excluded: they mirror correctly on their own in an
-// RTL run, but inside an LTR isolate they come out reversed — "((687 TB".
-const TOK = '[A-Za-z0-9$][A-Za-z0-9$%.,:/+–—\\-]*';
-const LTR_RUN = new RegExp(TOK + '(?: ' + TOK + ')*', 'g');
+// Mark whole non-Hebrew SPANS, not individual tokens. Marking tokens
+// individually leaves two LTR islands separated only by neutrals — "2025 — 220
+// TB", "75% (687 TB)" — and when the surrounding RTL run is reversed those two
+// islands swap places, so the sentence reads "220 TB — 2025". Keeping the
+// neutrals inside one embedding keeps the span in one piece.
+const HEB = /[֐-׿]/;
+const SEG = /[֐-׿]+|[^֐-׿]+/g;
+// Punctuation that belongs to the Hebrew sentence rather than to the LTR span,
+// trimmed off both ends so it stays in the RTL run (a sentence-ending period
+// must sit on the left, and a "-" prefix must stay glued to its Hebrew letter).
+const EDGE = /^[\s.,;:·|\-–—]+|[\s.,;:·|\-–—]+$/g;
 
 function he(s) {
   if (!s) return s;
-  return RLM + s.replace(LTR_RUN, (m) => {
-    if (!/[A-Za-z0-9]/.test(m)) return m;
-    // Trailing punctuation belongs to the Hebrew sentence, not to the LTR run,
-    // otherwise a sentence-ending period lands on the wrong side of the term.
-    const tail = m.match(/[.,;:–—-]+$/);
-    if (tail) m = m.slice(0, -tail[0].length);
-    return LRI + m + PDI + (tail ? tail[0] : '');
-  });
+  // Per line: an unterminated embedding would leak across a line break.
+  return s.split('\n').map((line) => {
+    if (!line) return line;
+    const marked = (line.match(SEG) || []).map((seg) => {
+      if (HEB.test(seg) || !/[A-Za-z0-9]/.test(seg)) return seg;
+      const core = seg.replace(EDGE, '');
+      if (!core) return seg;
+      const i = seg.indexOf(core);
+      return seg.slice(0, i) + LRE + core + PDF + seg.slice(i + core.length);
+    }).join('');
+    return RLE + marked + PDF;
+  }).join('\n');
 }
 
-module.exports = { C, F, G, he, RLM, LRI, PDI };
+module.exports = { C, F, G, he, RLE, LRE, PDF };
