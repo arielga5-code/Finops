@@ -1,5 +1,25 @@
 // Automated QA over preview.html: (1) text overflow, (2) bidi embedding order.
 const { chromium } = require('playwright');
+const D = require('./deck');
+
+// A bracket that opens inside an LRE…PDF embedding but closes outside it (or the
+// reverse) is rendered mirrored: "il-central-1 (תל אביב)" comes out with the
+// parens swapped. Brackets must sit either wholly inside one embedding or
+// wholly outside every embedding.
+function bracketCheck() {
+  const bad = [];
+  D.slides.forEach((sl, si) => {
+    sl.ops.filter((op) => op.t === 'text' && op.rtl).forEach((op) => {
+      const spans = String(op.s).match(/\u202A[^\u202C]*\u202C/g) || [];
+      spans.forEach((sp) => {
+        const open = (sp.match(/[([]/g) || []).length;
+        const close = (sp.match(/[)\]]/g) || []).length;
+        if (open !== close) bad.push({ slide: si + 1, span: sp.replace(/[\u202A\u202C]/g, '') });
+      });
+    });
+  });
+  return bad;
+}
 
 (async () => {
   const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
@@ -59,6 +79,9 @@ const { chromium } = require('playwright');
     return out;
   });
 
+  const brackets = bracketCheck();
+  console.log('UNBALANCED BRACKET SPANS:', brackets.length);
+  brackets.forEach(b => console.log('  s' + b.slide, JSON.stringify(b.span)));
   console.log('OVERFLOWS:', res.overflows.length);
   res.overflows.forEach(o => console.log('  s' + o.slide, JSON.stringify(o.text), o.need + '>' + o.have));
   console.log('COLLISIONS:', res.collisions.length);
