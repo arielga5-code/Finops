@@ -1073,6 +1073,144 @@ const RENDER = {
       });
     }
   },
+
+  /**
+   * One thick horizontal bar per item, name and growth above it, split into two
+   * coloured segments to scale, total printed at the end.
+   *
+   * Built for a short list — a handful of projects, not a meter table — so each
+   * row gets real height. That is the whole design brief: the previous version
+   * of this slide was a seven-month stacked column with four series and every
+   * label under 8pt; this trades the month-by-month detail (which lives on the
+   * slide it came from) for one comparison read at a glance — how big is each
+   * item, and what is it made of.
+   */
+  projectBars(pres, spec) {
+    const s = C.slide(pres, {
+      eyebrow: spec.eyebrow, accent: spec.accent,
+      title: spec.title, note: spec.note, foot: spec.foot,
+    });
+
+    let top = GEO.bodyTop;
+    const stats = resolveStats(spec.stats, null, {});
+    if (stats.length) {
+      const sw = (GEO.contentW - 0.25 * (stats.length - 1)) / stats.length;
+      stats.forEach((st, i) => {
+        C.statTile(pres, s, {
+          ...st, x: GEO.margin + i * (sw + 0.25), y: top, w: sw, h: 1.05,
+        });
+      });
+      top += 1.28;
+    }
+
+    if (spec.rowsTitle) {
+      chartHeading(s, spec.rowsTitle, GEO.margin, top, GEO.contentW);
+      if (spec.legend) {
+        let lx = GEO.w - GEO.margin;
+        [...spec.legend].reverse().forEach((it) => {
+          const tw = it.label.length * 0.072 + 0.05;
+          lx -= tw;
+          s.addText(it.label, {
+            x: lx, y: top, w: tw, h: 0.26,
+            fontFace: FONTS.body, fontSize: SIZE.caption, color: COLORS.muted,
+            margin: 0, align: "right", valign: "middle",
+          });
+          lx -= 0.22;
+          s.addShape(pres.ShapeType.rect, {
+            x: lx, y: top + 0.06, w: 0.14, h: 0.14,
+            fill: { color: it.color }, line: { color: it.color, width: 0 },
+          });
+          lx -= 0.18;
+        });
+      }
+      top += 0.4;
+    }
+
+    const items = spec.items;
+    const max = Math.max(...items.map((it) => it.total), 1);
+    // The total sits in its own column to the right of the bar track, not
+    // chasing the end of the bar — the largest item's bar fills the whole
+    // track, and a label placed past its end would run off the slide.
+    const totalW = 1.35, totalGap = 0.15;
+    const barMaxW = GEO.contentW - totalW - totalGap;
+
+    // Row height is derived from the space actually available, not fixed, so
+    // four items on their own slide get large, deliberate bars while a longer
+    // list still fits without spilling into the footnote. Everything below the
+    // name is squeezed proportionally out of what is left.
+    const nameH = 0.3, gapToBar = 0.08, gapToCaption = 0.05, captionH = 0.22;
+    const pitch = Math.min(1.55, (GEO.footY - 0.12 - top) / items.length);
+    const barH = Math.max(
+      0.32,
+      Math.min(0.85, pitch - nameH - gapToBar - gapToCaption - captionH)
+    );
+
+    items.forEach((it, i) => {
+      const y = top + i * pitch;
+
+      s.addText(it.name, {
+        x: GEO.margin, y, w: GEO.contentW - 2.6, h: nameH,
+        fontFace: FONTS.head, fontSize: 16, bold: true,
+        color: COLORS.text, margin: 0, valign: "middle",
+      });
+      if (it.badge) {
+        s.addText(it.badge, {
+          x: GEO.w - GEO.margin - 2.4, y, w: 2.4, h: nameH,
+          fontFace: FONTS.body, fontSize: SIZE.caption, bold: true,
+          color: COLORS.muted, margin: 0, align: "right", valign: "middle",
+        });
+      }
+
+      const barY = y + nameH + gapToBar;
+      // A faint track at full width first, so a small project still reads as a
+      // share of the same scale rather than as an isolated stub.
+      s.addShape(pres.ShapeType.rect, {
+        x: GEO.margin, y: barY, w: barMaxW, h: barH,
+        fill: { color: COLORS.cardAlt },
+        line: { color: COLORS.border, width: 0.75 },
+      });
+
+      const barW = Math.max(0.02, barMaxW * (it.total / max));
+      const infraW = it.total ? barW * (it.infra / it.total) : 0;
+      const aiW = barW - infraW;
+      if (infraW > 0.015) {
+        s.addShape(pres.ShapeType.rect, {
+          x: GEO.margin, y: barY, w: infraW, h: barH,
+          fill: { color: COLORS.azure },
+          line: { color: COLORS.azure, width: 0 },
+        });
+      }
+      if (aiW > 0.015) {
+        s.addShape(pres.ShapeType.rect, {
+          x: GEO.margin + infraW, y: barY, w: aiW, h: barH,
+          fill: { color: COLORS.ai },
+          line: { color: COLORS.ai, width: 0 },
+        });
+      }
+
+      s.addText(C.usd(it.total), {
+        x: GEO.margin + barMaxW + totalGap, y: barY, w: totalW, h: barH,
+        fontFace: FONTS.head, fontSize: 18, bold: true,
+        color: COLORS.text, margin: 0, valign: "middle",
+      });
+
+      const share = it.total ? Math.round((it.infra / it.total) * 100) : 0;
+      s.addText(
+        it.total === 0
+          ? "no spend"
+          : it.infra === 0
+          ? "entirely AI, no infrastructure"
+          : it.infra === it.total
+          ? "entirely infrastructure"
+          : `${share}% infrastructure, ${100 - share}% AI`,
+        {
+          x: GEO.margin, y: barY + barH + gapToCaption, w: barMaxW, h: captionH,
+          fontFace: FONTS.body, fontSize: SIZE.caption, color: COLORS.muted,
+          margin: 0, valign: "middle",
+        }
+      );
+    });
+  },
 };
 
 /**

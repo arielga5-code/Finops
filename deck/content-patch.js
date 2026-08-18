@@ -1,104 +1,50 @@
 /**
  * Replacement slides for the hand-assembled "Final" CIO deck.
  *
- * Three slides in that deck were pasted in from the v33 briefing rather than
- * generated here. They carried v33's type scale, eyebrows at 10.5pt, body text
- * down to 8pt, and, because PowerPoint drops a slide-level background when you
- * paste onto a different master, they lost the dark canvas and came through
- * white. This file rebuilds all three on the current design system; the merge
- * script splices them back into the deck in place.
- *
- * Their position in that deck moves as it is re-cut, so `fix:final` in
+ * Slides in that deck get pasted in, redesigned, or replaced from here as the
+ * deck evolves. Their position moves as it is re-cut, so `fix:final` in
  * package.json carries the current mapping rather than this comment. In build
  * order they are:
  *
- *   1  Spend by AI platform, was a v33 card row on the May-Jul cut
- *   2  Inside AIFactory, was a v33 table at 9.5pt
- *   3  AI spend is outpacing governance
+ *   1  Spend by AI platform
+ *   2  Infrastructure across the AI Factory programme, by service
+ *   3  AI spend is outpacing governance, the mesh
+ *   4  The same programme, built four different ways, by project
  *
- * One editorial change came with the rebuild. Slide 5 was still on v33's
- * May-July window, which put it next to a Jan-Jul slide showing a different
- * total for the same five platforms. It is now on the deck's single basis -
- * metered consumption, January to July 2026, and reads its figures from
- * `data/ai-platforms.js`, the same source as the chart on slide 6. The two
- * slides now add up to the same $199,531.
+ * Slide 1 reads its figures from `data/ai-platforms.js`; slides 2 and 4 both
+ * read from `data/ai-projects.js`, so a project's total, its infrastructure
+ * share and its growth cannot say something different from one slide to the
+ * next.
  */
 
 const { COLORS } = require("./lib/theme");
 const AI = require("./data/ai-platforms");
+const P = require("./data/ai-projects");
 
 const AI_PURPLE = COLORS.ai;
 
-/* ------------------------------------------------------------------ *
- * The AIFactory tag, meter by meter
- *
- * `kind` drives the totals: the infrastructure and AI summary rows and every
- * share are computed from the rows below, so a corrected meter cannot leave a
- * stale total sitting under it.
- * ------------------------------------------------------------------ */
-
-const METERS = [
-  { name: "API Management", kind: "infra", vals: [5694, 5514, 6103] },
-  { name: "Foundry Models", kind: "AI", vals: [1183, 9683, 5641] },
-  { name: "Virtual Machines", kind: "infra", vals: [2887, 4557, 4865] },
-  { name: "Azure Cognitive Search", kind: "AI", vals: [1166, 1582, 1825] },
-  { name: "Microsoft Defender for Cloud", kind: "infra", vals: [401, 1574, 1166] },
-  { name: "Azure Database for PostgreSQL", kind: "infra", vals: [790, 1069, 1102] },
-  { name: "Virtual Network", kind: "infra", vals: [330, 518, 543] },
-  { name: "Foundry Tools", kind: "AI", vals: [95, 480, 718] },
-  { name: "Redis Cache", kind: "infra", vals: [327, 379, 500] },
-  { name: "Storage", kind: "infra", vals: [307, 368, 445] },
-  // Ten meters too small to name individually, carried as one line.
-  { name: "10 smaller meters", kind: "-", count: 10, vals: [476, 620, 701] },
-];
-
-const sum = (a) => a.reduce((x, y) => x + y, 0);
 const money = (n) => "$" + Math.round(n).toLocaleString("en-US");
 const pct = (n, d = 1) => n.toFixed(d) + "%";
 
-const meterTotal = (m) => sum(m.vals);
-const tagTotal = sum(METERS.map(meterTotal));
-const bandTotal = (kind) => sum(METERS.filter((m) => m.kind === kind).map(meterTotal));
-
-// The unclassified bucket is 10 tail meters too small to name. It is carried
-// with infrastructure rather than left dangling, because that is what it is -
-// networking, storage and monitoring odds and ends, no models.
-const INFRA = bandTotal("infra") + bandTotal("-");
-const AI_METERS = bandTotal("AI");
-
-// Azure blue is the platform, purple is AI. That is the deck's colour language
-// everywhere else, so the slide does not need a legend to be read. The tail
-// bucket is a bit of both, so it gets neither and is drawn grey.
-const KIND_COLOR = { infra: COLORS.azure, AI: COLORS.ai, "-": COLORS.faint };
-
-const ranked = [...METERS].sort((a, b) => meterTotal(b) - meterTotal(a));
-
-/**
- * Five named lines and one remainder, for the bar rows.
- *
- * Five is the number that fits without the rows turning back into a table. The
- * remainder is computed against the tag total rather than listed out, so the
- * bars still add up to the whole and nothing is quietly dropped.
- */
-const NAMED = 5;
-const TOP_LINES = [
-  ...ranked.slice(0, NAMED).map((m) => ({
-    name: m.name,
-    value: meterTotal(m),
-    color: KIND_COLOR[m.kind],
-  })),
-  {
-    name: `${sum(ranked.slice(NAMED).map((m) => m.count || 1))} smaller meters`,
-    value: tagTotal - sum(ranked.slice(0, NAMED).map(meterTotal)),
-    color: COLORS.faint,
-  },
-];
-
 /* ------------------------------------------------------------------ *
- * The mesh slide
+ * Infrastructure across the whole programme, service by service
+ *
+ * Every project's non-AI meters, added together. Deliberately excludes AI:
+ * this slide answers one question — what does the platform under the AI cost —
+ * and the mixed AI/infra table it replaces buried that answer in ninety numbers.
  * ------------------------------------------------------------------ */
 
-const cowork = AI.platform("Cowork");
+const INFRA_NAMED = 8;
+const infraTop = P.infraByService.slice(0, INFRA_NAMED);
+const infraRest = P.infraByService.slice(INFRA_NAMED);
+const infraRestTotal = infraRest.reduce((a, b) => a + b.value, 0);
+
+const INFRA_SERIES = [
+  ...infraTop.map((l) => ({ name: l.name, vals: [l.value] })),
+  ...(infraRest.length
+    ? [{ name: `${infraRest.length} smaller services`, vals: [infraRestTotal] }]
+    : []),
+];
 
 module.exports = [
   /* ========================= 1 / AI platforms ========================= */
@@ -140,63 +86,62 @@ module.exports = [
     ].join("\n"),
   },
 
-  /* ========================== 2 / AIFactory ========================== */
+  /* ====================== 2 / programme infrastructure ================ */
   {
-    kind: "splitBars",
-    eyebrow: "Azure / AIFactory",
-    accent: AI_PURPLE,
-    title: "Every $1 of AI runs on $" + (INFRA / AI_METERS).toFixed(2) + " of platform",
-    note: money(tagTotal) + " billed under the tag, May-Jul invoiced.",
-    bands: [
+    kind: "chart",
+    eyebrow: "AI Factory / Infrastructure",
+    accent: COLORS.azure,
+    title: "The AI programme carries " + P.money(P.infraTotal) + " of infrastructure",
+    note:
+      "All four projects, January to July. AI meters are excluded here — " +
+      "models, tools, search and OCR pages have their own slides.",
+    chartTitle: "Infrastructure spend by service, every project combined",
+    chart: {
+      type: "rank",
+      color: COLORS.azure,
+      inline: { cats: INFRA_SERIES.map((s) => s.name), series: INFRA_SERIES },
+    },
+    stats: [
       {
-        label: "Platform",
-        value: INFRA,
-        color: COLORS.azure,
-        note: "the gateway, the servers and the databases",
+        label: "Infrastructure",
+        value: P.money(P.infraTotal),
+        note: pct((P.infraTotal / P.total) * 100) + " of the programme",
+        accent: COLORS.azure,
       },
       {
-        label: "AI",
-        value: AI_METERS,
-        color: AI_PURPLE,
-        note: "model tokens and cognitive search",
+        label: "Largest line",
+        value: P.money(P.infraByService[0].value),
+        note: P.infraByService[0].name,
+        accent: COLORS.cyan,
+      },
+      {
+        label: "AI, for contrast",
+        value: P.money(P.aiTotal),
+        note: pct((P.aiTotal / P.total) * 100) + " of the programme",
+        accent: AI_PURPLE,
       },
     ],
-    rowsTitle: "The five largest lines, and everything else",
-    items: TOP_LINES,
-    callout: {
-      title: "Inference needs somewhere to run",
-      text:
-        "The ratio is not a problem in itself. It is the number to carry into the next project, " +
-        "because the platform half is the half that right-sizing and reservations can move.",
-    },
     foot:
-      "Document Intelligence, the OCR service, is a separate project in the programme and is " +
-      "not inside this tag, so it is not in this total. It is on the projects slide. " +
-      "Meter-level detail for every line here is in the appendix.",
+      "Every project carries some infrastructure except Document Intelligence, a hosted OCR " +
+      "API with none at all — the next slide breaks this out project by project. Inference " +
+      "running on a plain virtual machine still bills as infrastructure, so this is a floor.",
     speakerNotes: [
-      "ONE NUMBER OFF THIS SLIDE: for every dollar of AI meters under the AI Factory",
-      "tag, there is $" + (INFRA / AI_METERS).toFixed(2) + " of platform underneath it.",
+      "ONE NUMBER OFF THIS SLIDE: " + P.money(P.infraTotal) + " of the " + P.money(P.total),
+      "AI Factory programme is infrastructure, not AI models. That is " +
+        pct((P.infraTotal / P.total) * 100) + ".",
       "",
-      "  Platform   " + money(INFRA) + "   " + pct((INFRA / tagTotal) * 100),
-      "  AI         " + money(AI_METERS) + "   " + pct((AI_METERS / tagTotal) * 100),
-      "  ---------------------------------",
-      "  Tag total  " + money(tagTotal) + "   May-Jul invoiced",
+      "THE TWO BIG LINES",
+      "  " + P.infraByService[0].name.padEnd(24) + P.money(P.infraByService[0].value),
+      "  " + P.infraByService[1].name.padEnd(24) + P.money(P.infraByService[1].value),
+      "Between them, " +
+        pct(((P.infraByService[0].value + P.infraByService[1].value) / P.infraTotal) * 100) +
+        " of all the infrastructure in the programme.",
       "",
-      "Blue is platform, purple is AI, the same as everywhere else in the deck.",
-      "Read the top two rows together: the gateway in front of the models costs",
-      "about what the models cost.",
+      "WHAT IS EXCLUDED: Foundry Models, Foundry Tools, Azure Cognitive Search, and every",
+      "Document Intelligence page meter. Those are on the AI platform slides, not here.",
       "",
-      "TONE: this is a ratio, not an accusation. Inference has to run somewhere. The",
-      "reason to know it is sizing the next project, and the platform half is the",
-      "half reservations and right-sizing can actually move.",
-      "",
-      "WHAT IS IN THE AI BAND",
-      "Foundry Models (tokens), Azure Cognitive Search, Foundry Tools.",
-      "Document Intelligence, the OCR service, is a separate project in the",
-      "programme and is not in this tag. It is on the projects slide, where it is",
-      "$30,970 across Jan-Jul. All of it counts as AI.",
-      "",
-      "IF ASKED FOR THE FULL METER LIST: it is in the appendix. Do not read it out.",
+      "WHERE THIS GOES: this is the half of the AI bill that right-sizing and reservations",
+      "can move. The next slide shows how unevenly it falls across the four projects.",
     ].join("\n"),
   },
 
@@ -255,19 +200,79 @@ module.exports = [
   },
 ];
 
-/**
- * The AI Factory projects chart, taken straight from the operational review so
- * the series cannot drift, with the figures printed on the bars. Four projects,
- * one of which is the OCR service.
- */
-// Index into the operational review, not a slide number in the CIO deck.
-const projects = require("./content")[24];
+/* ------------------------------------------------------------------ *
+ * 4 / consumption by project
+ *
+ * Was a seven-month stacked column, four series, twenty-eight numbers at
+ * 8-9pt. Traded for one bar per project: how big it is, and how much of it is
+ * infrastructure versus AI, at a glance. The month-by-month detail this drops
+ * still exists — it is the chart on the operational review's own copy of this
+ * slide — but a CIO briefing does not need it read off the screen.
+ * ------------------------------------------------------------------ */
+
+const projectItems = [...P.projects].sort((a, b) => b.total - a.total);
+
+const shareOf = (p) => (p.total ? (p.infra / p.total) * 100 : 0);
+const widest = [...P.projects].sort((a, b) => shareOf(a) - shareOf(b));
+const leanest = widest[0];
+const heaviest = widest[widest.length - 1];
+
+const top = projectItems[0];
 
 module.exports.push({
-  ...projects,
-  // Conditional number format: segments under $2,000 print nothing. In January
-  // three of the four projects are around $1,000 and their labels land on top
-  // of each other; from March on, where the money actually is, every segment is
-  // big enough to hold its figure. The axis still carries the small ones.
-  chart: { ...projects.chart, dataLabels: '[<2000]"";"$"#,##0,"K"' },
+  kind: "projectBars",
+  eyebrow: "AI Factory / Projects",
+  accent: AI_PURPLE,
+  title: "The same programme, built four different ways",
+  note:
+    "Four projects, January to July. Blue is infrastructure, purple is AI, the " +
+    "same colours as the programme total.",
+  legend: [
+    { label: "Infrastructure", color: COLORS.azure },
+    { label: "AI", color: AI_PURPLE },
+  ],
+  stats: [
+    {
+      label: "Total, Jan-Jul",
+      value: P.money(P.total),
+      note: (P.growth >= 0 ? "+" : "") + P.growth.toFixed(0) + "% Jan to Jul",
+      accent: AI_PURPLE,
+    },
+    { label: "Largest project", value: top.name, note: pct((top.total / P.total) * 100) + " of the programme", accent: COLORS.cyan },
+    {
+      label: "Infrastructure share",
+      value: `${Math.round(shareOf(leanest))}% to ${Math.round(shareOf(heaviest))}%`,
+      note: leanest.name + " to " + heaviest.name,
+      accent: COLORS.azure,
+    },
+  ],
+  items: projectItems.map((p) => ({
+    name: p.name, total: p.total, infra: p.infra, ai: p.ai, badge: p.badge,
+  })),
+  foot:
+    leanest.name + " buys AI as a hosted API and carries no infrastructure at all. " +
+    heaviest.name + " builds its own, so " + pct(shareOf(heaviest), 0) + " of it is infrastructure. " +
+    "The gap is what a project buys versus what it builds, not how well it is run.",
+  speakerNotes: [
+    "Same four projects as the infrastructure slide, now compared to each other",
+    "rather than added together.",
+    "",
+    ...projectItems.map(
+      (p) =>
+        `  ${p.name.padEnd(23)} ${P.money(p.total).padStart(9)}   infra ${Math.round(shareOf(p))}%   ${p.badge}`
+    ),
+    "",
+    "THE RANGE IS THE POINT: from " + Math.round(shareOf(leanest)) + "% to " +
+      Math.round(shareOf(heaviest)) + "% infrastructure, inside the same programme.",
+    leanest.name + " is a hosted OCR API — there is nothing under it to build.",
+    heaviest.name + " is a research workload running on its own containers and",
+    "gateway, so nearly all of it is platform.",
+    "",
+    "AI Factory sits in the middle because it is the shared platform everyone",
+    "else's model traffic runs through — that gateway is the largest single",
+    "infrastructure line in the whole programme. See the previous slide.",
+    "",
+    "IF ASKED FOR THE MONTH-BY-MONTH VIEW: it is in the appendix, on the",
+    "operational review's own copy of this slide.",
+  ].join("\n"),
 });

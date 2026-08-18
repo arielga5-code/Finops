@@ -457,7 +457,6 @@ function columnChart(pres, s, { x, y, w, h, name, cats, vals, color = COLORS.azu
       x, y, w, h,
       barDir: "col",
       barGapWidthPct: 60,
-      chartColors: [color],
       showValue: true,
       dataLabelPosition: "outEnd",
       dataLabelColor: COLORS.text,
@@ -466,6 +465,9 @@ function columnChart(pres, s, { x, y, w, h, name, cats, vals, color = COLORS.azu
       dataLabelFormatCode: valFmt,
       valAxisLabelFormatCode: valFmt,
       ...axisStyle,
+      // See rankChart: must follow the axisStyle spread, or its own palette
+      // silently wins and every column comes out a different colour.
+      chartColors: [color],
       showLegend: false,
     }
   );
@@ -498,7 +500,6 @@ function rankChart(pres, s, { x, y, w, h, cats, vals, color = COLORS.azure, valF
       x, y, w, h,
       barDir: "bar",
       barGapWidthPct: 45,
-      chartColors: [color],
       showValue: true,
       dataLabelPosition: "outEnd",
       dataLabelColor: COLORS.text,
@@ -507,6 +508,11 @@ function rankChart(pres, s, { x, y, w, h, cats, vals, color = COLORS.azure, valF
       dataLabelFormatCode: valFmt,
       valAxisLabelFormatCode: valFmt,
       ...axisStyle,
+      // `axisStyle` carries its own chartColors (the deck's multi-colour
+      // SERIES palette, for stacked/line charts) — set after the spread, or
+      // this single accent colour is silently overwritten by it and every bar
+      // comes out a different colour instead of one.
+      chartColors: [color],
       showLegend: false,
     }
   );

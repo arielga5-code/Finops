@@ -103,6 +103,7 @@ a slide can never drift away from the chart beside it. Hard-coded strings
 - `platforms` — a share strip over one column per platform: total, share, first and last month, growth
 - `mesh` — two columns wired to each other with nothing in between, plus a panel and stats
 - `splitBars` — one total split two ways, then the largest lines on a shared scale, coloured by side
+- `projectBars` — one thick bar per item, split into two colours to scale, total and growth labelled — for a short list, not a meter table
 - `closing` — sign-off
 
 A chart spec can carry `inline: { cats, series }` instead of an `id`, for
@@ -189,31 +190,86 @@ it would turn into nonsense.
 `content-ai.js` and `content-vendor.js` have not been through this pass; they
 build decks of their own, not the Final deck.
 
-### The three slides in `content-patch.js`
+### The four slides in `content-patch.js`
 
-Slides 5, 7 and 19 of the Final deck had been pasted from v33 and still carried
-v33's type scale — eyebrows at 10.5pt and body text down to 8pt, against this
-deck's 12pt floor. They are rebuilt here on the current design system.
+Four slides in the Final deck are generated here rather than assembled by hand,
+either because the pasted version came in unreadable (white background, v33's
+8-9pt type) or because the CIO cut needed a different level of detail than the
+operational review it was drawn from. In build order:
 
-One editorial change came with the rebuild. Slide 5 was still on v33's May–July
-window, which put it directly before a Jan–Jul slide showing a different total
-for the same five platforms. It now runs on the deck's single basis — metered
-consumption, January to July 2026 — and reads its figures from
-`data/ai-platforms.js`, the same source as the chart on slide 6. Both slides now
-add up to $199,531.
+**1 — Spend by AI platform.** Reads from `data/ai-platforms.js`, the same
+source as the "AI went from 4% of the bill to 27%" chart, so the two can never
+show different totals for the same five platforms.
 
 | Platform | Jan–Jul | Share | Jan | Jul |
 |---|---:|---:|---:|---:|
 | Azure AI Foundry | $87,158 | 43.7% | $5,764 | $19,613 |
 | GitHub Copilot | $57,177 | 28.7% | $2,779 | $19,260 |
-| AWS Bedrock — Claude | $42,056 | 21.1% | — | $25,288 |
-| Copilot Studio (Cowork) | $9,444 | 4.7% | $97 | $8,920 |
+| AWS Bedrock (Claude) | $42,056 | 21.1% | — | $25,288 |
+| Cowork | $9,444 | 4.7% | $97 | $8,920 |
 | Google Vertex AI | $3,696 | 1.9% | — | $2,359 |
 
 Growth is stated as a percentage only where January was non-zero. A platform
-that started at nothing gets its first billed month named instead — Copilot
-Studio against $97 in January would otherwise read "+9,096%", which is
-arithmetic theatre, and the two figures are on the slide anyway.
+that started at nothing gets its first billed month named instead — Cowork
+against $97 in January would otherwise read "+9,096%", which is arithmetic
+theatre, and the two figures are on the slide anyway.
+
+**2 — Infrastructure across the AI Factory programme.** Was a 13-row, 7-column
+table of every meter under the AIFactory tag — ninety numbers to say that most
+of the tag is not AI. Replaced with a ranked bar list of every infrastructure
+service across all four projects, one colour, one number per line: $77,049,
+46.5% of the $165,588 programme. AI meters (models, tools, search, OCR) are
+excluded entirely — the programme's AI total appears once, as a single
+contrast figure, not as a second colour fighting the chart for attention.
+
+**3 — AI spend is outpacing governance.** The consumer/provider mesh; unchanged
+in substance from earlier rounds, still reads from `data/ai-platforms.js` for
+its one AI-specific stat.
+
+**4 — The same programme, built four different ways.** Was a seven-month
+stacked column, four series, every label under 9pt. Replaced with one large bar
+per project — infrastructure and AI drawn to scale within each bar, so both the
+size of a project and what it is made of read at a glance:
+
+| Project | Total | Infrastructure | Share |
+|---|---:|---:|---:|
+| AI Factory | $92,247 | $61,169 | 66% |
+| Solugen | $31,631 | $6,189 | 20% |
+| Document Intelligence | $30,970 | $0 | 0% |
+| INSAIT | $10,740 | $9,692 | 90% |
+
+The spread — 0% to 90% — is the point of the slide: Document Intelligence buys
+OCR as a hosted API and carries no infrastructure at all, INSAIT builds its
+own, and AI Factory sits in between because it is the shared platform
+everyone's model traffic runs through.
+
+Slides 2 and 4 both read from `data/ai-projects.js`, so a project's total, its
+infrastructure share and its growth badge cannot say something different on
+one slide than on the other. That module derives everything from
+`data/charts.json` at build time and throws if a project's rollup total and its
+service-level breakdown disagree by more than half a percent — the two are
+different extracts of the same workbook, and if they drift apart the split on
+the slide is no longer describing the project.
+
+**What counts as AI**, on both slides: Foundry Models, Foundry Tools, Azure
+Cognitive Search, and the whole of Document Intelligence (it bills nothing but
+OCR page meters). Everything else a project consumes — the gateway, the
+servers, the databases, the network — counts as infrastructure. Inference
+running on a plain virtual machine still bills as infrastructure, so the
+infrastructure figure is a floor, not a ceiling.
+
+### A pptxgenjs colour bug, in `rankChart` and `columnChart`
+
+Both single-series chart wrappers built their options object as
+`{ chartColors: [color], ...axisStyle }` — and `axisStyle` (shared by every
+chart in the deck) carries its own `chartColors: SERIES`, the deck's full
+multi-colour palette. A later spread key wins, so the single-colour override
+was silently overwritten every time, and every "one colour" ranked bar or
+labelled column chart in the deck rendered with a different colour per bar —
+including the two "Marketplace purchases" slides in the operational review,
+which had been shipping like that unnoticed. Fixed by moving `chartColors`
+after the `...axisStyle` spread, matching the order `stackedChart` already
+used correctly.
 
 ## Source mapping
 
