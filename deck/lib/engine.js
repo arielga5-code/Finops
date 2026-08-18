@@ -858,8 +858,16 @@ const RENDER = {
     const panelX = rightX + colW + 0.4;
     const panelW = GEO.w - GEO.margin - panelX;
     const top = GEO.bodyTop + 0.5;
-    const pitch = 0.7;
-    const cardH = 0.58;
+
+    // The two columns need not be the same length, and the longer one sets the
+    // spacing for both. Fit that column into the band above the stat strip
+    // rather than using a fixed pitch, so adding a provider tightens the rows
+    // instead of pushing the strip off the bottom of the slide.
+    const rows = Math.max(spec.left.items.length, spec.right.items.length);
+    const statsH = (spec.stats || []).length ? 1.43 : 0;
+    const band = GEO.footY - 0.1 - statsH - top;
+    const cardH = Math.min(0.58, band / rows - 0.08);
+    const pitch = Math.min(0.72, (band - cardH) / Math.max(1, rows - 1));
 
     const column = (x, heading, items, color) => {
       s.addText(heading.toUpperCase(), {
@@ -904,10 +912,10 @@ const RENDER = {
     // The panel restates the mesh in words, for the reader who does not want
     // to count the wires. It is sized to finish level with the columns beside
     // it rather than to its own content, so the two blocks read as one band.
-    const rows = spec.panel.items;
-    const colBottom = top + (spec.left.items.length - 1) * pitch + cardH;
-    const panelH = Math.max(0.62 + rows.length * 0.5, colBottom - GEO.bodyTop);
-    const rowPitch = (panelH - 0.62) / rows.length;
+    const panelRows = spec.panel.items;
+    const colBottom = top + (rows - 1) * pitch + cardH;
+    const panelH = Math.max(0.62 + panelRows.length * 0.5, colBottom - GEO.bodyTop);
+    const rowPitch = (panelH - 0.62) / panelRows.length;
     s.addShape(pres.ShapeType.roundRect, {
       x: panelX, y: GEO.bodyTop, w: panelW, h: panelH,
       rectRadius: 0.06,
@@ -924,7 +932,7 @@ const RENDER = {
       fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
       color: spec.accent, charSpacing: 1.4, margin: 0, valign: "middle",
     });
-    rows.forEach((it, i) => {
+    panelRows.forEach((it, i) => {
       const y = GEO.bodyTop + 0.56 + i * rowPitch;
       if (i) {
         s.addShape(pres.ShapeType.rect, {
@@ -943,10 +951,7 @@ const RENDER = {
     const stats = resolveStats(spec.stats, null, {});
     if (stats.length) {
       const sw = (GEO.contentW - 0.25 * (stats.length - 1)) / stats.length;
-      const sy = Math.max(
-        top + spec.left.items.length * pitch + 0.25,
-        GEO.bodyTop + panelH + 0.25
-      );
+      const sy = Math.max(colBottom + 0.25, GEO.bodyTop + panelH + 0.25);
       stats.forEach((st, i) => {
         C.statTile(pres, s, {
           ...st, x: GEO.margin + i * (sw + 0.25), y: sy, w: sw, h: 1.18,
