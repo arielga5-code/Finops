@@ -130,7 +130,13 @@ function drawChart(pres, s, spec, box) {
     });
     return;
   }
-  C.stackedChart(pres, s, { ...box, cats: c.cats, series, legend: spec.legend !== false });
+  C.stackedChart(pres, s, {
+    ...box, cats: c.cats, series,
+    legend: spec.legend !== false,
+    colors: spec.colors,
+    grouping: spec.grouping,
+    valFmt: spec.valFmt,
+  });
 }
 
 function chartHeading(s, text, x, y, w) {

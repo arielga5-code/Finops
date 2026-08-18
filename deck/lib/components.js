@@ -409,17 +409,20 @@ const legendStyle = {
 };
 
 /** Stacked columns over months — the default shape for "spend by X, by month". */
-function stackedChart(pres, s, { x, y, w, h, series, cats, legend = true, valFmt = '"$"#,##0' }) {
+function stackedChart(pres, s, {
+  x, y, w, h, series, cats, legend = true, valFmt = '"$"#,##0',
+  colors: override, grouping = "stacked",
+}) {
   // With a single series pptxgenjs hands each *point* the next palette colour,
   // which reads as three unrelated bars. Pin it to one colour instead.
-  const colors = series.length === 1 ? [SERIES[0]] : SERIES;
+  const colors = override || (series.length === 1 ? [SERIES[0]] : SERIES);
   s.addChart(
     pres.ChartType.bar,
     series.map((ser) => ({ name: ser.name, labels: cats, values: ser.vals })),
     {
       x, y, w, h,
       barDir: "col",
-      barGrouping: "stacked",
+      barGrouping: grouping,
       barGapWidthPct: 55,
       valAxisLabelFormatCode: valFmt,
       ...axisStyle,

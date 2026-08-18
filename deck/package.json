@@ -6,7 +6,8 @@
   "scripts": {
     "build": "node build.js",
     "build:cio": "node build-cio.js",
-    "build:ai": "node build-ai.js"
+    "build:ai": "node build-ai.js",
+    "build:vendor": "node build-vendor.js"
   },
   "dependencies": {
     "pptxgenjs": "^4.0.1"

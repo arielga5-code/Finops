@@ -1,22 +1,25 @@
 # Cloud FinOps decks — Harel, 2026
 
-Two decks, one design system, one set of source data.
+Four decks, one design system, one set of source data.
 
 | Deck | Build | Slides | For |
 |---|---|---|---|
 | **Operational review** | `npm run build` → `Cloud_FinOps_Harel_2026.pptx` | 40 | The monthly FinOps walkthrough, Jan–Jul 2026 |
 | **CIO briefing (v34)** | `npm run build:cio` → `Harel_Cloud_Cost_CIO_v34.pptx` | 40 | The combined executive deck: v33's narrative plus the operational findings |
 | **FinOps for AI** | `npm run build:ai` → `FinOps_for_AI_CIO.pptx` | 11 | Executive cut of the five AI cost levers and the one-page usage policy |
+| **Consumption by vendor** | `npm run build:vendor` → `Cloud_Consumption_by_Vendor.pptx` | 8 | One question: what does each cloud cost per month, and how much of it is AI |
 
 ```bash
 cd deck
 npm install                # pptxgenjs only
 npm run build              # operational review
 npm run build:cio          # combined CIO briefing
+npm run build:ai           # FinOps for AI
+npm run build:vendor       # consumption by vendor
 npm run build:cio -- /path/to/Somewhere_Else.pptx
 ```
 
-Both are 13.333" × 7.5", dark theme, native PowerPoint charts and tables
+All four are 13.333" × 7.5", dark theme, native PowerPoint charts and tables
 (everything stays editable in PowerPoint — nothing is a picture).
 
 ### Sized for a meeting-room screen
@@ -52,8 +55,11 @@ adapt, but dense tables will need rows cut rather than type shrunk.
 | `lib/engine.js` | The renderers — one per slide `kind` — and the `auto:` resolver. Shared by both decks. |
 | `content.js` | The operational review: every headline, callout, table row and slide order. |
 | `content-cio.js` | The combined CIO briefing. Its appendix imports slides straight from `content.js`. |
+| `content-ai.js` | The FinOps for AI briefing. |
+| `content-vendor.js` | Consumption by vendor, AI against everything else. |
 | `data/charts.json` | The numeric series, extracted from the source `.pptx` chart parts. |
-| `build.js` / `build-cio.js` | Thin wrappers that hand a content array to the engine. |
+| `data/vendor-split.js` | Derives the vendor × AI split from `charts.json` at build time. |
+| `build*.js` | Thin wrappers that hand a content array to the engine. |
 
 ### Customising it
 
@@ -191,3 +197,59 @@ Per-cost-centre and per-project detail — SAP, Cloud IT, Actuary, ITSec,
 Basasach, Investments, Opswat, Risk Agility, the smaller AI projects and the
 sandbox. `APPENDIX_PICKS` in `content-cio.js` selects them by index from
 `content.js`, so they are the same slide objects and cannot drift.
+
+## Consumption by vendor — how the AI split is defined
+
+`content-vendor.js` answers one question: what does each cloud cost per month,
+and how much of that is AI. Every series is derived in `data/vendor-split.js`
+from the same extracted workbooks the other decks use — there are no typed-in
+figures in the content file, so a stat tile cannot disagree with the bar next
+to it.
+
+**The basis**, stated once and applied on every slide:
+
+| | |
+|---|---|
+| Vendor total | That vendor's consumption, **plus Amazon Bedrock** |
+| AI | Azure AI Foundry (models and tools), GitHub Copilot, Copilot Studio; Amazon Bedrock; Vertex AI, Gemini API |
+| Everything else | All remaining consumption, **including Azure Databricks** |
+| Excluded | AWS Marketplace other than Bedrock — $1.5M of security, database and observability subscriptions |
+
+Bedrock is pulled in because it bills as an AWS Marketplace subscription rather
+than as consumption, and leaving it where the invoice puts it would show AWS as
+having no AI at all. That is an invoicing artefact, not an accounting judgement.
+
+Databricks stays in "everything else" deliberately: it is a data platform, and
+its 600,000-DBCU pre-purchase was paid up front in April, so it bills at $0 from
+May. Folding it into AI would put a fixed, prepaid data cost inside a line whose
+whole job is to track generative-AI growth — and it would make the AI line fall
+in May, when it in fact doubled.
+
+The definition is conservative in both directions that matter. Azure Cognitive
+Search is reported inside "other services" in the source and cannot be split out
+cleanly, and the VMs, storage and API Management that serve AI workloads bill as
+ordinary consumption. **The real AI-attributable cost is higher than these
+charts show, not lower.**
+
+### What the split shows
+
+| | January | July | Change |
+|---|---:|---:|---:|
+| AI | $8,640 | $75,439 | **+773%** |
+| Everything else | $225,476 | $217,302 | −3.6% |
+| Total | $234,115 | $292,742 | +25.0% |
+
+Non-AI cloud spend is flat to slightly down across the seven months. Every
+dollar of growth in the estate this year is AI. AI went from 3.7% of the monthly
+bill to 25.8%.
+
+One figure to be aware of when presenting alongside the CIO deck: July Bedrock
+is shown **gross**, at $25,288, before the $16,100 MAP contract credit. The
+credit is still to be confirmed with the reseller, and the AWS slide says so.
+
+### Colour language
+
+AI is purple on every slide. Vendors keep their accents (Azure blue, AWS orange,
+GCP green) for ordinary consumption. On the combined chart the AI bands stack on
+top in three tints of purple, so AI reads as one block across every column while
+the base of each column still says which cloud it is.

@@ -28,6 +28,11 @@ const COLORS = {
   gcp: "3DDC97", // green
   ai: "B07CFF", // purple — AI / Foundry / model spend
   cyan: "3DD9EB", // secondary highlight
+  // Tints of `ai`, for charts that stack more than one vendor's AI spend. AI
+  // is always purple across the decks; these keep the vendors apart inside it
+  // without breaking that rule.
+  aiMid: "8E5FD8",
+  aiDeep: "6A46A8",
   danger: "FF6B7A", // increases, overruns
   good: "3DDC97", // savings, decreases
   warn: "E0A030",
