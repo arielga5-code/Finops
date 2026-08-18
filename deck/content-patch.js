@@ -48,7 +48,8 @@ const METERS = [
   { name: "Foundry Tools", kind: "AI", vals: [95, 480, 718] },
   { name: "Redis Cache", kind: "infra", vals: [327, 379, 500] },
   { name: "Storage", kind: "infra", vals: [307, 368, 445] },
-  { name: "10 smaller meters", kind: "-", vals: [476, 620, 701] },
+  // Ten meters too small to name individually, carried as one line.
+  { name: "10 smaller meters", kind: "-", count: 10, vals: [476, 620, 701] },
 ];
 
 const sum = (a) => a.reduce((x, y) => x + y, 0);
@@ -58,41 +59,41 @@ const pct = (n, d = 1) => n.toFixed(d) + "%";
 const meterTotal = (m) => sum(m.vals);
 const tagTotal = sum(METERS.map(meterTotal));
 const bandTotal = (kind) => sum(METERS.filter((m) => m.kind === kind).map(meterTotal));
-const bandMonth = (kind, i) => sum(METERS.filter((m) => m.kind === kind).map((m) => m.vals[i]));
 
 // The unclassified bucket is 10 tail meters too small to name. It is carried
 // with infrastructure rather than left dangling, because that is what it is -
 // networking, storage and monitoring odds and ends, no models.
 const INFRA = bandTotal("infra") + bandTotal("-");
 const AI_METERS = bandTotal("AI");
-const infraMonth = (i) => bandMonth("infra", i) + bandMonth("-", i);
 
+// Orange is infrastructure, blue is AI, everywhere on the slide. The tail
+// bucket is both, so it gets neither and is drawn grey.
 const KIND_COLOR = { infra: COLORS.warn, AI: COLORS.azure, "-": COLORS.faint };
 
-/** One table row, in the column order the slide declares: name, kind, May-Jul, total, share. */
-const meterRow = (m) => [
-  m.name,
-  { text: m.kind, color: KIND_COLOR[m.kind] },
-  money(m.vals[0]),
-  money(m.vals[1]),
-  money(m.vals[2]),
-  money(meterTotal(m)),
-  pct((meterTotal(m) / tagTotal) * 100),
+const ranked = [...METERS].sort((a, b) => meterTotal(b) - meterTotal(a));
+const topMeter = ranked[0];
+const models = METERS.find((m) => m.name === "Foundry Models");
+
+/**
+ * Five named lines and one remainder, for the bar rows.
+ *
+ * Five is the number that fits without the rows turning back into a table. The
+ * remainder is computed against the tag total rather than listed out, so the
+ * bars still add up to the whole and nothing is quietly dropped.
+ */
+const NAMED = 5;
+const TOP_LINES = [
+  ...ranked.slice(0, NAMED).map((m) => ({
+    name: m.name,
+    value: meterTotal(m),
+    color: KIND_COLOR[m.kind],
+  })),
+  {
+    name: `${sum(ranked.slice(NAMED).map((m) => m.count || 1))} smaller meters`,
+    value: tagTotal - sum(ranked.slice(0, NAMED).map(meterTotal)),
+    color: COLORS.faint,
+  },
 ];
-
-/** The two summary rows under the meters, same columns, set bold. */
-const bandRow = (label, months, color) => {
-  const total = sum(months);
-  return [
-    { text: label, bold: true },
-    { text: "-", color: COLORS.faint },
-    ...months.map((v) => ({ text: money(v), bold: true })),
-    { text: money(total), bold: true },
-    { text: pct((total / tagTotal) * 100), bold: true, color },
-  ];
-};
-
-const topMeter = [...METERS].sort((a, b) => meterTotal(b) - meterTotal(a))[0];
 
 /* ------------------------------------------------------------------ *
  * The mesh slide
@@ -142,77 +143,56 @@ module.exports = [
 
   /* ========================== 2 / AIFactory ========================== */
   {
-    kind: "table",
+    kind: "splitBars",
     eyebrow: "Azure / AIFactory",
     accent: COLORS.warn,
-    title: "Inside AIFactory: infrastructure vs. AI",
-    note: "May-Jul invoiced, the only window with meter-level detail.",
-    tables: [
+    title: "Two thirds of the AI Factory tag is not AI",
+    note: money(tagTotal) + " billed under the tag, May-Jul invoiced.",
+    bands: [
       {
-        title: "Every meter billed under the tag",
-        sub: "Three-month totals, with the month-by-month split and each meter's share of the tag",
-        fontSize: 12,
-        cols: [
-          { label: "Meter category", w: 2.75 },
-          { label: "Kind", w: 0.75 },
-          { label: "May", w: 0.95, align: "right" },
-          { label: "Jun", w: 0.95, align: "right" },
-          { label: "Jul", w: 0.95, align: "right" },
-          { label: "3-month", w: 1.05, align: "right" },
-          { label: "Share", w: 0.85, align: "right" },
-        ],
-        rows: [
-          // Largest first, but the unnamed tail bucket stays at the bottom -
-          // sorting it by size would drop it into the middle of the named
-          // meters, where it reads as one of them.
-          ...[...METERS]
-            .sort((a, b) =>
-              (a.kind === "-") - (b.kind === "-") || meterTotal(b) - meterTotal(a))
-            .map(meterRow),
-          bandRow("Infrastructure", [0, 1, 2].map(infraMonth), COLORS.warn),
-          bandRow("AI meters", [0, 1, 2].map((i) => bandMonth("AI", i)), COLORS.azure),
-        ],
-      },
-    ],
-    stats: [
-      {
-        label: "Not AI meters",
-        value: pct((INFRA / tagTotal) * 100),
-        note: "of the AIFactory tag is infrastructure",
-        accent: COLORS.warn,
-      },
-      {
-        label: "Largest single line",
-        value: money(meterTotal(topMeter)),
-        note: topMeter.name + ", ahead of the models it fronts",
-        accent: COLORS.cyan,
+        label: "Infrastructure",
+        value: INFRA,
+        color: COLORS.warn,
+        note: "the gateway, the servers and the databases",
       },
       {
         label: "AI meters",
-        value: money(AI_METERS),
-        note: pct((AI_METERS / tagTotal) * 100) + " of the tag",
-        accent: COLORS.azure,
+        value: AI_METERS,
+        color: COLORS.azure,
+        note: "model tokens and cognitive search",
       },
     ],
+    rowsTitle: "The five largest lines, and everything else",
+    items: TOP_LINES,
+    callout: {
+      title:
+        "API Management costs more than the models it fronts: " +
+        money(meterTotal(topMeter)) + " against " + money(meterTotal(models)),
+      text:
+        "Inference has to run somewhere, so this is not automatically wrong. It is the part " +
+        "of the AI bill that right-sizing can actually move, and it is the part nobody is looking at.",
+    },
     foot:
-      "API Management alone is " + money(meterTotal(topMeter)) + ", or " +
-      pct((meterTotal(topMeter) / tagTotal) * 100) + " of the tag, more than the models it " +
-      "fronts. Inference has to run somewhere, so this is not automatically wrong; it is the " +
-      "part of the AI bill that right-sizing can actually move, and nobody is looking at it. " +
-      "The subscriptions actually named \"AI Factory\" total just $4,279. The tag is what " +
-      "counts here, not the subscription name.",
+      "Meter-level detail for every line is in the appendix. The subscriptions actually " +
+      "named \"AI Factory\" total just $4,279, so the tag is what counts, not the name.",
     speakerNotes: [
-      "The AIFactory tag is " + money(tagTotal) + " over May-July.",
+      "ONE NUMBER OFF THIS SLIDE: " + pct((INFRA / tagTotal) * 100) + " of the AI Factory tag",
+      "is infrastructure, not AI.",
       "",
-      "  Infrastructure  " + money(INFRA) + "  " + pct((INFRA / tagTotal) * 100),
-      "  AI meters       " + money(AI_METERS) + "  " + pct((AI_METERS / tagTotal) * 100),
+      "  Infrastructure  " + money(INFRA) + "   " + pct((INFRA / tagTotal) * 100),
+      "  AI meters       " + money(AI_METERS) + "   " + pct((AI_METERS / tagTotal) * 100),
+      "  ---------------------------------",
+      "  Tag total       " + money(tagTotal) + "   May-Jul invoiced",
       "",
-      "The headline: API Management is the single largest line at " +
-        money(meterTotal(topMeter)) + ",",
-      "ahead of Foundry Models. The gateway costs more than the models behind it.",
+      "The orange bars are infrastructure, the blue are AI. Read the top two rows",
+      "together: the gateway in front of the models costs more than the models.",
       "",
-      "Watch for the trap in the name: the two subscriptions literally called",
-      '"AI Factory" total $4,279. The tag is what matters, not the subscription name.',
+      "WHAT IS IN THE AI BAND",
+      "Foundry Models (tokens), Azure Cognitive Search, Foundry Tools. Document",
+      "Intelligence, the OCR service, is a separate project in the programme and is",
+      "not in this tag, so it is not in this total. It is on the projects slide.",
+      "",
+      "IF ASKED FOR THE FULL METER LIST: it is in the appendix. Do not read it out.",
     ].join("\n"),
   },
 

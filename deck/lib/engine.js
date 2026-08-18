@@ -962,6 +962,112 @@ const RENDER = {
       });
     }
   },
+
+  /**
+   * One total, split two ways, then the lines that make it up.
+   *
+   * The bar across the top is the argument — its two segments are drawn to
+   * scale, so the split is read before any figure is. The rows beneath are the
+   * largest contributors on a single shared scale, each in the colour of the
+   * band it belongs to, which is what shows the two kinds of spend interleaved
+   * rather than neatly stacked.
+   *
+   * Deliberately sparse: a percentage per band, a figure per row, nothing else.
+   * The full meter table belongs in the appendix, not in front of a CIO.
+   */
+  splitBars(pres, spec) {
+    const s = C.slide(pres, {
+      eyebrow: spec.eyebrow, accent: spec.accent,
+      title: spec.title, note: spec.note, foot: spec.foot,
+    });
+
+    const total = C.sum(spec.bands.map((b) => b.value));
+    const gap = 0.06;
+    const barY = GEO.bodyTop + 0.05;
+    const barH = 0.86;
+
+    let x = GEO.margin;
+    spec.bands.forEach((b, i) => {
+      const w = (GEO.contentW - gap * (spec.bands.length - 1)) * (b.value / total);
+      s.addShape(pres.ShapeType.rect, {
+        x, y: barY, w, h: barH,
+        fill: { color: b.color },
+        line: { color: b.color, width: 0 },
+      });
+      // Set on the band itself. The bar is dark enough for the deck's near-white
+      // to sit on it, and putting the figure inside means the segment width and
+      // the number it stands for cannot be read apart.
+      s.addText(`${((b.value / total) * 100).toFixed(1)}%`, {
+        x: x + 0.24, y: barY + 0.08, w: w - 0.48, h: 0.46,
+        fontFace: FONTS.head, fontSize: 30, bold: true,
+        color: COLORS.bg, margin: 0, valign: "middle",
+      });
+      s.addText(b.label.toUpperCase(), {
+        x: x + 0.24, y: barY + 0.52, w: w - 0.48, h: 0.26,
+        fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
+        color: COLORS.bg, charSpacing: 1.2, margin: 0, valign: "middle",
+      });
+      s.addText(`${C.usd(b.value)}, ${b.note}`, {
+        x: x + 0.24, y: barY + barH + 0.1, w: w - 0.24, h: 0.28,
+        fontFace: FONTS.body, fontSize: SIZE.caption, color: COLORS.muted,
+        margin: 0, valign: "middle",
+      });
+      x += w + gap;
+    });
+
+    // The rows.
+    const headY = barY + barH + 0.55;
+    chartHeading(s, spec.rowsTitle, GEO.margin, headY, GEO.contentW);
+
+    const labelW = 3.1;
+    const valueW = 1.15;
+    const trackX = GEO.margin + labelW + 0.2;
+    const trackW = GEO.w - GEO.margin - valueW - 0.15 - trackX;
+    const max = Math.max(...spec.items.map((it) => it.value));
+    const top = headY + 0.42;
+    const pitch = 0.42;
+
+    spec.items.forEach((it, i) => {
+      const y = top + i * pitch;
+      s.addText(it.name, {
+        x: GEO.margin, y, w: labelW, h: 0.32,
+        fontFace: FONTS.body, fontSize: SIZE.body, color: COLORS.text,
+        margin: 0, valign: "middle",
+      });
+      // A faint track behind every bar, so a short line still reads as a share
+      // of the same whole rather than as a stub floating in space.
+      s.addShape(pres.ShapeType.rect, {
+        x: trackX, y: y + 0.09, w: trackW, h: 0.14,
+        fill: { color: COLORS.cardAlt },
+        line: { color: COLORS.cardAlt, width: 0 },
+      });
+      s.addShape(pres.ShapeType.rect, {
+        x: trackX, y: y + 0.09, w: Math.max(0.02, trackW * (it.value / max)), h: 0.14,
+        fill: { color: it.color },
+        line: { color: it.color, width: 0 },
+      });
+      s.addText(C.usd(it.value), {
+        x: GEO.w - GEO.margin - valueW, y, w: valueW, h: 0.32,
+        fontFace: FONTS.head, fontSize: SIZE.table, bold: true,
+        color: COLORS.text, margin: 0, align: "right", valign: "middle",
+      });
+    });
+
+    if (spec.callout) {
+      const y = top + spec.items.length * pitch + 0.2;
+      C.card(pres, s, { x: GEO.margin, y, w: GEO.contentW, h: 0.85, accent: spec.accent });
+      s.addText(spec.callout.title, {
+        x: GEO.margin + 0.25, y: y + 0.12, w: GEO.contentW - 0.5, h: 0.32,
+        fontFace: FONTS.head, fontSize: 16, bold: true,
+        color: COLORS.text, margin: 0, valign: "middle",
+      });
+      s.addText(spec.callout.text, {
+        x: GEO.margin + 0.25, y: y + 0.42, w: GEO.contentW - 0.5, h: 0.36,
+        fontFace: FONTS.body, fontSize: SIZE.body, color: COLORS.muted,
+        margin: 0, valign: "middle",
+      });
+    }
+  },
 };
 
 /**

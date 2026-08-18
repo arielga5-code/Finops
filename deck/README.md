@@ -102,6 +102,7 @@ a slide can never drift away from the chart beside it. Hard-coded strings
 - `bigStat` — one very large figure with a paragraph beside it
 - `platforms` — a share strip over one column per platform: total, share, first and last month, growth
 - `mesh` — two columns wired to each other with nothing in between, plus a panel and stats
+- `splitBars` — one total split two ways, then the largest lines on a shared scale, coloured by side
 - `closing` — sign-off
 
 A chart spec can carry `inline: { cats, series }` instead of an `id`, for
@@ -135,7 +136,7 @@ npm run build:patch
 python3 tools/merge-slides.py \
     --into Harel_Cloud_Cost_CIO_Final.pptx \
     --from patch-slides.pptx \
-    --map 15=3 \
+    --map 6=2,15=3 \
     --out Harel_Cloud_Cost_CIO_Final_fixed.pptx
 ```
 
