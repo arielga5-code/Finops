@@ -573,7 +573,7 @@ const RENDER = {
     if (spec.centre.foot) {
       s.addText(spec.centre.foot, {
         x: midX + 0.2, y: top + midH - 0.62, w: midW - 0.4, h: 0.5,
-        fontFace: FONTS.body, fontSize: 11.5, color: COLORS.muted,
+        fontFace: FONTS.body, fontSize: SIZE.footnote, color: COLORS.muted,
         margin: 0, valign: "middle", align: "center", lineSpacingMultiple: 1.1,
       });
     }
@@ -610,7 +610,7 @@ const RENDER = {
         });
         s.addText("GATE", {
           x: x + w - 0.92, y: y + 0.2, w: 0.7, h: 0.26,
-          fontFace: FONTS.head, fontSize: 11, bold: true,
+          fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
           color: spec.accent, margin: 0, align: "center", valign: "middle",
           charSpacing: 0.8,
         });
@@ -716,6 +716,241 @@ const RENDER = {
       C.noteList(pres, s, {
         x: GEO.margin, y: y + 2.15, w: GEO.contentW,
         items: spec.points, accent: spec.accent, title: spec.pointsTitle,
+      });
+    }
+  },
+
+  /**
+   * One column per platform, ranked, under a strip that shows how the total
+   * divides between them. Each column carries the period total, the share, the
+   * first and last month side by side, and the growth between the two — the
+   * growth is the point of the slide, so it gets the badge.
+   */
+  platforms(pres, spec) {
+    const s = C.slide(pres, {
+      eyebrow: spec.eyebrow, accent: spec.accent,
+      title: spec.title, note: spec.note, foot: spec.foot,
+    });
+
+    const items = spec.items;
+    const total = C.sum(items.map((it) => it.total));
+
+    // Share strip: the whole bill as one bar, split in the same order as the
+    // columns beneath it, so the eye can size a platform before reading a
+    // figure. Segments below ~0.3" would collapse into a smear, so they get a
+    // floor and the rest are scaled into what is left.
+    const stripY = GEO.bodyTop;
+    const minSeg = 0.28;
+    const gap = 0.05;
+    const spare = GEO.contentW - gap * (items.length - 1);
+    const raw = items.map((it) => (it.total / total) * spare);
+    const lifted = raw.map((w) => Math.max(minSeg, w));
+    const scale = (spare - C.sum(lifted.filter((w) => w === minSeg))) /
+      Math.max(0.01, C.sum(lifted.filter((w) => w !== minSeg)));
+    let sx = GEO.margin;
+    items.forEach((it, i) => {
+      const w = lifted[i] === minSeg ? minSeg : lifted[i] * scale;
+      s.addShape(pres.ShapeType.rect, {
+        x: sx, y: stripY, w, h: 0.2,
+        fill: { color: it.color },
+        line: { color: it.color, width: 0 },
+      });
+      sx += w + gap;
+    });
+
+    const top = stripY + 0.42;
+    const h = 4.35;
+    const cw = (GEO.contentW - 0.22 * (items.length - 1)) / items.length;
+    const pad = 0.2;
+
+    items.forEach((it, i) => {
+      const x = GEO.margin + i * (cw + 0.22);
+      const iw = cw - pad * 2;
+      s.addShape(pres.ShapeType.roundRect, {
+        x, y: top, w: cw, h,
+        rectRadius: 0.06,
+        fill: { color: COLORS.card },
+        line: { color: COLORS.border, width: 1 },
+      });
+      // A rule in the platform's own colour, so the column and its segment in
+      // the strip above read as the same thing.
+      s.addShape(pres.ShapeType.rect, {
+        x, y: top, w: cw, h: 0.05,
+        fill: { color: it.color },
+        line: { color: it.color, width: 0 },
+      });
+
+      s.addText(it.name.toUpperCase(), {
+        x: x + pad, y: top + 0.18, w: iw, h: 0.48,
+        fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
+        color: COLORS.muted, charSpacing: 1.1, margin: 0, valign: "top",
+        lineSpacingMultiple: 1.05,
+      });
+      s.addText(C.usd(it.total), {
+        x: x + pad, y: top + 0.72, w: iw, h: 0.5,
+        fontFace: FONTS.head, fontSize: SIZE.stat, bold: true,
+        color: COLORS.text, margin: 0, valign: "middle",
+      });
+      s.addText(`${((it.total / total) * 100).toFixed(1)}% of billed AI`, {
+        x: x + pad, y: top + 1.22, w: iw, h: 0.26,
+        fontFace: FONTS.body, fontSize: SIZE.statNote, bold: true,
+        color: it.color, margin: 0, valign: "middle",
+      });
+
+      s.addShape(pres.ShapeType.rect, {
+        x: x + pad, y: top + 1.6, w: iw, h: 0.01,
+        fill: { color: COLORS.border },
+        line: { color: COLORS.border, width: 0 },
+      });
+
+      // First and last month on one row each: the two numbers the growth badge
+      // is derived from, so nobody has to take the percentage on trust.
+      [[spec.firstLabel, it.first], [spec.lastLabel, it.last]].forEach(([lab, v], j) => {
+        const ly = top + 1.74 + j * 0.42;
+        s.addText(lab.toUpperCase(), {
+          x: x + pad, y: ly, w: iw * 0.5, h: 0.3,
+          fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
+          color: COLORS.faint, charSpacing: 1, margin: 0, valign: "middle",
+        });
+        s.addText(v ? C.usd(v) : "—", {
+          x: x + pad + iw * 0.5, y: ly, w: iw * 0.5, h: 0.3,
+          fontFace: FONTS.head, fontSize: SIZE.body, bold: true,
+          color: v ? COLORS.text : COLORS.faint, margin: 0,
+          align: "right", valign: "middle",
+        });
+      });
+
+      const badgeY = top + 2.68;
+      s.addShape(pres.ShapeType.roundRect, {
+        x: x + pad, y: badgeY, w: iw, h: 0.36,
+        rectRadius: 0.1,
+        fill: { color: COLORS.cardHi },
+        line: { color: it.color, width: 1 },
+      });
+      s.addText(it.badge, {
+        x: x + pad, y: badgeY, w: iw, h: 0.36,
+        fontFace: FONTS.head, fontSize: SIZE.statNote, bold: true,
+        color: it.color, margin: 0, align: "center", valign: "middle",
+      });
+
+      s.addText(it.desc, {
+        x: x + pad, y: badgeY + 0.5, w: iw, h: h - (badgeY - top) - 0.66,
+        fontFace: FONTS.body, fontSize: SIZE.cardSub, color: COLORS.muted,
+        margin: 0, valign: "top", lineSpacingMultiple: 1.15,
+      });
+    });
+  },
+
+  /**
+   * Two columns wired to each other with nothing in between — the "before"
+   * picture for the gateway slide. The mesh is the argument: every consumer
+   * reaches every provider directly, so no single point can see the spend.
+   */
+  mesh(pres, spec) {
+    const s = C.slide(pres, {
+      eyebrow: spec.eyebrow, accent: spec.accent,
+      title: spec.title, note: spec.note, foot: spec.foot,
+    });
+
+    const colW = 3.0;
+    const leftX = GEO.margin;
+    const rightX = leftX + colW + 1.1;
+    const panelX = rightX + colW + 0.4;
+    const panelW = GEO.w - GEO.margin - panelX;
+    const top = GEO.bodyTop + 0.5;
+    const pitch = 0.7;
+    const cardH = 0.58;
+
+    const column = (x, heading, items, color) => {
+      s.addText(heading.toUpperCase(), {
+        x, y: top - 0.4, w: colW, h: 0.28,
+        fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
+        color: COLORS.muted, charSpacing: 1.4, margin: 0, valign: "middle",
+      });
+      items.forEach((it, i) => {
+        const y = top + i * pitch;
+        s.addShape(pres.ShapeType.roundRect, {
+          x, y, w: colW, h: cardH,
+          rectRadius: 0.06,
+          fill: { color: COLORS.card },
+          line: { color: COLORS.border, width: 1 },
+        });
+        s.addText(it, {
+          x: x + 0.2, y, w: colW - 0.4, h: cardH,
+          fontFace: FONTS.body, fontSize: SIZE.body, color: color || COLORS.text,
+          margin: 0, valign: "middle",
+        });
+      });
+    };
+
+    // Wires first, so the cards sit on top of them.
+    const x1 = leftX + colW;
+    const wireW = rightX - x1;
+    spec.left.items.forEach((_, i) => {
+      spec.right.items.forEach((__, j) => {
+        const y1 = top + i * pitch + cardH / 2;
+        const y2 = top + j * pitch + cardH / 2;
+        s.addShape(pres.ShapeType.line, {
+          x: x1, y: Math.min(y1, y2), w: wireW, h: Math.abs(y2 - y1) || 0.004,
+          flipV: y2 < y1,
+          line: { color: spec.accent, width: 0.75, transparency: 58 },
+        });
+      });
+    });
+
+    column(leftX, spec.left.heading, spec.left.items);
+    column(rightX, spec.right.heading, spec.right.items, COLORS.cyan);
+
+    // The panel restates the mesh in words, for the reader who does not want
+    // to count the wires. It is sized to finish level with the columns beside
+    // it rather than to its own content, so the two blocks read as one band.
+    const rows = spec.panel.items;
+    const colBottom = top + (spec.left.items.length - 1) * pitch + cardH;
+    const panelH = Math.max(0.62 + rows.length * 0.5, colBottom - GEO.bodyTop);
+    const rowPitch = (panelH - 0.62) / rows.length;
+    s.addShape(pres.ShapeType.roundRect, {
+      x: panelX, y: GEO.bodyTop, w: panelW, h: panelH,
+      rectRadius: 0.06,
+      fill: { color: COLORS.card },
+      line: { color: COLORS.border, width: 1 },
+    });
+    s.addShape(pres.ShapeType.rect, {
+      x: panelX, y: GEO.bodyTop, w: panelW, h: 0.05,
+      fill: { color: spec.accent },
+      line: { color: spec.accent, width: 0 },
+    });
+    s.addText(spec.panel.title.toUpperCase(), {
+      x: panelX + 0.24, y: GEO.bodyTop + 0.18, w: panelW - 0.48, h: 0.3,
+      fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
+      color: spec.accent, charSpacing: 1.4, margin: 0, valign: "middle",
+    });
+    rows.forEach((it, i) => {
+      const y = GEO.bodyTop + 0.56 + i * rowPitch;
+      if (i) {
+        s.addShape(pres.ShapeType.rect, {
+          x: panelX + 0.24, y, w: panelW - 0.48, h: 0.01,
+          fill: { color: COLORS.border },
+          line: { color: COLORS.border, width: 0 },
+        });
+      }
+      s.addText(it, {
+        x: panelX + 0.24, y: y + 0.04, w: panelW - 0.48, h: rowPitch - 0.06,
+        fontFace: FONTS.body, fontSize: SIZE.body, color: COLORS.text,
+        margin: 0, valign: "middle",
+      });
+    });
+
+    const stats = resolveStats(spec.stats, null, {});
+    if (stats.length) {
+      const sw = (GEO.contentW - 0.25 * (stats.length - 1)) / stats.length;
+      const sy = Math.max(
+        top + spec.left.items.length * pitch + 0.25,
+        GEO.bodyTop + panelH + 0.25
+      );
+      stats.forEach((st, i) => {
+        C.statTile(pres, s, {
+          ...st, x: GEO.margin + i * (sw + 0.25), y: sy, w: sw, h: 1.18,
+        });
       });
     }
   },

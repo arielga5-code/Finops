@@ -16,8 +16,12 @@ npm run build              # operational review
 npm run build:cio          # combined CIO briefing
 npm run build:ai           # FinOps for AI
 npm run build:vendor       # consumption by vendor
+npm run build:patch        # the three replacement slides on their own
 npm run build:cio -- /path/to/Somewhere_Else.pptx
 ```
+
+There is also `npm run fix:final`, which repairs a hand-assembled deck —
+see [Repairing a hand-assembled deck](#repairing-a-hand-assembled-deck).
 
 All four are 13.333" × 7.5", dark theme, native PowerPoint charts and tables
 (everything stays editable in PowerPoint — nothing is a picture).
@@ -57,9 +61,12 @@ adapt, but dense tables will need rows cut rather than type shrunk.
 | `content-cio.js` | The combined CIO briefing. Its appendix imports slides straight from `content.js`. |
 | `content-ai.js` | The FinOps for AI briefing. |
 | `content-vendor.js` | Consumption by vendor, AI against everything else. |
+| `content-patch.js` | Replacement slides for the hand-assembled Final deck. |
 | `data/charts.json` | The numeric series, extracted from the source `.pptx` chart parts. |
 | `data/vendor-split.js` | Derives the vendor × AI split from `charts.json` at build time. |
+| `data/ai-platforms.js` | The five AI platforms, Jan–Jul. Shared by every slide that cites one. |
 | `build*.js` | Thin wrappers that hand a content array to the engine. |
+| `tools/merge-slides.py` | Splices generated slides into a hand-assembled deck and repairs its background. |
 
 ### Customising it
 
@@ -92,6 +99,8 @@ a slide can never drift away from the chart beside it. Hard-coded strings
 - `steps` — numbered process cards, optionally badged as gates
 - `criteria` — numbered requirements in two columns, with a closing banner
 - `bigStat` — one very large figure with a paragraph beside it
+- `platforms` — a share strip over one column per platform: total, share, first and last month, growth
+- `mesh` — two columns wired to each other with nothing in between, plus a panel and stats
 - `closing` — sign-off
 
 A chart spec can carry `inline: { cats, series }` instead of an `id`, for
@@ -103,6 +112,69 @@ map in `lib/engine.js` rather than special-casing an existing one.
 **Wide charts.** Source workbooks carry up to 38 series per chart. Each chart
 spec takes `top: n` — the n largest series are kept and the rest are rolled into
 a single "All other" band. Raise or lower it per slide.
+
+## Repairing a hand-assembled deck
+
+The CIO deck that actually gets presented is assembled by hand in PowerPoint —
+slides from these builds, reordered, with a few pasted in from the older v33
+briefing. That works, with one trap worth knowing about.
+
+**Why pasted slides come through white.** Our slides carry the dark canvas as an
+explicit `<p:bg>` on the slide itself. The presentation's master, inherited from
+Office, still declares `bg1` — which resolves through the theme to `FFFFFF`.
+PowerPoint drops a slide-level background when you paste onto a different
+master, so the pasted slide falls back to the master's white and its near-white
+text disappears. Nothing is broken and nothing is lost; the slide is just
+invisible.
+
+`tools/merge-slides.py` fixes both halves of that:
+
+```bash
+npm run build:patch
+python3 tools/merge-slides.py \
+    --into Harel_Cloud_Cost_CIO_Final.pptx \
+    --from patch-slides.pptx \
+    --map 5=1,7=2,19=3 \
+    --out Harel_Cloud_Cost_CIO_Final_fixed.pptx
+```
+
+- **Backgrounds.** It rewrites the master and every layout to the deck's own
+  `COLORS.bg` — read out of `lib/theme.js`, so it cannot drift — which means
+  anything pasted in future inherits the right colour instead of white. It also
+  stamps an explicit background onto every slide that lacks one, so each slide
+  is correct on its own terms as well.
+- **Slides.** `--map target=source` replaces slides in place, carrying the
+  speaker notes across and keeping the target deck's own layout. Chart parts
+  left unreferenced by a replacement are swept out, along with their embedded
+  workbooks.
+
+Run it with no `--map` to do the background repair alone.
+
+### The three slides in `content-patch.js`
+
+Slides 5, 7 and 19 of the Final deck had been pasted from v33 and still carried
+v33's type scale — eyebrows at 10.5pt and body text down to 8pt, against this
+deck's 12pt floor. They are rebuilt here on the current design system.
+
+One editorial change came with the rebuild. Slide 5 was still on v33's May–July
+window, which put it directly before a Jan–Jul slide showing a different total
+for the same five platforms. It now runs on the deck's single basis — metered
+consumption, January to July 2026 — and reads its figures from
+`data/ai-platforms.js`, the same source as the chart on slide 6. Both slides now
+add up to $199,531.
+
+| Platform | Jan–Jul | Share | Jan | Jul |
+|---|---:|---:|---:|---:|
+| Azure AI Foundry | $87,158 | 43.7% | $5,764 | $19,613 |
+| GitHub Copilot | $57,177 | 28.7% | $2,779 | $19,260 |
+| AWS Bedrock — Claude | $42,056 | 21.1% | — | $25,288 |
+| Copilot Studio (Cowork) | $9,444 | 4.7% | $97 | $8,920 |
+| Google Vertex AI | $3,696 | 1.9% | — | $2,359 |
+
+Growth is stated as a percentage only where January was non-zero. A platform
+that started at nothing gets its first billed month named instead — Copilot
+Studio against $97 in January would otherwise read "+9,096%", which is
+arithmetic theatre, and the two figures are on the slide anyway.
 
 ## Source mapping
 

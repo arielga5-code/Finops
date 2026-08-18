@@ -7,7 +7,9 @@
     "build": "node build.js",
     "build:cio": "node build-cio.js",
     "build:ai": "node build-ai.js",
-    "build:vendor": "node build-vendor.js"
+    "build:vendor": "node build-vendor.js",
+    "build:patch": "node build-patch.js",
+    "fix:final": "node build-patch.js && python3 tools/merge-slides.py --into Harel_Cloud_Cost_CIO_Final.pptx --from patch-slides.pptx --map 5=1,7=2,19=3 --out Harel_Cloud_Cost_CIO_Final_fixed.pptx"
   },
   "dependencies": {
     "pptxgenjs": "^4.0.1"

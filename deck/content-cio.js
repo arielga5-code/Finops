@@ -19,6 +19,7 @@
 
 const { COLORS } = require("./lib/theme");
 const operational = require("./content");
+const AI_PLATFORMS = require("./data/ai-platforms");
 
 const AWS = COLORS.aws;
 const AZURE = COLORS.azure;
@@ -261,16 +262,10 @@ const core = [
     chartTitle: "Billed AI spend by platform, Jan–Jul 2026",
     chart: {
       type: "stacked",
-      inline: {
-        cats: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
-        series: [
-          { name: "Azure AI Foundry", vals: [5764, 6875, 7840, 10544, 14913, 21609, 19613] },
-          { name: "GitHub Copilot", vals: [2779, 3618, 4319, 4080, 6467, 16654, 19260] },
-          { name: "AWS Bedrock — Claude", vals: [0, 0, 841, 1609, 3811, 10507, 25288] },
-          { name: "Copilot Studio (Cowork)", vals: [97, 100, 117, 130, 80, 0, 8920] },
-          { name: "Google Vertex AI", vals: [0, 0, 0, 0, 379, 958, 2359] },
-        ],
-      },
+      // Shared with the platform breakdown that precedes this slide, so the
+      // two can never disagree about what a platform cost.
+      inline: { cats: AI_PLATFORMS.MONTHS, series: AI_PLATFORMS.series },
+      colors: AI_PLATFORMS.PLATFORMS.map((p) => p.color),
     },
     stats: [
       { label: "Billed AI, July", value: "$75,439", note: "was $8,640 in January", accent: AI },
