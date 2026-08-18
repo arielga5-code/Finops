@@ -8,11 +8,13 @@
  * white. This file rebuilds all three on the current design system; the merge
  * script splices them back into the deck in place.
  *
- * They are numbered by their position in that deck, not by anything here:
+ * Their position in that deck moves as it is re-cut, so `fix:final` in
+ * package.json carries the current mapping rather than this comment. In build
+ * order they are:
  *
- *   5   Spend by AI platform, was a v33 card row on the May-Jul cut
- *   7   Inside AIFactory, was a v33 table at 9.5pt
- *   19  AI spend is outpacing governance
+ *   1  Spend by AI platform, was a v33 card row on the May-Jul cut
+ *   2  Inside AIFactory, was a v33 table at 9.5pt
+ *   3  AI spend is outpacing governance
  *
  * One editorial change came with the rebuild. Slide 5 was still on v33's
  * May-July window, which put it next to a Jan-Jul slide showing a different
@@ -25,11 +27,10 @@
 const { COLORS } = require("./lib/theme");
 const AI = require("./data/ai-platforms");
 
-const AWS = COLORS.aws;
 const AI_PURPLE = COLORS.ai;
 
 /* ------------------------------------------------------------------ *
- * Slide 7 / the AIFactory tag, meter by meter
+ * The AIFactory tag, meter by meter
  *
  * `kind` drives the totals: the infrastructure and AI summary rows and every
  * share are computed from the rows below, so a corrected meter cannot leave a
@@ -94,13 +95,13 @@ const bandRow = (label, months, color) => {
 const topMeter = [...METERS].sort((a, b) => meterTotal(b) - meterTotal(a))[0];
 
 /* ------------------------------------------------------------------ *
- * Slide 19 / the mesh
+ * The mesh slide
  * ------------------------------------------------------------------ */
 
 const cowork = AI.platform("Cowork");
 
 module.exports = [
-  /* ============================== slide 5 ============================== */
+  /* ========================= 1 / AI platforms ========================= */
   {
     kind: "platforms",
     eyebrow: "All providers",
@@ -139,7 +140,7 @@ module.exports = [
     ].join("\n"),
   },
 
-  /* ============================== slide 7 ============================== */
+  /* ========================== 2 / AIFactory ========================== */
   {
     kind: "table",
     eyebrow: "Azure / AIFactory",
@@ -215,7 +216,7 @@ module.exports = [
     ].join("\n"),
   },
 
-  /* ============================= slide 19 ============================= */
+  /* ============================ 3 / the mesh ========================= */
   {
     kind: "mesh",
     eyebrow: "The problem",
@@ -255,20 +256,6 @@ module.exports = [
         "No unified enterprise ownership",
       ],
     },
-    stats: [
-      {
-        label: "Untagged spend",
-        value: "23.4%",
-        note: "of the July bill has no project owner",
-        accent: AWS,
-      },
-      {
-        label: "New platform, no baseline",
-        value: money(cowork.last),
-        note: "Cowork went from $0 to this in one month",
-        accent: AWS,
-      },
-    ],
     speakerNotes: [
       "The mesh is the argument. Five consumer groups, six platforms, nothing in",
       "the middle. Thirty direct paths, no single place that can see the spend,",
@@ -278,10 +265,6 @@ module.exports = [
       "it is the largest single commitment of the year. It bills at $0 today because",
       "it draws down the April pre-purchase, which is exactly why nobody is watching",
       "it. See the Databricks slide.",
-      "",
-      "The two figures underneath are from this report, not illustrative:",
-      "  23.4%   of the July bill carries no project tag",
-      "  " + money(cowork.last) + " Cowork, from $0 the month before",
       "",
       "This slide sets up the gateway slide. Do not solve it here.",
     ].join("\n"),

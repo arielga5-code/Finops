@@ -860,14 +860,17 @@ const RENDER = {
     const top = GEO.bodyTop + 0.5;
 
     // The two columns need not be the same length, and the longer one sets the
-    // spacing for both. Fit that column into the band above the stat strip
-    // rather than using a fixed pitch, so adding a provider tightens the rows
-    // instead of pushing the strip off the bottom of the slide.
+    // spacing for both. Both the card height and the gap between cards are
+    // fitted to whatever height is left after the stat strip, so adding a
+    // provider tightens the rows instead of pushing the strip off the bottom,
+    // and dropping the strip lets the columns grow into the space rather than
+    // leaving a band of nothing under them. The gap is capped at 0.3" so a
+    // short list does not drift apart into unrelated cards.
     const rows = Math.max(spec.left.items.length, spec.right.items.length);
     const statsH = (spec.stats || []).length ? 1.43 : 0;
     const band = GEO.footY - 0.1 - statsH - top;
-    const cardH = Math.min(0.58, band / rows - 0.08);
-    const pitch = Math.min(0.72, (band - cardH) / Math.max(1, rows - 1));
+    const cardH = Math.min(0.74, band / rows - 0.08);
+    const pitch = Math.min(cardH + 0.3, (band - cardH) / Math.max(1, rows - 1));
 
     const column = (x, heading, items, color) => {
       s.addText(heading.toUpperCase(), {

@@ -135,7 +135,7 @@ npm run build:patch
 python3 tools/merge-slides.py \
     --into Harel_Cloud_Cost_CIO_Final.pptx \
     --from patch-slides.pptx \
-    --map 5=1,7=2,19=3 \
+    --map 15=3 \
     --out Harel_Cloud_Cost_CIO_Final_fixed.pptx
 ```
 
@@ -150,6 +150,12 @@ python3 tools/merge-slides.py \
   workbooks.
 
 Run it with no `--map` to do the background repair alone.
+
+**The map is not stable.** The deck gets re-cut in PowerPoint between rounds —
+slides move, some get deleted — so a slide's number is a property of the copy
+in hand, not of the slide. `Harel_Cloud_Cost_CIO_Final.pptx` is whatever
+arrangement came back last, and the `--map` in `fix:final` is the mapping for
+*that* file. Check the target position before re-running it on a newer export.
 
 ### Plain punctuation
 
