@@ -65,8 +65,8 @@ function change(vals) {
 /** Human phrasing for a percent change: "flat" reads better than "-0%". */
 function changeLabel(ch, from, to) {
   if (ch === null) return "";
-  if (Math.abs(ch) < 1) return `flat ${from}→${to}`;
-  return `${pct(ch, 0)} ${from}→${to}`;
+  if (Math.abs(ch) < 1) return `flat ${from} to ${to}`;
+  return `${pct(ch, 0)} ${from} to ${to}`;
 }
 
 /* ------------------------------------------------------------------ *

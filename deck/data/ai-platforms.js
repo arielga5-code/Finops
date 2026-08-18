@@ -5,9 +5,9 @@
  * 4% of the bill to 27%" chart and the platform breakdown that precedes it read
  * from here, so the two slides cannot disagree about what any platform cost.
  *
- * Basis: billed AI, all three clouds, metered consumption Jan–Jul 2026.
+ * Basis: billed AI, all three clouds, metered consumption Jan-Jul 2026.
  * Excludes the Databricks pre-purchase, which draws down against the April
- * payment and bills at $0 — including it would swamp every share on the slide
+ * payment and bills at $0, including it would swamp every share on the slide
  * with money that is not being spent again. AWS July is gross of the $16,100
  * MAP credit, on the same footing as the rest of the deck.
  *
@@ -33,16 +33,16 @@ const PLATFORMS = [
     desc: "Developer seats plus AI credit overage. Billed in full.",
   },
   {
-    name: "AWS Bedrock — Claude",
+    name: "AWS Bedrock (Claude)",
     color: COLORS.aws,
     vals: [0, 0, 841, 1609, 3811, 10507, 25288],
     desc: "Claude models via Claude Code. July gross of the MAP credit.",
   },
   {
-    name: "Copilot Studio (Cowork)",
+    name: "Cowork",
     color: COLORS.ai,
     vals: [97, 100, 117, 130, 80, 0, 8920],
-    desc: "Pay-as-you-go credits on Power Platform, branded Cowork.",
+    desc: "Pay-as-you-go agent credits, billed through Power Platform.",
   },
   {
     name: "Google Vertex AI",
@@ -58,8 +58,8 @@ const money = (n) => "$" + Math.round(n).toLocaleString("en-US");
 /**
  * How a platform grew, said in whichever way is honest for its shape.
  *
- * A percentage off a zero or near-zero January is arithmetic theatre — Copilot
- * Studio would read "+9,096%" against $97 — so anything that started at nothing
+ * A percentage off a zero or near-zero January is arithmetic theatre, Copilot
+ * Studio would read "+9,096%" against $97, so anything that started at nothing
  * gets its first billed month named instead, and the reader is handed the two
  * figures rather than a ratio.
  */
@@ -69,11 +69,11 @@ function badgeFor(p) {
   const startedAt = p.vals.findIndex((v) => v > 0);
   if (!first) return `First billed in ${MONTHS[startedAt]}`;
   const growth = (last / first - 1) * 100;
-  if (growth >= 1000) return `${money(first)} → ${money(last)}`;
-  return `${growth >= 0 ? "+" : ""}${growth.toFixed(0)}% Jan→Jul`;
+  if (growth >= 1000) return `${money(first)} to ${money(last)}`;
+  return `${growth >= 0 ? "+" : ""}${growth.toFixed(0)}% Jan to Jul`;
 }
 
-/** The shape the `platforms` slide kind wants, derived — never typed in. */
+/** The shape the `platforms` slide kind wants, derived, never typed in. */
 const items = PLATFORMS.map((p) => ({
   name: p.name,
   color: p.color,
@@ -90,7 +90,7 @@ const series = PLATFORMS.map((p) => ({ name: p.name, vals: p.vals }));
 const monthlyTotals = MONTHS.map((_, i) => sum(PLATFORMS.map((p) => p.vals[i])));
 const total = sum(monthlyTotals);
 
-/** Look one platform's period total up by name — used by slides that cite one. */
+/** Look one platform's period total up by name, used by slides that cite one. */
 const platform = (name) => {
   const p = items.find((x) => x.name === name);
   if (!p) throw new Error(`ai-platforms: no platform named "${name}"`);

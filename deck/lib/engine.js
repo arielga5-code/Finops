@@ -86,11 +86,11 @@ function resolveAuto(token, defaultId, spec) {
     }
     case "series": {
       const s = c.series.find((x) => x.name === name);
-      return s ? C.money(seriesTotal(s)) : "—";
+      return s ? C.money(seriesTotal(s)) : "-";
     }
     case "seriesshare": {
       const s = c.series.find((x) => x.name === name);
-      return s ? ((seriesTotal(s) / total) * 100).toFixed(0) + "% of the total" : "—";
+      return s ? ((seriesTotal(s) / total) * 100).toFixed(0) + "% of the total" : "-";
     }
     default:
       return token;
@@ -116,7 +116,7 @@ function drawChart(pres, s, spec, box) {
     const ranked = [...series].sort((a, b) => seriesTotal(a) - seriesTotal(b));
     C.rankChart(pres, s, {
       ...box,
-      cats: ranked.map((x) => (x.name.length > 34 ? x.name.slice(0, 32) + "…" : x.name)),
+      cats: ranked.map((x) => (x.name.length > 34 ? x.name.slice(0, 32) + "..." : x.name)),
       vals: ranked.map(seriesTotal),
       color: spec.color || COLORS.azure,
     });
@@ -812,7 +812,7 @@ const RENDER = {
           fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
           color: COLORS.faint, charSpacing: 1, margin: 0, valign: "middle",
         });
-        s.addText(v ? C.usd(v) : "—", {
+        s.addText(v ? C.usd(v) : "-", {
           x: x + pad + iw * 0.5, y: ly, w: iw * 0.5, h: 0.3,
           fontFace: FONTS.head, fontSize: SIZE.body, bold: true,
           color: v ? COLORS.text : COLORS.faint, margin: 0,
@@ -1012,7 +1012,7 @@ function buildDeck(content, outFile, meta = {}) {
   pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5 — must be set before any slide
   pres.author = meta.author || "Cloud Infrastructure, DevOps & Databases";
   pres.company = meta.company || "Harel Insurance";
-  pres.title = meta.title || "Cloud FinOps — Harel, 2026";
+  pres.title = meta.title || "Cloud FinOps - Harel, 2026";
 
   content.forEach((spec, i) => {
     const fn = RENDER[spec.kind];

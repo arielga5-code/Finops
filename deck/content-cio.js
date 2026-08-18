@@ -1,18 +1,18 @@
 /**
- * Combined CIO briefing — the merge of "Harel Cloud Cost · CIO v33" and the
- * Jan–Jul 2026 operational FinOps review.
+ * Combined CIO briefing, the merge of "Harel Cloud Cost / CIO v33" and the
+ * Jan-Jul 2026 operational FinOps review.
  *
  * Editorial rules this deck follows, in case you re-cut it:
  *
  *  1. ONE BASIS: metered consumption, January to July 2026, all three clouds.
- *     The two slides that can only be built from the May–Jul invoiced cut say
+ *     The two slides that can only be built from the May-Jul invoiced cut say
  *     so on their face. Nothing else switches window.
  *  2. No story is told twice. Where both decks covered the same ground, the
  *     sharper version won and the other moved to the appendix.
  *  3. Every number that appears twice in the deck must reconcile, or the
  *     slide explains why it does not.
  *
- * The appendix at the end is reused straight from `content.js` — the same
+ * The appendix at the end is reused straight from `content.js`, the same
  * slide objects, so the operational detail can never drift out of step with
  * the review deck it came from.
  */
@@ -35,9 +35,9 @@ const core = [
    * ================================================================ */
   {
     kind: "section",
-    kicker: "Harel Insurance · Cloud FinOps",
+    kicker: "Harel Insurance / Cloud FinOps",
     title: "Cloud spend, the AI shift,\nand what we have taken out",
-    sub: "Seven months of consumption, January to July 2026 · CIO briefing",
+    sub: "Seven months of consumption, January to July 2026, CIO briefing",
     accent: COLORS.cyan,
     speakerNotes: [
       "ONE BASIS FOR THE WHOLE DECK: metered consumption, January to July 2026,",
@@ -58,8 +58,8 @@ const core = [
     title: "Today's run-rate",
     note: "July annualised, all three clouds. A pace, not a budget.",
     value: "$3.4M",
-    valueLabel: "run-rate today  ·  July consumption × 12, across Azure, AWS and GCP",
-    delta: "up $593K since January  ·  +21.1%",
+    valueLabel: "run-rate today. July consumption x 12, across Azure, AWS and GCP",
+    delta: "up $593K since January, +21.1%",
     deltaColor: COLORS.danger,
     parts: [
       { label: "Azure", value: "$186,917", note: "66% of the bill", accent: AZURE },
@@ -68,13 +68,13 @@ const core = [
     ],
     pointsTitle: "What moved since January",
     points: [
-      "Azure added $29,927 a month — billed AI accounts for more than the whole increase.",
+      "Azure added $29,927 a month, billed AI accounts for more than the whole increase.",
       "AWS added $15,804 a month of usage, before Marketplace, which is reported separately.",
       "GCP started from nothing in March and is now $3,707 a month, almost entirely Vertex AI.",
     ],
-    foot: "Consumption only — Marketplace purchases are excluded here and reported separately. AWS is shown gross of the $16,100 July credit, which is explained later in this deck.",
+    foot: "Consumption only, Marketplace purchases are excluded here and reported separately. AWS is shown gross of the $16,100 July credit, which is explained later in this deck.",
     speakerNotes: [
-      "HOW $3.4M IS BUILT — one month, times twelve. No model, no forecast.",
+      "HOW $3.4M IS BUILT, one month, times twelve. No model, no forecast.",
       "",
       "  Azure    186,917",
       "  AWS       92,930   (gross, before the $16,100 MAP credit)",
@@ -100,7 +100,7 @@ const core = [
     accent: COLORS.warn,
     title: "December is a $4.0M run-rate",
     note: "Seven months of actuals, carried forward at the pace those seven months actually set.",
-    chartTitle: "Monthly spend — actual January to July, projected to December",
+    chartTitle: "Monthly spend, actual January to July, projected to December",
     chart: {
       type: "line",
       legend: true,
@@ -109,16 +109,16 @@ const core = [
         cats: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         series: [
           { name: "Actual", vals: [234115, 218324, 261455, 234947, 236775, 256207, 283554, null, null, null, null, null] },
-          { name: "Projected at the Jan–Jul pace", vals: [null, null, null, null, null, null, 283554, 293102, 302905, 312972, 323309, 333925] },
+          { name: "Projected at the Jan-Jul pace", vals: [null, null, null, null, null, null, 283554, 293102, 302905, 312972, 323309, 333925] },
         ],
       },
     },
     stats: [
       { label: "December run-rate", value: "$4.01M", note: "+18% on today's $3.4M", accent: COLORS.warn },
-      { label: "The pace being carried", value: "+3.2%", note: "per month, measured Jan→Jul", accent: COLORS.cyan },
-      { label: "If July simply repeats", value: "$3.40M", note: "the floor — no growth at all", accent: COLORS.good },
+      { label: "The pace being carried", value: "+3.2%", note: "per month, measured Jan to Jul", accent: COLORS.cyan },
+      { label: "If July simply repeats", value: "$3.40M", note: "the floor, no growth at all", accent: COLORS.good },
     ],
-    foot: "This is the base case: the pace measured across the full seven months, 3.2% a month. The next slide carries the faster May–July pace instead — that is where the $5.8M in the July briefing comes from, and it is the top of the range rather than the forecast.",
+    foot: "This is the base case: the pace measured across the full seven months, 3.2% a month. The next slide carries the faster May-July pace instead, that is where the $5.8M in the July briefing comes from, and it is the top of the range rather than the forecast.",
     speakerNotes: [
       "ONE PROJECTION, BUILT IN THREE STEPS.",
       "",
@@ -131,7 +131,7 @@ const core = [
       "",
       "3. Annualise December:  333,925 x 12  =  $4.01M",
       "",
-      "The floor is $3.40M — July repeating with no growth at all.",
+      "The floor is $3.40M, July repeating with no growth at all.",
       "",
       "IF ASKED ABOUT THE $5.8M IN THE JULY BRIEFING",
       "That used May->Jul only: Azure 145,254 -> 186,541 = +13.3% a month. Two months,",
@@ -145,7 +145,7 @@ const core = [
     kind: "chart",
     eyebrow: "The risk case",
     accent: COLORS.danger,
-    title: "If the May–July pace returns: $5.8M",
+    title: "If the May-July pace returns: $5.8M",
     note: "The same arithmetic as the previous slide, carried at the faster rate the last three months set.",
     chartTitle: "Monthly spend to December, on both paces",
     chart: {
@@ -156,15 +156,15 @@ const core = [
         cats: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
         series: [
           { name: "Actual", vals: [234115, 218324, 261455, 234947, 236775, 256207, 283554, null, null, null, null, null] },
-          { name: "Jan–Jul pace  ·  +3.2%/mo", vals: [null, null, null, null, null, null, 283554, 293160, 303026, 313158, 323566, 334256] },
-          { name: "May–Jul pace  ·  Azure +13.3%/mo", vals: [null, null, null, null, null, null, 283554, 314904, 349873, 388919, 432559, 481378] },
+          { name: "Jan-Jul pace / +3.2%/mo", vals: [null, null, null, null, null, null, 283554, 293160, 303026, 313158, 323566, 334256] },
+          { name: "May-Jul pace / Azure +13.3%/mo", vals: [null, null, null, null, null, null, 283554, 314904, 349873, 388919, 432559, 481378] },
         ],
       },
     },
     stats: [
       { label: "December run-rate", value: "$5.78M", note: "+70% on today's $3.4M", accent: COLORS.danger },
-      { label: "Against the base case", value: "+$1.77M", note: "a year more than the Jan–Jul pace", accent: COLORS.warn },
-      { label: "Extra cash, Aug–Dec", value: "$400,465", note: "if the faster pace resumes", accent: COLORS.cyan },
+      { label: "Against the base case", value: "+$1.77M", note: "a year more than the Jan-Jul pace", accent: COLORS.warn },
+      { label: "Extra cash, Aug-Dec", value: "$400,465", note: "if the faster pace resumes", accent: COLORS.cyan },
     ],
     foot: "The July briefing's number, recomputed from today's July actual. It is the upper bound, not the forecast: it assumes Azure resumes 13.3% a month, a rate seen over two months only. August and September decide which line we are on.",
     speakerNotes: [
@@ -184,7 +184,7 @@ const core = [
       "  Cash Aug-Dec        1,967,632  vs  1,567,166   =   +400,465",
       "",
       "HOW TO POSITION IT",
-      "Do not present this as the forecast — present it as the range's top. The",
+      "Do not present this as the forecast, present it as the range's top. The",
       "base case is the previous slide at $4.0M. This slide answers 'what if the",
       "acceleration was real', and it is the number the July briefing carried.",
       "",
@@ -199,7 +199,7 @@ const core = [
   },
 
   /* ================================================================ *
-   * Part one — the numbers
+   * Part one, the numbers
    * ================================================================ */
   {
     kind: "section",
@@ -212,11 +212,11 @@ const core = [
 
   {
     kind: "chart",
-    eyebrow: "Azure · the estate",
+    eyebrow: "Azure / the estate",
     accent: AZURE,
     title: "Azure grew 19%. Its AI bill grew 453%.",
     note: "Metered consumption, January to July. Marketplace and the Databricks prepayment are excluded so the line reads as usage.",
-    chartTitle: "Monthly Azure consumption, Jan–Jul 2026",
+    chartTitle: "Monthly Azure consumption, Jan-Jul 2026",
     chart: {
       type: "line",
       legend: false,
@@ -227,11 +227,11 @@ const core = [
       },
     },
     stats: [
-      { label: "Azure, Jan–Jul", value: "$1.12M", note: "+19% Jan→Jul", accent: AZURE },
-      { label: "Billed AI, Jan–Jul", value: "$153,779", note: "+453% Jan→Jul", accent: AI },
+      { label: "Azure, Jan-Jul", value: "$1.12M", note: "+19% Jan to Jul", accent: AZURE },
+      { label: "Billed AI, Jan-Jul", value: "$153,779", note: "+453% Jan to Jul", accent: AI },
       { label: "AI share of Azure", value: "25.6%", note: "was 5.5% in January", accent: COLORS.danger },
     ],
-    foot: "Azure itself is growing modestly. What is changing underneath it is the mix: in January AI was one dollar in twenty of the Azure bill, in July it is one in four. The total is not the story — the composition is.",
+    foot: "Azure itself is growing modestly. What is changing underneath it is the mix: in January AI was one dollar in twenty of the Azure bill, in July it is one in four. The total is not the story, the composition is.",
     speakerNotes: [
       "AZURE, SEVEN MONTHS OF METERED CONSUMPTION.",
       "",
@@ -241,8 +241,8 @@ const core = [
       "",
       "  +19% = 186,917 / 156,990 - 1",
       "",
-      "BILLED AI INSIDE THAT — Foundry Models, Foundry Tools, GitHub Copilot and",
-      "Copilot Studio. Databricks is excluded: it draws on the pre-purchase and",
+      "BILLED AI INSIDE THAT, Foundry Models, Foundry Tools, GitHub Copilot and",
+      "Cowork. Databricks is excluded: it draws on the pre-purchase and",
       "bills at $0, so counting it would overstate what we actually pay.",
       "",
       "  Jan   8,640   ( 5.5% of Azure )",
@@ -259,7 +259,7 @@ const core = [
     accent: AI,
     title: "AI went from 4% of the bill to 27%",
     note: "Billed AI across all three clouds. Excludes the Databricks pre-purchase, which bills at $0.",
-    chartTitle: "Billed AI spend by platform, Jan–Jul 2026",
+    chartTitle: "Billed AI spend by platform, Jan-Jul 2026",
     chart: {
       type: "stacked",
       // Shared with the platform breakdown that precedes this slide, so the
@@ -270,9 +270,9 @@ const core = [
     stats: [
       { label: "Billed AI, July", value: "$75,439", note: "was $8,640 in January", accent: AI },
       { label: "Share of the cloud bill", value: "26.6%", note: "was 3.7% in January", accent: COLORS.danger },
-      { label: "Billed AI, Jan–Jul", value: "$199,531", note: "+773% Jan→Jul", accent: COLORS.cyan },
+      { label: "Billed AI, Jan-Jul", value: "$199,531", note: "+773% Jan to Jul", accent: COLORS.cyan },
     ],
-    foot: "Five platforms, three clouds, bought separately by different teams. This is the slide the rest of the deck is about: the total bill is manageable, the rate at which AI is taking it over is not — and today nothing sits between a team and a provider.",
+    foot: "Five platforms, three clouds, bought separately by different teams. This is the slide the rest of the deck is about: the total bill is manageable, the rate at which AI is taking it over is not, and today nothing sits between a team and a provider.",
     speakerNotes: [
       "THIS IS THE SLIDE THAT MATTERS.",
       "",
@@ -291,17 +291,17 @@ const core = [
       "Databricks. It draws on the 600,000 DBU pre-purchase and bills at $0, so",
       "including it would inflate what we actually pay. It has its own slide.",
       "",
-      "The July step-up is Bedrock (Claude, 25,288) plus Copilot Studio arriving at",
+      "The July step-up is Bedrock (Claude, 25,288) plus Cowork arriving at",
       "8,920 in its first full month.",
     ].join("\n"),
   },
 
   {
     kind: "table",
-    eyebrow: "Azure · AI deep dive",
+    eyebrow: "Azure / AI deep dive",
     accent: AI,
     title: "Most of the AI bill is not models",
-    note: "May–Jul invoiced — the only window with project-level meter splits. $152,402 of AI meter spend across tagged projects.",
+    note: "May-Jul invoiced, the only window with project-level meter splits. $152,402 of AI meter spend across tagged projects.",
     tables: [
       {
         title: "AI spend by project",
@@ -325,23 +325,23 @@ const core = [
     stats: [
       { label: "Three of the top six", value: "> 50%", note: "spend more on infrastructure than on models", accent: COLORS.danger },
       { label: "AIFactory tag", value: "$63,609", note: "of which 64.8% is infrastructure", accent: COLORS.warn },
-      { label: "Largest single line", value: "$17,311", note: "API Management — ahead of Foundry Models", accent: COLORS.cyan },
+      { label: "Largest single line", value: "$17,311", note: "API Management, ahead of Foundry Models", accent: COLORS.cyan },
     ],
-    foot: "Not automatically wrong — inference needs somewhere to run — but it is the part of the AI bill that right-sizing can actually move, and it is the part nobody is looking at.",
+    foot: "Not automatically wrong, inference needs somewhere to run, but it is the part of the AI bill that right-sizing can actually move, and it is the part nobody is looking at.",
   },
 
   {
     kind: "reconcile",
-    eyebrow: "AWS · the $16,100 question",
+    eyebrow: "AWS / the $16,100 question",
     accent: AWS,
     title: "The undocumented credit, identified",
     note: "v33 flagged a $16,100.27 charge on ai-factory-dev that was reversed and never itemised. Cross-referencing the operational data identifies it exactly.",
     terms: [
       { label: "Regular AWS usage, July", value: "$92,930", note: "service usage as metered", accent: COLORS.text },
-      { label: "Credit applied", value: "$16,100", op: "−", note: "MAP contract credit, ai-factory-dev", accent: AWS },
+      { label: "Credit applied", value: "$16,100", op: "-", note: "MAP contract credit, ai-factory-dev", accent: AWS },
       { label: "Invoiced by Comm-IT", value: "$76,830", op: "=", note: "what we actually paid", accent: COLORS.good },
     ],
-    tableTitle: "Where the $16,100.27 sits — July Bedrock consumption, two sources",
+    tableTitle: "Where the $16,100.27 sits: July Bedrock consumption, two sources",
     table: {
       cols: [
         { label: "Claude model, July 2026", w: 3.2 },
@@ -351,9 +351,9 @@ const core = [
         { label: "", w: 3.03 },
       ],
       rows: [
-        ["Claude Opus 4.8", "$11,361.86", "—", { text: "$11,361.86", color: COLORS.aws }, "entire line reversed"],
+        ["Claude Opus 4.8", "$11,361.86", "-", { text: "$11,361.86", color: COLORS.aws }, "entire line reversed"],
         ["Claude Opus 4.6", "$9,873.22", "$5,134.81", { text: "$4,738.41", color: COLORS.aws }, "part of the line reversed"],
-        ["Opus 4.7 · Opus 5 · Sonnet 4.6 · Haiku 4.5 · Sonnet 4.5", "$3,362.97", "$3,362.97", { text: "—", color: COLORS.muted }, "identical in both"],
+        ["Opus 4.7, Opus 5, Sonnet 4.6, Haiku 4.5, Sonnet 4.5", "$3,362.97", "$3,362.97", { text: "-", color: COLORS.muted }, "identical in both"],
         [
           { text: "Total", bold: true },
           { text: "$25,288.33", bold: true },
@@ -368,7 +368,7 @@ const core = [
       { label: "Attributed to", value: "ai-factory-dev", note: "88.6% of all July AWS credits", accent: AWS },
       { label: "Action", value: "Confirm", note: "raise with Comm-IT, then close the v33 item", accent: COLORS.cyan },
     ],
-    foot: "The reversed charge is Claude Opus 4.8 in full plus part of Opus 4.6, on ai-factory-dev — and the operational deck names the reason: a MAP contract credit. v33 concluded it was 'not a discount on Claude consumption'; the line-level match says otherwise. Worth confirming with Comm-IT before it is treated as settled, but it is no longer an open mystery.",
+    foot: "The reversed charge is Claude Opus 4.8 in full plus part of Opus 4.6, on ai-factory-dev, and the operational deck names the reason: a MAP contract credit. v33 concluded it was 'not a discount on Claude consumption'; the line-level match says otherwise. Worth confirming with Comm-IT before it is treated as settled, but it is no longer an open mystery.",
   },
 
   {
@@ -377,14 +377,14 @@ const core = [
     accent: AWS,
     title: "Marketplace dwarfs the usage underneath it",
     note: "None of this is consumption. Security vendors bought, replaced and retired inside the year.",
-    chartTitle: "AWS Marketplace purchases by product, Jan–Jul total",
+    chartTitle: "AWS Marketplace purchases by product, Jan-Jul total",
     chart: { id: "chart5", type: "rank", top: 9 },
     stats: [
-      { label: "AWS Marketplace, Jan–Jul", value: "auto:total", note: "2.6× regular AWS usage", accent: AWS },
-      { label: "Azure Marketplace, Jan–Jul", value: "auto:total:chart9", note: "mostly the Databricks prepayment", accent: AZURE },
+      { label: "AWS Marketplace, Jan-Jul", value: "auto:total", note: "2.6x regular AWS usage", accent: AWS },
+      { label: "Azure Marketplace, Jan-Jul", value: "auto:total:chart9", note: "mostly the Databricks prepayment", accent: AZURE },
       { label: "Recurring, of all of it", value: "~$14K/mo", note: "MongoDB Atlas and the small tools", accent: COLORS.good },
     ],
-    foot: "Splunk, CrowdStrike and Trellix land in Q1; TrendAI and Fortinet in June and gone by July; Cortex replaces them. Treating Marketplace as part of the cloud bill makes the trend unreadable — it belongs on its own line in the budget.",
+    foot: "Splunk, CrowdStrike and Trellix land in Q1; TrendAI and Fortinet in June and gone by July; Cortex replaces them. Treating Marketplace as part of the cloud bill makes the trend unreadable. It belongs on its own line in the budget.",
   },
 
   {
@@ -400,11 +400,11 @@ const core = [
       { label: "Vertex AI, July", value: "$2,359", note: "now the largest GCP service", accent: AI },
       { label: "Everything else", value: "flat", note: "Compute, networking and DNS unchanged", accent: COLORS.muted },
     ],
-    foot: "Vertex AI passed Compute Engine in July. Every dollar of GCP growth this year is AI — which makes it the cleanest illustration of the shift happening more expensively elsewhere.",
+    foot: "Vertex AI passed Compute Engine in July. Every dollar of GCP growth this year is AI, which makes it the cleanest illustration of the shift happening more expensively elsewhere.",
   },
 
   /* ================================================================ *
-   * Part two — the gap
+   * Part two, the gap
    * ================================================================ */
   {
     kind: "section",
@@ -418,8 +418,8 @@ const core = [
     kind: "table",
     eyebrow: "Coverage",
     accent: COLORS.warn,
-    title: "Azure buys 59% at a discount — AWS buys 93%",
-    note: "How each cloud's compute is actually purchased — the single biggest lever on unit cost.",
+    title: "Azure buys 59% at a discount, AWS 93%",
+    note: "How each cloud's compute is actually purchased, the single biggest lever on unit cost.",
     tables: [
       {
         title: "AWS",
@@ -458,7 +458,7 @@ const core = [
       { label: "If Azure matched AWS", value: "~$7,600", note: "estimated monthly saving at 93% coverage", accent: COLORS.good },
       { label: "Annualised", value: "~$91,000", note: "on compute alone, nothing switched off", accent: COLORS.good },
     ],
-    foot: "SAP is the obvious first candidate: it is the largest Azure workload, it has not moved more than a few percent in seven months, and it is almost entirely virtual machines — the flattest, most reservable profile in the estate.",
+    foot: "SAP is the obvious first candidate: it is the largest Azure workload, it has not moved more than a few percent in seven months, and it is almost entirely virtual machines, the flattest, most reservable profile in the estate.",
   },
 
   {
@@ -468,15 +468,15 @@ const core = [
     title: "$504,000 paid in April. 18% of it used.",
     note: "A three-year, 600,000 DBU-hour pre-purchase made on 28 April 2026.",
     value: "18%",
-    text: "cumulative utilisation of the Databricks commitment as at July. Databricks compute bills at $0 because it draws against a balance already paid — so it disappears from every consumption report while the money is already gone.",
+    text: "cumulative utilisation of the Databricks commitment as at July. Databricks compute bills at $0 because it draws against a balance already paid, so it disappears from every consumption report while the money is already gone.",
     stats: [
       { label: "Committed", value: "$504,000", note: "Azure P3 pre-purchase, 28 Apr 2026", accent: AI },
       { label: "Term", value: "3 years", note: "600,000 DBU hours", accent: COLORS.muted },
       { label: "Drawn to July", value: "$88,666", note: "consumption, not new cash", accent: COLORS.cyan },
-      { label: "Infra underneath", value: "$63,501", note: "May–Jul — this part still bills", accent: COLORS.danger },
+      { label: "Infra underneath", value: "$63,501", note: "May-Jul, this part still bills", accent: COLORS.danger },
     ],
     points: [
-      "At the current pace the commitment finishes its three-year term substantially unused — the choice is to drive utilisation up or to renegotiate.",
+      "At the current pace the commitment finishes its three-year term substantially unused, the choice is to drive utilisation up or to renegotiate.",
       "The VMs, networking and storage that Databricks runs on are not covered by the pre-purchase and cost $63,501 across May to July alone.",
       "This is invisible in a consumption-only view, which is exactly why it belongs in a CIO briefing rather than an operations report.",
     ],
@@ -489,20 +489,20 @@ const core = [
     title: "A quarter of the bill has no owner",
     note: "From the Project tag on each resource, Azure enrollment.",
     value: "23.4%",
-    text: "of July's Azure spend carries no project tag — up from 8.4% in May. Nearly a quarter of the bill cannot be attributed to a team, which means it cannot be charged back, questioned, or defended.",
+    text: "of July's Azure spend carries no project tag, up from 8.4% in May. Nearly a quarter of the bill cannot be attributed to a team, which means it cannot be charged back, questioned, or defended.",
     stats: [
       { label: "Untagged, July", value: "23.4%", note: "was 8.4% in May", accent: COLORS.danger },
       { label: "Untagged AI spend", value: "$51,381", note: "of $96,843 untagged in total", accent: AI },
       { label: "Cost centre field", value: "empty", note: "on every line of the enrollment", accent: COLORS.muted },
     ],
     points: [
-      "The untagged share tripled in three months — it is getting worse, not better, and it is worst in exactly the AI workloads that are growing fastest.",
+      "The untagged share tripled in three months, it is getting worse, not better, and it is worst in exactly the AI workloads that are growing fastest.",
       "Tagging is the dependency under everything else: no chargeback, no per-consumer budget, and no gateway quota can be enforced without it.",
     ],
   },
 
   /* ================================================================ *
-   * Part three — what we have taken out
+   * Part three, what we have taken out
    * ================================================================ */
   {
     kind: "section",
@@ -531,11 +531,11 @@ const core = [
           ["Savings plan purchase", { text: "$65,335", color: COLORS.good }],
           ["Remove unnecessary VMs", { text: "$28,105", color: COLORS.good }],
           ["Idle unattached disks", { text: "$20,576", color: COLORS.good }],
-          ["RI renewal — blob storage", { text: "$9,432", color: COLORS.good }],
+          ["RI renewal, blob storage", { text: "$9,432", color: COLORS.good }],
           ["RDS reserved instance purchase", { text: "$7,944", color: COLORS.good }],
           ["Retire two unused SQL instances on expiring RI", { text: "$4,563", color: COLORS.good }],
-          ["EKS extended support 1.33 — preprod", { text: "$4,526", color: COLORS.good }],
-          ["App Service — reserved instance", { text: "$712", color: COLORS.good }],
+          ["EKS extended support 1.33, preprod", { text: "$4,526", color: COLORS.good }],
+          ["App Service, reserved instance", { text: "$712", color: COLORS.good }],
           ["RI refund to reach 100% utilisation", { text: "$440", color: COLORS.good }],
         ],
       },
@@ -543,7 +543,7 @@ const core = [
     stats: [
       { label: "Total annual savings", value: "$278,868", note: "already implemented", accent: COLORS.good, big: true },
       { label: "Against annualised spend", value: "9.4%", note: "of ~$3.0M consumption", accent: COLORS.cyan },
-      { label: "Largest action", value: "$70,452", note: "North Europe — $5,871/mo removed", accent: AZURE },
+      { label: "Largest action", value: "$70,452", note: "North Europe, $5,871/mo removed", accent: AZURE },
       { label: "Commitment-based", value: "$132,118", note: "reservations and savings plans", accent: COLORS.muted },
     ],
     foot: "This is the half of the story the previous briefing did not tell: the bill grew 21% since January, and it would have grown considerably more without these.",
@@ -568,7 +568,7 @@ const core = [
           ["Schedule shutdown for 24/7 VMs", { text: "$36,741", color: COLORS.good }],
           ["VM reserved instance purchase", { text: "$26,758", color: COLORS.good }],
           ["VM right-size", { text: "$19,854", color: COLORS.good }],
-          ["RI — PostgreSQL databases", { text: "$17,037", color: COLORS.good }],
+          ["RI, PostgreSQL databases", { text: "$17,037", color: COLORS.good }],
           ["Idle reserved disks", { text: "$13,464", color: COLORS.good }],
           ["Remove unnecessary VMs", { text: "$13,147", color: COLORS.good }],
           [{ text: "Four smaller items", color: COLORS.muted }, { text: "$13,243", color: COLORS.good }],
@@ -582,21 +582,21 @@ const core = [
           { label: "Annual saving", w: 1.45, align: "right" },
         ],
         rows: [
-          ["EKS extended support 1.33 — prod", { text: "$4,526", color: COLORS.good }],
-          ["SageMaker — check necessity", { text: "$3,420", color: COLORS.good }],
+          ["EKS extended support 1.33, prod", { text: "$4,526", color: COLORS.good }],
+          ["SageMaker, check necessity", { text: "$3,420", color: COLORS.good }],
         ],
       },
     ],
     stats: [
       { label: "Total potential", value: "$193K", note: "annualised, both clouds", accent: COLORS.warn },
       { label: "Plus the coverage gap", value: "~$91K", note: "Azure on-demand, at AWS rates", accent: COLORS.warn },
-      { label: "Banked plus identified", value: "$563K", note: "≈ 19% of annualised consumption", accent: COLORS.good },
+      { label: "Banked plus identified", value: "$563K", note: "about 19% of annualised consumption", accent: COLORS.good },
     ],
-    foot: "None of this changes what runs — it changes how it is bought and how long it stays on. The ask is a decision on the top four items, which are 66% of the value.",
+    foot: "None of this changes what runs, it changes how it is bought and how long it stays on. The ask is a decision on the top four items, which are 66% of the value.",
   },
 
   /* ================================================================ *
-   * Part four — governance
+   * Part four, governance
    * ================================================================ */
   {
     kind: "section",
@@ -611,7 +611,7 @@ const core = [
     eyebrow: "The mechanism",
     accent: AI,
     title: "One gateway for every AI request",
-    note: "The enforcement point, not a reporting layer bolted on afterwards — its logs are the financial record.",
+    note: "The enforcement point, not a reporting layer bolted on afterwards, its logs are the financial record.",
     left: {
       heading: "Consumers",
       items: ["Business applications", "Copilots and assistants", "Autonomous agents", "Data science", "Third-party SaaS"],
@@ -626,7 +626,7 @@ const core = [
       heading: "Providers",
       items: ["Microsoft Copilot", "Azure AI Foundry", "AWS Bedrock", "Google Vertex AI", "Claude / OpenAI"],
     },
-    foot: "Today every business unit buys AI separately, on shared keys, with no owner per consumer — which is why 23.4% of the bill has no name against it.",
+    foot: "Today every business unit buys AI separately, on shared keys, with no owner per consumer, which is why 23.4% of the bill has no name against it.",
   },
 
   {
@@ -649,12 +649,12 @@ const core = [
       heading: "What it unlocks",
       items: ["Cost per use case", "Cost per agent", "AI unit economics", "Anomaly detection", "Chargeback that holds"],
     },
-    foot: "Today we can say AI cost $75,439 in July and that $25,288 of it was Claude on Bedrock. We cannot say which agent, which use case, or which tool call spent it — and no resource tag will ever tell us, because the cost is in the traffic, not the resource.",
+    foot: "Today we can say AI cost $75,439 in July and that $25,288 of it was Claude on Bedrock. We cannot say which agent, which use case, or which tool call spent it, and no resource tag will ever tell us, because the cost is in the traffic, not the resource.",
     speakerNotes: [
       "WHY ITEM 3 ON THE NEXT SLIDE IS TWO JOBS, NOT ONE.",
       "",
-      "Resource tagging — owner, application, environment, cost centre, business",
-      "unit — fixes attribution for VMs, storage and databases. That work is in",
+      "Resource tagging, owner, application, environment, cost centre, business",
+      "unit, fixes attribution for VMs, storage and databases. That work is in",
       "progress and it is worth finishing: it is what closes the 23.4% untagged gap.",
       "",
       "It will NOT fix AI attribution. AI cost does not sit on a resource; it sits",
@@ -666,7 +666,7 @@ const core = [
       "same gateway stamps each request with use case, agent, model and provider.",
       "Cost then lands against a use case instead of a subscription.",
       "",
-      "The telemetry side already exists in our Elastic design — OpenTelemetry",
+      "The telemetry side already exists in our Elastic design, OpenTelemetry",
       "spans carry token counts and tool activity. This is the missing half.",
       "",
       "IF ASKED WHAT IT COSTS: nothing new to buy. It is a schema decision plus",
@@ -700,11 +700,11 @@ const core = [
       },
     ],
     stats: [
-      { label: "Azure Budget latency", value: "8–24 h", note: "reporting, not enforcement", accent: COLORS.danger },
+      { label: "Azure Budget latency", value: "8-24 h", note: "reporting, not enforcement", accent: COLORS.danger },
       { label: "APIM enforcement", value: "Per request", note: "429 on TPM, 403 on quota", accent: COLORS.good },
-      { label: "Set the hard quota at", value: "75–85%", note: "of the approved budget", accent: COLORS.warn },
+      { label: "Set the hard quota at", value: "75-85%", note: "of the approved budget", accent: COLORS.warn },
     ],
-    foot: "No API key is approved without: owner, cost centre, allowed models, max output tokens, TPM, a daily and a monthly quota, and an agreed break-glass path. Direct access to Foundry or a model endpoint is blocked — all traffic goes through the gateway.",
+    foot: "No API key is approved without: owner, cost centre, allowed models, max output tokens, TPM, a daily and a monthly quota, and an agreed break-glass path. Direct access to Foundry or a model endpoint is blocked. All traffic goes through the gateway.",
     speakerNotes: [
       "WHY A BUDGET IS NOT A KILL SWITCH",
       "Azure Cost Management budgets are a reporting mechanism: cost data arrives",
@@ -716,10 +716,10 @@ const core = [
       "SEPARATE IDENTITY PER APPLICATION",
       "Each application gets its own APIM subscription or Entra client_id, carrying",
       "owner, cost centre, environment, monthly budget, approved models, TPM, and",
-      "daily plus monthly quota. Never share one key across applications — you can",
+      "daily plus monthly quota. Never share one key across applications, you can",
       "then neither limit nor attribute.",
       "",
-      "HARD LIMITS IN APIM — three llm-token-limit instances in <inbound>:",
+      "HARD LIMITS IN APIM, three llm-token-limit instances in <inbound>:",
       "  minute   tokens-per-minute=\"20000\"                    burst protection",
       "  daily    token-quota=\"3000000\"  period=\"Daily\"        runaway job",
       "  monthly  token-quota=\"60000000\" period=\"Monthly\"      hard ceiling",
@@ -734,14 +734,14 @@ const core = [
       "below production. One user cannot drain an application, one application",
       "cannot drain the organisation.",
       "",
-      "BUDGET INTO TOKENS — the policy counts tokens, not dollars, so each model",
+      "BUDGET INTO TOKENS, the policy counts tokens, not dollars, so each model",
       "needs its own quota:",
       "  cost = (input tokens x input price + output tokens x output price) / 1M",
       "On a $1,000 budget set the hard quota near $750-$850. The margin covers",
       "in-flight parallel requests, reasoning tokens, price differences between",
       "models, counting lag, and multiple gateways. Microsoft notes concurrent",
       "requests can temporarily exceed the quota, and that in multi-region APIM",
-      "each gateway counts separately rather than globally — so split the quota",
+      "each gateway counts separately rather than globally, so split the quota",
       "across regions.",
       "",
       "ALERTS: emit llm-emit-token-metric to Application Insights with application,",
@@ -769,7 +769,7 @@ const core = [
     ],
     banner: {
       title: "This is what makes shadow AI structurally impossible",
-      text: "Applied at the gateway, these criteria mean an unowned or unfunded workload cannot obtain a key — so it never reaches a provider inside the enterprise network.",
+      text: "Applied at the gateway, these criteria mean an unowned or unfunded workload cannot obtain a key, so it never reaches a provider inside the enterprise network.",
     },
   },
 
@@ -797,7 +797,7 @@ const core = [
     eyebrow: "Model policy",
     accent: AI,
     title: "Sonnet by default, Opus by exception",
-    note: "GitHub Copilot model selection is the one AI lever that needs no new platform — only a policy.",
+    note: "GitHub Copilot model selection is the one AI lever that needs no new platform, only a policy.",
     tables: [
       {
         title: "Model pricing and intended use",
@@ -810,20 +810,20 @@ const core = [
           { label: "Recommended usage", w: 2.6 },
         ],
         rows: [
-          ["Claude Sonnet 5", "$2", "$10", { text: "Baseline", color: COLORS.good }, "Default model — routine coding, SQL, debugging, documentation"],
-          ["Claude Opus 4.8", "$5", "$25", { text: "~2.5×", color: COLORS.warn }, "Complex tasks"],
-          ["Claude Opus 5", "$5", "$25", { text: "~2.5×", color: COLORS.warn }, "Advanced reasoning"],
-          ["Opus 4.8 Fast", "$10", "$50", { text: "~5×", color: COLORS.danger }, "Exception only"],
+          ["Claude Sonnet 5", "$2", "$10", { text: "Baseline", color: COLORS.good }, "Default model: routine coding, SQL, debugging, documentation"],
+          ["Claude Opus 4.8", "$5", "$25", { text: "~2.5x", color: COLORS.warn }, "Complex tasks"],
+          ["Claude Opus 5", "$5", "$25", { text: "~2.5x", color: COLORS.warn }, "Advanced reasoning"],
+          ["Opus 4.8 Fast", "$10", "$50", { text: "~5x", color: COLORS.danger }, "Exception only"],
         ],
       },
     ],
     stats: [
-      { label: "Available saving", value: "~60%", note: "on model token cost, routine work Opus → Sonnet", accent: COLORS.good },
-      { label: "GitHub Copilot spend", value: "$57,177", note: "Jan–Jul, +593% Jan→Jul", accent: COLORS.danger },
+      { label: "Available saving", value: "~60%", note: "on model token cost, routine work Opus to Sonnet", accent: COLORS.good },
+      { label: "GitHub Copilot spend", value: "$57,177", note: "Jan-Jul, +593% Jan to Jul", accent: COLORS.danger },
       { label: "AWS Bedrock, Opus share", value: "82.1%", note: "of AWS AI spend is Opus-class", accent: COLORS.warn },
       { label: "Promo pricing ends", value: "31 Aug 2026", note: "reassess before the date", accent: COLORS.muted },
     ],
-    foot: "The same policy applies to Bedrock: 82% of AWS AI spend is Opus-class, and the model mix changes month to month — Opus 4.8 ran and stopped, Opus 5 appeared in July. That is a policy gap, not a usage pattern.",
+    foot: "The same policy applies to Bedrock: 82% of AWS AI spend is Opus-class, and the model mix changes month to month: Opus 4.8 ran and stopped, Opus 5 appeared in July. That is a policy gap, not a usage pattern.",
   },
 
   /* ================================================================ *
@@ -848,11 +848,11 @@ const core = [
         rowH: 0.52,
         fontSize: 12,
         rows: [
-          ["1", "Savings and efficiency programme", "Deliver the Cloud FinOps savings plan — right-sizing, auto-shutdown, reserved instances", { text: "Planned", color: COLORS.warn }, "Infrastructure Division"],
+          ["1", "Savings and efficiency programme", "Deliver the Cloud FinOps savings plan: right-sizing, auto-shutdown, reserved instances", { text: "Planned", color: COLORS.warn }, "Infrastructure Division"],
           ["2", "WIV.AI rollout (free tier)", "Deploy the WIV.AI platform for governance, cost and usage monitoring", { text: "Planned", color: COLORS.warn }, "Ariel Oral"],
-          ["3", "Two-layer tagging", "Resource tags (Service, Application, Cost Center, Environment) for chargeback — plus per-request metadata (use case, agent, model, provider) injected at the AI gateway", { text: "In progress", color: COLORS.cyan }, "Ariel Oral"],
+          ["3", "Two-layer tagging", "Resource tags (Service, Application, Cost Center, Environment) for chargeback, plus per-request metadata (use case, agent, model, provider) injected at the AI gateway", { text: "In progress", color: COLORS.cyan }, "Ariel Oral"],
           ["4", "AWS FinOps agent", "Automated cost analysis, savings recommendations and AWS service optimisation", { text: "Planned", color: COLORS.warn }, "Ariel"],
-          ["5", "Databricks commitment optimisation", "Raise DBU commitment utilisation from 18%, track it monthly, and tune Classic vs Serverless", { text: "To scope", color: COLORS.muted }, "—"],
+          ["5", "Databricks commitment optimisation", "Raise DBU commitment utilisation from 18%, track it monthly, and tune Classic vs Serverless", { text: "To scope", color: COLORS.muted }, "-"],
         ],
       },
     ],

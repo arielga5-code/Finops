@@ -67,6 +67,7 @@ adapt, but dense tables will need rows cut rather than type shrunk.
 | `data/ai-platforms.js` | The five AI platforms, Jan–Jul. Shared by every slide that cites one. |
 | `build*.js` | Thin wrappers that hand a content array to the engine. |
 | `tools/merge-slides.py` | Splices generated slides into a hand-assembled deck and repairs its background. |
+| `tools/plain-text.py` | Rewrites em dashes, middots, arrows and × into plain typed punctuation. |
 
 ### Customising it
 
@@ -149,6 +150,35 @@ python3 tools/merge-slides.py \
   workbooks.
 
 Run it with no `--map` to do the background repair alone.
+
+### Plain punctuation
+
+`tools/plain-text.py` rewrites the deck's typography into the punctuation a
+person types: em dashes become commas, colons or full stops; middots become
+slashes; `→` becomes "to"; `–` becomes a hyphen; `×` becomes `x`.
+
+An em dash is not one thing, so it does not get one rule. The script carries a
+curated replacement for every dash on a slide, because the choice between a
+comma, a colon and a full stop is a judgement about that sentence and a blanket
+rule leaves comma splices behind. Mechanical characters are swept afterwards,
+and any curated phrase it cannot find is reported rather than passed over.
+
+It runs over both the .pptx and the .js sources, so a rebuild does not undo it:
+
+```bash
+python3 tools/plain-text.py Harel_Cloud_Cost_CIO_Final_fixed.pptx
+python3 tools/plain-text.py content.js content-cio.js content-patch.js data/ai-platforms.js
+```
+
+Two rules are deliberately narrow. Every pattern matches spaces and tabs rather
+than `\s`, because a dash at the end of a comment line would otherwise swallow
+the newline and splice two lines of source together. And the rule that closes a
+gap left by a hand-deleted dash (`$29,927 a month  billed AI`) is applied only
+to slide text — speaker notes and the sources both contain space-aligned tables
+it would turn into nonsense.
+
+`content-ai.js` and `content-vendor.js` have not been through this pass; they
+build decks of their own, not the Final deck.
 
 ### The three slides in `content-patch.js`
 
