@@ -66,13 +66,12 @@ const bandTotal = (kind) => sum(METERS.filter((m) => m.kind === kind).map(meterT
 const INFRA = bandTotal("infra") + bandTotal("-");
 const AI_METERS = bandTotal("AI");
 
-// Orange is infrastructure, blue is AI, everywhere on the slide. The tail
-// bucket is both, so it gets neither and is drawn grey.
-const KIND_COLOR = { infra: COLORS.warn, AI: COLORS.azure, "-": COLORS.faint };
+// Azure blue is the platform, purple is AI. That is the deck's colour language
+// everywhere else, so the slide does not need a legend to be read. The tail
+// bucket is a bit of both, so it gets neither and is drawn grey.
+const KIND_COLOR = { infra: COLORS.azure, AI: COLORS.ai, "-": COLORS.faint };
 
 const ranked = [...METERS].sort((a, b) => meterTotal(b) - meterTotal(a));
-const topMeter = ranked[0];
-const models = METERS.find((m) => m.name === "Foundry Models");
 
 /**
  * Five named lines and one remainder, for the bar rows.
@@ -145,52 +144,57 @@ module.exports = [
   {
     kind: "splitBars",
     eyebrow: "Azure / AIFactory",
-    accent: COLORS.warn,
-    title: "Two thirds of the AI Factory tag is not AI",
+    accent: AI_PURPLE,
+    title: "Every $1 of AI runs on $" + (INFRA / AI_METERS).toFixed(2) + " of platform",
     note: money(tagTotal) + " billed under the tag, May-Jul invoiced.",
     bands: [
       {
-        label: "Infrastructure",
+        label: "Platform",
         value: INFRA,
-        color: COLORS.warn,
+        color: COLORS.azure,
         note: "the gateway, the servers and the databases",
       },
       {
-        label: "AI meters",
+        label: "AI",
         value: AI_METERS,
-        color: COLORS.azure,
+        color: AI_PURPLE,
         note: "model tokens and cognitive search",
       },
     ],
     rowsTitle: "The five largest lines, and everything else",
     items: TOP_LINES,
     callout: {
-      title:
-        "API Management costs more than the models it fronts: " +
-        money(meterTotal(topMeter)) + " against " + money(meterTotal(models)),
+      title: "Inference needs somewhere to run",
       text:
-        "Inference has to run somewhere, so this is not automatically wrong. It is the part " +
-        "of the AI bill that right-sizing can actually move, and it is the part nobody is looking at.",
+        "The ratio is not a problem in itself. It is the number to carry into the next project, " +
+        "because the platform half is the half that right-sizing and reservations can move.",
     },
     foot:
-      "Meter-level detail for every line is in the appendix. The subscriptions actually " +
-      "named \"AI Factory\" total just $4,279, so the tag is what counts, not the name.",
+      "Document Intelligence, the OCR service, is a separate project in the programme and is " +
+      "not inside this tag, so it is not in this total. It is on the projects slide. " +
+      "Meter-level detail for every line here is in the appendix.",
     speakerNotes: [
-      "ONE NUMBER OFF THIS SLIDE: " + pct((INFRA / tagTotal) * 100) + " of the AI Factory tag",
-      "is infrastructure, not AI.",
+      "ONE NUMBER OFF THIS SLIDE: for every dollar of AI meters under the AI Factory",
+      "tag, there is $" + (INFRA / AI_METERS).toFixed(2) + " of platform underneath it.",
       "",
-      "  Infrastructure  " + money(INFRA) + "   " + pct((INFRA / tagTotal) * 100),
-      "  AI meters       " + money(AI_METERS) + "   " + pct((AI_METERS / tagTotal) * 100),
+      "  Platform   " + money(INFRA) + "   " + pct((INFRA / tagTotal) * 100),
+      "  AI         " + money(AI_METERS) + "   " + pct((AI_METERS / tagTotal) * 100),
       "  ---------------------------------",
-      "  Tag total       " + money(tagTotal) + "   May-Jul invoiced",
+      "  Tag total  " + money(tagTotal) + "   May-Jul invoiced",
       "",
-      "The orange bars are infrastructure, the blue are AI. Read the top two rows",
-      "together: the gateway in front of the models costs more than the models.",
+      "Blue is platform, purple is AI, the same as everywhere else in the deck.",
+      "Read the top two rows together: the gateway in front of the models costs",
+      "about what the models cost.",
+      "",
+      "TONE: this is a ratio, not an accusation. Inference has to run somewhere. The",
+      "reason to know it is sizing the next project, and the platform half is the",
+      "half reservations and right-sizing can actually move.",
       "",
       "WHAT IS IN THE AI BAND",
-      "Foundry Models (tokens), Azure Cognitive Search, Foundry Tools. Document",
-      "Intelligence, the OCR service, is a separate project in the programme and is",
-      "not in this tag, so it is not in this total. It is on the projects slide.",
+      "Foundry Models (tokens), Azure Cognitive Search, Foundry Tools.",
+      "Document Intelligence, the OCR service, is a separate project in the",
+      "programme and is not in this tag. It is on the projects slide, where it is",
+      "$30,970 across Jan-Jul. All of it counts as AI.",
       "",
       "IF ASKED FOR THE FULL METER LIST: it is in the appendix. Do not read it out.",
     ].join("\n"),
@@ -250,3 +254,20 @@ module.exports = [
     ].join("\n"),
   },
 ];
+
+/**
+ * The AI Factory projects chart, taken straight from the operational review so
+ * the series cannot drift, with the figures printed on the bars. Four projects,
+ * one of which is the OCR service.
+ */
+// Index into the operational review, not a slide number in the CIO deck.
+const projects = require("./content")[24];
+
+module.exports.push({
+  ...projects,
+  // Conditional number format: segments under $2,000 print nothing. In January
+  // three of the four projects are around $1,000 and their labels land on top
+  // of each other; from March on, where the money actually is, every segment is
+  // big enough to hold its figure. The axis still carries the small ones.
+  chart: { ...projects.chart, dataLabels: '[<2000]"";"$"#,##0,"K"' },
+});

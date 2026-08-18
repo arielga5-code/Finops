@@ -136,7 +136,7 @@ npm run build:patch
 python3 tools/merge-slides.py \
     --into Harel_Cloud_Cost_CIO_Final.pptx \
     --from patch-slides.pptx \
-    --map 6=2,15=3 \
+    --map 6=2,7=4,15=3 \
     --out Harel_Cloud_Cost_CIO_Final_fixed.pptx
 ```
 
@@ -146,9 +146,11 @@ python3 tools/merge-slides.py \
   stamps an explicit background onto every slide that lacks one, so each slide
   is correct on its own terms as well.
 - **Slides.** `--map target=source` replaces slides in place, carrying the
-  speaker notes across and keeping the target deck's own layout. Chart parts
-  left unreferenced by a replacement are swept out, along with their embedded
-  workbooks.
+  speaker notes across and keeping the target deck's own layout. A replacement
+  brings its own parts with it — a chart and its embedded workbook — which land
+  under names the target deck is not using, and the slide's relationship ids are
+  preserved rather than rebuilt, because the slide XML refers to its chart by
+  id. Parts the replacement orphans are swept out along with their workbooks.
 
 Run it with no `--map` to do the background repair alone.
 

@@ -80,15 +80,46 @@ def rels_targets(xml: str) -> list[str]:
     return re.findall(r'Target="([^"]+)"', xml)
 
 
-def slide_rels(layout_target: str, notes_target: str | None) -> str:
-    rels = [f'<Relationship Id="rId1" Type="{R_NS}/slideLayout" '
-            f'Target="{layout_target}"/>']
-    if notes_target:
-        rels.append(f'<Relationship Id="rId2" Type="{R_NS}/notesSlide" '
-                    f'Target="{notes_target}"/>')
+REL_ENTRY = re.compile(r'<Relationship\b[^>]*/>')
+REL_ID = re.compile(r'Id="([^"]+)"')
+REL_TYPE = re.compile(r'Type="[^"]*/(\w+)"')
+
+
+def rewrite_slide_rels(src_rels: str, layout_target: str,
+                       notes_target: str | None, retarget) -> str:
+    """
+    Take the replacement slide's own rels and point them at the target deck.
+
+    Rebuilding this from scratch would be simpler but wrong: the slide XML
+    refers to its parts by relationship id, and pptxgenjs does not hand out the
+    same ids every time — a chart may be rId1 on one slide and rId3 on another.
+    Keeping each entry's id and rewriting only its target preserves the link.
+    """
+    out = []
+    for entry in REL_ENTRY.findall(src_rels):
+        kind = REL_TYPE.search(entry).group(1)
+        rid = REL_ID.search(entry).group(1)
+        if kind == "slideLayout":
+            target = layout_target
+        elif kind == "notesSlide":
+            if not notes_target:
+                continue
+            target = notes_target
+        else:
+            target = retarget(kind, entry)
+            if target is None:
+                continue
+        out.append(f'<Relationship Id="{rid}" Type="{R_NS}/{kind}" '
+                   f'Target="{target}"/>')
     return ('<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n'
             f'<Relationships xmlns="{REL_NS}">'
-            + "".join(rels) + "</Relationships>")
+            + "".join(out) + "</Relationships>")
+
+
+def rel_target_path(entry: str) -> str:
+    """The part a relationship points at, as a package path."""
+    t = re.search(r'Target="([^"]+)"', entry).group(1)
+    return t.lstrip("/") if t.startswith("/") else t.replace("../", "ppt/")
 
 
 def notes_rels(slide_no: int) -> str:
@@ -131,6 +162,42 @@ def main() -> None:
 
     replaced: dict[str, bytes] = {}
     log: list[str] = []
+    added: dict[str, bytes] = {}
+    origin: dict[str, str] = {}   # imported part name -> the name it had in --from
+
+    # Parts a replacement slide brings with it — a chart, its embedded workbook,
+    # an image — land under names the target deck is not already using, so a
+    # spliced chart cannot overwrite one the deck already had.
+    taken = {n for n in names}
+    imported = 0
+
+    def import_part(path: str, from_zip: zipfile.ZipFile) -> str:
+        """Copy one part in under a free name, following its own rels."""
+        nonlocal imported
+        stem, ext = path.rsplit(".", 1)
+        base = re.sub(r"\d+$", "", stem)
+        n = 1
+        while f"{base}{n}.{ext}" in taken:
+            n += 1
+        new = f"{base}{n}.{ext}"
+        taken.add(new)
+        imported += 1
+
+        rels_path = f"{Path(path).parent}/_rels/{Path(path).name}.rels"
+        if rels_path in from_zip.namelist():
+            child = from_zip.read(rels_path).decode("utf8")
+            for entry in REL_ENTRY.findall(child):
+                dep = rel_target_path(entry)
+                if dep in from_zip.namelist():
+                    moved = import_part(dep, from_zip)
+                    child = child.replace(
+                        re.search(r'Target="([^"]+)"', entry).group(1),
+                        "../" + moved.split("/", 1)[1])
+            added[f"{Path(new).parent}/_rels/{Path(new).name}.rels"] = child.encode("utf8")
+
+        added[new] = from_zip.read(path)
+        origin[new] = path
+        return new
 
     # ---- 1. splice the replacement slides in ----
     for target, source in sorted(mapping.items()):
@@ -156,16 +223,26 @@ def main() -> None:
                 notes_rels(target).encode("utf8")
             notes_target = f"../notesSlides/notesSlide{target}.xml"
 
+        def retarget(kind, entry, _src=src):
+            dep = rel_target_path(entry)
+            if dep not in _src.namelist():
+                return None
+            return "../" + import_part(dep, _src).split("/", 1)[1]
+
+        src_rels = src.read(f"ppt/slides/_rels/slide{source}.xml.rels").decode("utf8")
         replaced[f"ppt/slides/_rels/slide{target}.xml.rels"] = \
-            slide_rels(layout, notes_target).encode("utf8")
+            rewrite_slide_rels(src_rels, layout, notes_target, retarget).encode("utf8")
         log.append(f"slide {target} ← {Path(args.src).name} slide {source}")
+
+    if imported:
+        log.append(f"imported {imported} part(s) the replacements brought with them")
 
     # ---- 2. drop chart parts nothing points at any more ----
     #
-    # The slides being replaced carried charts; the replacements do not. An
-    # orphaned chart is harmless but it drags its embedded workbook along, so
-    # sweep both out rather than leaving several hundred KB of unreachable parts
-    # in a file that gets mailed around.
+    # A replaced slide's chart is usually not the replacement's chart, and an
+    # orphan drags its embedded workbook along with it, so sweep both out rather
+    # than leaving several hundred KB of unreachable parts in a file that gets
+    # mailed around.
     live: set[str] = set()
     for n in names:
         if n.startswith("ppt/slides/_rels/"):
@@ -211,6 +288,22 @@ def main() -> None:
         if n.startswith("ppt/notesSlides/notesSlide") and f'PartName="/{n}"' not in ct:
             ct = ct.replace("</Types>",
                             f'<Override PartName="/{n}" ContentType="{NOTES_CT}"/></Types>')
+
+    # An imported part needs the content type it had in the deck it came from.
+    # Parts covered by a Default extension rule (the embedded workbooks, images)
+    # have no Override of their own and need none here either.
+    src_ct = src.read("[Content_Types].xml").decode("utf8") if src else ""
+    src_types = dict(re.findall(r'<Override PartName="/([^"]+)" ContentType="([^"]+)"/>',
+                                src_ct))
+    for new in added:
+        if new.endswith(".rels") or f'PartName="/{new}"' in ct:
+            continue
+        kind = src_types.get(origin[new])
+        if kind:
+            ct = ct.replace("</Types>",
+                            f'<Override PartName="/{new}" ContentType="{kind}"/></Types>')
+        elif f'Extension="{new.rsplit(".", 1)[1]}"' not in ct:
+            sys.exit(f"merge-slides: no content type for imported part {new}")
     replaced["[Content_Types].xml"] = ct.encode("utf8")
 
     out = Path(args.out)
@@ -222,6 +315,8 @@ def main() -> None:
         for n, data in replaced.items():
             if n not in names:
                 z.writestr(n, data)
+        for n, data in added.items():
+            z.writestr(n, data)
 
     slide_count = sum(1 for n in names if re.fullmatch(r"ppt/slides/slide\d+\.xml", n))
     for line in log:

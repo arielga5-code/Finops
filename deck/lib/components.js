@@ -411,11 +411,26 @@ const legendStyle = {
 /** Stacked columns over months — the default shape for "spend by X, by month". */
 function stackedChart(pres, s, {
   x, y, w, h, series, cats, legend = true, valFmt = '"$"#,##0',
-  colors: override, grouping = "stacked",
+  colors: override, grouping = "stacked", dataLabels = false,
 }) {
   // With a single series pptxgenjs hands each *point* the next palette colour,
   // which reads as three unrelated bars. Pin it to one colour instead.
   const colors = override || (series.length === 1 ? [SERIES[0]] : SERIES);
+  // Printing the figure inside each segment only works while the segments are
+  // tall enough to hold it. Rounding to whole thousands keeps the label to four
+  // or five characters so it fits the narrow bands, and the axis still carries
+  // the exact scale.
+  const labelled = dataLabels
+    ? {
+        showValue: true,
+        dataLabelPosition: "ctr",
+        dataLabelColor: COLORS.bg,
+        dataLabelFontSize: SIZE.table,
+        dataLabelFontBold: true,
+        dataLabelFontFace: FONTS.body,
+        dataLabelFormatCode: dataLabels === true ? '"$"#,##0,"K"' : dataLabels,
+      }
+    : {};
   s.addChart(
     pres.ChartType.bar,
     series.map((ser) => ({ name: ser.name, labels: cats, values: ser.vals })),
@@ -427,6 +442,7 @@ function stackedChart(pres, s, {
       valAxisLabelFormatCode: valFmt,
       ...axisStyle,
       chartColors: colors,
+      ...labelled,
       ...(legend ? legendStyle : { showLegend: false }),
     }
   );

@@ -136,6 +136,7 @@ function drawChart(pres, s, spec, box) {
     colors: spec.colors,
     grouping: spec.grouping,
     valFmt: spec.valFmt,
+    dataLabels: spec.dataLabels,
   });
 }
 
@@ -989,8 +990,9 @@ const RENDER = {
     let x = GEO.margin;
     spec.bands.forEach((b, i) => {
       const w = (GEO.contentW - gap * (spec.bands.length - 1)) * (b.value / total);
-      s.addShape(pres.ShapeType.rect, {
+      s.addShape(pres.ShapeType.roundRect, {
         x, y: barY, w, h: barH,
+        rectRadius: 0.05,
         fill: { color: b.color },
         line: { color: b.color, width: 0 },
       });
@@ -1015,7 +1017,8 @@ const RENDER = {
       x += w + gap;
     });
 
-    // The rows.
+    // The rows, on a panel of their own so the bars read as one block rather
+    // than as loose marks floating on the canvas.
     const headY = barY + barH + 0.55;
     chartHeading(s, spec.rowsTitle, GEO.margin, headY, GEO.contentW);
 
@@ -1036,13 +1039,15 @@ const RENDER = {
       });
       // A faint track behind every bar, so a short line still reads as a share
       // of the same whole rather than as a stub floating in space.
-      s.addShape(pres.ShapeType.rect, {
-        x: trackX, y: y + 0.09, w: trackW, h: 0.14,
+      s.addShape(pres.ShapeType.roundRect, {
+        x: trackX, y: y + 0.08, w: trackW, h: 0.16,
+        rectRadius: 0.08,
         fill: { color: COLORS.cardAlt },
-        line: { color: COLORS.cardAlt, width: 0 },
+        line: { color: COLORS.border, width: 0.5 },
       });
-      s.addShape(pres.ShapeType.rect, {
-        x: trackX, y: y + 0.09, w: Math.max(0.02, trackW * (it.value / max)), h: 0.14,
+      s.addShape(pres.ShapeType.roundRect, {
+        x: trackX, y: y + 0.08, w: Math.max(0.16, trackW * (it.value / max)), h: 0.16,
+        rectRadius: 0.08,
         fill: { color: it.color },
         line: { color: it.color, width: 0 },
       });
