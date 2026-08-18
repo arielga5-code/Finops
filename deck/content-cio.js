@@ -758,14 +758,46 @@ const core = [
     accent: AI,
     title: "Nothing reaches production unowned",
     note: "No AI workload goes live without explicit business ownership and financial allocation.",
+    // Each tip is a practitioner detail that supports the criterion rather
+    // than restating it, most trace straight back to the APIM mechanics on
+    // the enforcement slide two before this one, so the two slides read as
+    // one argument rather than two unrelated lists.
     items: [
-      { label: "Business owner", desc: "Accountability for the use case and its return." },
-      { label: "Technical owner", desc: "Deployment, model choice and system health." },
-      { label: "Budget", desc: "Maximum financial exposure, set before anything runs." },
-      { label: "Rate limit", desc: "Prevents API spam, runaway loops and overload." },
-      { label: "Token quota", desc: "Caps consumption per consumer, independent of budget." },
-      { label: "Cost centre", desc: "Makes chargeback possible at month end." },
-      { label: "Executive approval", desc: "Sign-off before launch, not after the first invoice." },
+      {
+        label: "Business owner",
+        desc: "Accountability for the use case and its return.",
+        tip: "Record it with the cost centre, so it survives a reorg.",
+      },
+      {
+        label: "Technical owner",
+        desc: "Deployment, model choice and system health.",
+        tip: "On call for the model, not just the pipeline.",
+      },
+      {
+        label: "Budget",
+        desc: "Maximum financial exposure, set before anything runs.",
+        tip: "Set the hard quota at 75-85% of budget.",
+      },
+      {
+        label: "Rate limit",
+        desc: "Prevents API spam, runaway loops and overload.",
+        tip: "One key per application, never shared.",
+      },
+      {
+        label: "Token quota",
+        desc: "Caps consumption per consumer, independent of budget.",
+        tip: "Split it by region; each APIM gateway counts alone.",
+      },
+      {
+        label: "Cost centre",
+        desc: "Makes chargeback possible at month end.",
+        tip: "Tag the request at the gateway, not just the resource.",
+      },
+      {
+        label: "Executive approval",
+        desc: "Sign-off before launch, not after the first invoice.",
+        tip: "Re-approve at every model-tier change.",
+      },
     ],
     banner: {
       title: "This is what makes shadow AI structurally impossible",

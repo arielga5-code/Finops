@@ -8,8 +8,8 @@
  * Basis: metered consumption, January to July 2026, Azure enrollment.
  *
  * WHAT COUNTS AS AI
- * The model and inference meters — Foundry Models, Foundry Tools, Azure
- * Cognitive Search — plus the whole of Document Intelligence, which is an OCR
+ * The model and inference meters, Foundry Models, Foundry Tools, Azure
+ * Cognitive Search, plus the whole of Document Intelligence, which is an OCR
  * API and bills nothing but page meters. Everything else a project consumes is
  * infrastructure: the gateway in front of the models, the servers they run on,
  * the databases, the networking, the monitoring.
@@ -80,7 +80,7 @@ function monthly(name) {
   const s = DATA[ROLLUP].series.find((x) => x.name === name);
   if (!s) {
     throw new Error(
-      `ai-projects: "${name}" is not a series in ${ROLLUP} — the source data ` +
+      `ai-projects: "${name}" is not a series in ${ROLLUP}, the source data ` +
       "changed, update PROJECTS."
     );
   }
@@ -106,7 +106,7 @@ function servicesOf(p, total) {
   if (Math.abs(charted - total) > Math.max(5, total * 0.005)) {
     throw new Error(
       `ai-projects: ${p.name} is ${money(total)} in ${ROLLUP} but ` +
-      `${money(charted)} in ${p.services} — the two cuts disagree.`
+      `${money(charted)} in ${p.services}, the two cuts disagree.`
     );
   }
 

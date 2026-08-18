@@ -10,16 +10,20 @@
  *   2  Infrastructure across the AI Factory programme, by service
  *   3  AI spend is outpacing governance, the mesh
  *   4  The same programme, built four different ways, by project
+ *   5  Nothing reaches production unowned, the ownership criteria
  *
  * Slide 1 reads its figures from `data/ai-platforms.js`; slides 2 and 4 both
  * read from `data/ai-projects.js`, so a project's total, its infrastructure
  * share and its growth cannot say something different from one slide to the
- * next.
+ * next. Slide 5 is not built here at all, it is pulled straight out of
+ * `content-cio.js`, the same object the combined CIO briefing itself uses, so
+ * a tip added there does not need to be repeated in two places.
  */
 
 const { COLORS } = require("./lib/theme");
 const AI = require("./data/ai-platforms");
 const P = require("./data/ai-projects");
+const cio = require("./content-cio");
 
 const AI_PURPLE = COLORS.ai;
 
@@ -30,7 +34,7 @@ const pct = (n, d = 1) => n.toFixed(d) + "%";
  * Infrastructure across the whole programme, service by service
  *
  * Every project's non-AI meters, added together. Deliberately excludes AI:
- * this slide answers one question — what does the platform under the AI cost —
+ * this slide answers one question, what does the platform under the AI cost -
  * and the mixed AI/infra table it replaces buried that answer in ninety numbers.
  * ------------------------------------------------------------------ */
 
@@ -93,7 +97,7 @@ module.exports = [
     accent: COLORS.azure,
     title: "The AI programme carries " + P.money(P.infraTotal) + " of infrastructure",
     note:
-      "All four projects, January to July. AI meters are excluded here — " +
+      "All four projects, January to July. AI meters are excluded here, " +
       "models, tools, search and OCR pages have their own slides.",
     chartTitle: "Infrastructure spend by service, every project combined",
     chart: {
@@ -123,7 +127,7 @@ module.exports = [
     ],
     foot:
       "Every project carries some infrastructure except Document Intelligence, a hosted OCR " +
-      "API with none at all — the next slide breaks this out project by project. Inference " +
+      "API with none at all, the next slide breaks this out project by project. Inference " +
       "running on a plain virtual machine still bills as infrastructure, so this is a floor.",
     speakerNotes: [
       "ONE NUMBER OFF THIS SLIDE: " + P.money(P.infraTotal) + " of the " + P.money(P.total),
@@ -206,8 +210,8 @@ module.exports = [
  * Was a seven-month stacked column, four series, twenty-eight numbers at
  * 8-9pt. Traded for one bar per project: how big it is, and how much of it is
  * infrastructure versus AI, at a glance. The month-by-month detail this drops
- * still exists — it is the chart on the operational review's own copy of this
- * slide — but a CIO briefing does not need it read off the screen.
+ * still exists, it is the chart on the operational review's own copy of this
+ * slide, but a CIO briefing does not need it read off the screen.
  * ------------------------------------------------------------------ */
 
 const projectItems = [...P.projects].sort((a, b) => b.total - a.total);
@@ -264,15 +268,28 @@ module.exports.push({
     "",
     "THE RANGE IS THE POINT: from " + Math.round(shareOf(leanest)) + "% to " +
       Math.round(shareOf(heaviest)) + "% infrastructure, inside the same programme.",
-    leanest.name + " is a hosted OCR API — there is nothing under it to build.",
+    leanest.name + " is a hosted OCR API, there is nothing under it to build.",
     heaviest.name + " is a research workload running on its own containers and",
     "gateway, so nearly all of it is platform.",
     "",
     "AI Factory sits in the middle because it is the shared platform everyone",
-    "else's model traffic runs through — that gateway is the largest single",
+    "else's model traffic runs through, that gateway is the largest single",
     "infrastructure line in the whole programme. See the previous slide.",
     "",
     "IF ASKED FOR THE MONTH-BY-MONTH VIEW: it is in the appendix, on the",
     "operational review's own copy of this slide.",
   ].join("\n"),
 });
+
+/* ------------------------------------------------------------------ *
+ * 5 / ownership criteria
+ *
+ * Pulled by reference from content-cio.js rather than redefined, so this is
+ * never a second copy that can drift from the one the CIO deck itself builds.
+ * ------------------------------------------------------------------ */
+
+const ownership = cio.find((s) => s.kind === "criteria");
+if (!ownership) {
+  throw new Error("content-patch: content-cio.js no longer has a criteria slide");
+}
+module.exports.push(ownership);

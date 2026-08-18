@@ -15,7 +15,7 @@ const { COLORS, SERIES, FONTS, SIZE, GEO } = require("./theme");
 
 const usd = (n) => "$" + Math.round(n).toLocaleString("en-US");
 
-/** $1.54M / $584K / $4,440 — the compact form used in the stat tiles. */
+/** $1.54M / $584K / $4,440, the compact form used in the stat tiles. */
 function money(n) {
   const a = Math.abs(n);
   if (a >= 1e6) return "$" + (n / 1e6).toFixed(2).replace(/\.?0+$/, "") + "M";
@@ -54,7 +54,7 @@ function topSeries(series, n = 7, otherLabel = "All other") {
 const totalsByPeriod = (series) =>
   series[0].vals.map((_, i) => sum(series.map((s) => s.vals[i] || 0)));
 
-/** Percent change first period → last period, guarding divide-by-zero. */
+/** Percent change first period to last period, guarding divide-by-zero. */
 function change(vals) {
   const first = vals.find((v) => v > 0);
   const last = vals[vals.length - 1];
@@ -190,7 +190,7 @@ function sectionSlide(pres, { kicker, title, sub, accent = COLORS.aws }) {
   const s = pres.addSlide();
   paintBackground(pres, s);
 
-  // Two soft overlapping discs, bled off the right edge — the motif carried
+  // Two soft overlapping discs, bled off the right edge, the motif carried
   // from the CIO deck's cover.
   s.addShape(pres.ShapeType.ellipse, {
     x: 8.6, y: -1.4, w: 6.4, h: 6.4,
@@ -256,7 +256,7 @@ function card(pres, s, { x, y, w, h, title, sub, accent }) {
 
 /**
  * Label / big number / coloured note, on the card background. The workhorse of
- * the deck — every "TOTAL COST $584K" annotation from the source becomes one.
+ * the deck, every "TOTAL COST $584K" annotation from the source becomes one.
  */
 function statTile(pres, s, { x, y, w, h = 1.18, label, value, note, accent = COLORS.cyan, boxed = true, valueSize = SIZE.stat }) {
   if (boxed) {
@@ -269,7 +269,7 @@ function statTile(pres, s, { x, y, w, h = 1.18, label, value, note, accent = COL
   }
   const px = boxed ? x + 0.22 : x;
   const pw = w - (boxed ? 0.44 : 0);
-  // The label must stay on one line — if it wraps it pushes into the value.
+  // The label must stay on one line, if it wraps it pushes into the value.
   const lab = String(label).toUpperCase();
   const labSize = Math.max(10, Math.min(SIZE.statLabel, (pw * 88) / Math.max(1, lab.length)));
   s.addText(lab, {
@@ -277,8 +277,8 @@ function statTile(pres, s, { x, y, w, h = 1.18, label, value, note, accent = COL
     fontFace: FONTS.head, fontSize: labSize, bold: true,
     color: COLORS.muted, charSpacing: 1.2, margin: 0, valign: "middle",
   });
-  // Values are not always short figures — "Direct Connect - Port Hours" also
-  // lands here — so step the size down as the string gets longer. Bold Calibri
+  // Values are not always short figures, "Direct Connect - Port Hours" also
+  // lands here, so step the size down as the string gets longer. Bold Calibri
   // averages ~0.52em per character, i.e. pw*72/(0.52*chars) points to fit one
   // line; 130 is that constant with a little slack.
   const chars = String(value).length;
@@ -297,7 +297,7 @@ function statTile(pres, s, { x, y, w, h = 1.18, label, value, note, accent = COL
   }
 }
 
-/** A short bullet of narrative — the "Increase in X" callouts from the source. */
+/** A short bullet of narrative, the "Increase in X" callouts from the source. */
 function noteList(pres, s, { x, y, w, items, accent = COLORS.aws, title }) {
   let cy = y;
   if (title) {
@@ -334,7 +334,7 @@ function noteList(pres, s, { x, y, w, items, accent = COLORS.aws, title }) {
 
 /**
  * Dark table with a muted header row and zebra striping.
- * `cols`: [{ label, w, align, color }]  ·  `rows`: array of cell arrays.
+ * `cols`: [{ label, w, align, color }] / `rows`: array of cell arrays.
  * A cell may be a string or { text, color, bold }.
  */
 function table(pres, s, { x, y, w, cols, rows, fontSize = SIZE.table, rowH = 0.32 }) {
@@ -408,7 +408,7 @@ const legendStyle = {
   legendFontFace: FONTS.body,
 };
 
-/** Stacked columns over months — the default shape for "spend by X, by month". */
+/** Stacked columns over months, the default shape for "spend by X, by month". */
 function stackedChart(pres, s, {
   x, y, w, h, series, cats, legend = true, valFmt = '"$"#,##0',
   colors: override, grouping = "stacked", dataLabels = false,
@@ -491,7 +491,7 @@ function lineChart(pres, s, { x, y, w, h, series, cats, legend = true, colors, v
   );
 }
 
-/** Horizontal ranking bars — for "which service costs most" cuts. */
+/** Horizontal ranking bars, for "which service costs most" cuts. */
 function rankChart(pres, s, { x, y, w, h, cats, vals, color = COLORS.azure, valFmt = '"$"#,##0' }) {
   s.addChart(
     pres.ChartType.bar,
@@ -509,7 +509,7 @@ function rankChart(pres, s, { x, y, w, h, cats, vals, color = COLORS.azure, valF
       valAxisLabelFormatCode: valFmt,
       ...axisStyle,
       // `axisStyle` carries its own chartColors (the deck's multi-colour
-      // SERIES palette, for stacked/line charts) — set after the spread, or
+      // SERIES palette, for stacked/line charts), set after the spread, or
       // this single accent colour is silently overwritten by it and every bar
       // comes out a different colour instead of one.
       chartColors: [color],

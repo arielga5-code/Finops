@@ -1,5 +1,5 @@
 /**
- * Deck engine — turns a content array into a .pptx.
+ * Deck engine, turns a content array into a .pptx.
  *
  * Shared by every deck in this folder (`build.js` for the operational review,
  * `build-cio.js` for the combined CIO briefing). Renderers live in the RENDER
@@ -19,7 +19,7 @@ const DATA = require("../data/charts.json");
 
 function chartOf(id, spec = {}) {
   // A slide can carry its own series inline instead of pointing at the
-  // extracted workbook data — used for figures that come from the CIO deck
+  // extracted workbook data, used for figures that come from the CIO deck
   // rather than from the operational workbooks.
   if (spec && spec.inline) return { cats: spec.inline.cats, series: spec.inline.series };
 
@@ -322,7 +322,7 @@ const RENDER = {
         deepest = Math.max(deepest, drawTable(pres, s, t, x, y));
         x += width(t) + 0.4;
       });
-      // Stats become a strip under the tables — placed against the deepest of
+      // Stats become a strip under the tables, placed against the deepest of
       // the two, not pinned to the floor, so short tables do not leave a hole.
       if (stats.length) {
         const sw = (GEO.contentW - 0.25 * (stats.length - 1)) / stats.length;
@@ -442,7 +442,7 @@ const RENDER = {
   },
 
   /**
-   * The reconciliation slide: A − B = C across the top, then the line-by-line
+   * The reconciliation slide: A - B = C across the top, then the line-by-line
    * delta underneath. Built for the $16,100 credit, reusable for any variance.
    */
   reconcile(pres, spec) {
@@ -500,7 +500,7 @@ const RENDER = {
     }
   },
 
-  /** Left consumers → centre control point → right providers. */
+  /** Left consumers to centre control point to right providers. */
   flow(pres, spec) {
     const s = C.slide(pres, {
       eyebrow: spec.eyebrow, accent: spec.accent,
@@ -629,7 +629,21 @@ const RENDER = {
     });
   },
 
-  /** Numbered criteria in two columns — "nothing ships without these". */
+  /**
+   * Numbered criteria in two columns, "nothing ships without these".
+   *
+   * Row height, circle size and every font here are derived from how much
+   * vertical room the slide actually has for this item count, rather than
+   * fixed, a short list (few items, both columns even) used to leave a band
+   * of empty canvas below the banner, which is dead space on a screen meant to
+   * be read from across a room. Whatever height is left now goes into larger
+   * type and a taller banner instead.
+   *
+   * An item may carry an optional `tip`, a third, shorter line under the
+   * description, in the accent colour, for a practitioner detail that
+   * supports the criterion rather than defining it. Present on every item or
+   * none; a slide does not mix the two.
+   */
   criteria(pres, spec) {
     const s = C.slide(pres, {
       eyebrow: spec.eyebrow, accent: spec.accent,
@@ -637,48 +651,125 @@ const RENDER = {
     });
 
     const cols = 2;
-    const w = (GEO.contentW - 0.4) / cols;
+    const gap = 0.4;
+    const w = (GEO.contentW - gap) / cols;
     const perCol = Math.ceil(spec.items.length / cols);
+    const hasTip = spec.items.some((it) => it.tip);
+
+    const top = GEO.bodyTop + 0.25;
+    const available = GEO.footY - 0.1 - top;
+    const bannerH = spec.banner
+      ? Math.min(1.55, Math.max(1.05, available * 0.26))
+      : 0;
+    const bannerGap = spec.banner ? 0.3 : 0;
+    const pitch = (available - bannerH - bannerGap) / perCol;
+
+    // Circle and type scale off the pitch we ended up with, clamped so a very
+    // short list doesn't blow up and a very long one never shrinks below the
+    // deck's 12pt floor.
+    const scale = Math.max(0.85, Math.min(1.7, pitch / 0.72));
+    const circleD = Math.max(0.36, Math.min(0.56, 0.36 * scale));
+    const numSize = Math.max(13, Math.min(20, 13 * scale));
+    let labelSize = Math.max(14, Math.min(21, 14 * scale));
+    let descSize = Math.max(12, Math.min(16, 12 * scale));
+    let tipSize = Math.max(12, Math.min(14, 12 * scale));
+
+    // Each row stacks label, description and (if present) a tip line, and the
+    // three must fit inside one `pitch` regardless of what the clamps above
+    // picked, a longer item list, or adding tips to a slide that did not have
+    // them, changes pitch independently of font size. Rather than hand-tune
+    // constants for one item count, size every block from its own font size
+    // using the table renderer's line-height convention, then if the stack
+    // does not fit, shrink all three fonts by the one factor that makes it
+    // fit and lay out again. Two passes, never more: height is linear in font
+    // size, so the second pass lands exactly.
+    //
+    // Tips are written and reviewed as one-liners (see content-cio.js), so the
+    // reservation is one line plus a small pad rather than a full second line
+    //, reserving two, "just in case", was costing every row nearly half an
+    // inch and dragging label and description down with it whenever a tip was
+    // present. The 12pt floor below is what actually protects a tip that runs
+    // long in a future edit; it wraps a little tight rather than shrinking
+    // under the deck's type-scale minimum.
+    const lineH = (pt) => (pt / 72) * 1.25;
+    const descLines = hasTip ? 1 : 2;
+    const rowGap = 0.05;
+    const stackH = () =>
+      lineH(labelSize) + rowGap + lineH(descSize) * descLines +
+      (hasTip ? rowGap + lineH(tipSize) + 0.04 : 0);
+
+    const room = pitch - 0.1; // leave a sliver between rows
+    const over = stackH() / room;
+    if (over > 1) {
+      labelSize = Math.max(13, labelSize / over);
+      descSize = Math.max(12, descSize / over);
+      tipSize = Math.max(12, tipSize / over);
+    }
+
     spec.items.forEach((it, i) => {
       const col = Math.floor(i / perCol);
       const row = i % perCol;
-      const x = GEO.margin + col * (w + 0.4);
-      const y = GEO.bodyTop + 0.25 + row * 0.72;
+      const x = GEO.margin + col * (w + gap);
+      const y = top + row * pitch;
+      const textW = w - (circleD + 0.16);
+      const textX = x + circleD + 0.16;
 
       s.addShape(pres.ShapeType.ellipse, {
-        x, y: y + 0.08, w: 0.36, h: 0.36,
+        x, y: y + 0.06, w: circleD, h: circleD,
         fill: { color: COLORS.card },
-        line: { color: spec.accent, width: 1 },
+        line: { color: spec.accent, width: 1.25 },
       });
       s.addText(String(i + 1), {
-        x, y: y + 0.08, w: 0.36, h: 0.36,
-        fontFace: FONTS.head, fontSize: 13, bold: true,
+        x, y: y + 0.06, w: circleD, h: circleD,
+        fontFace: FONTS.head, fontSize: numSize, bold: true,
         color: spec.accent, margin: 0, align: "center", valign: "middle",
       });
+
+      const labelH = lineH(labelSize);
+      const descH = lineH(descSize) * descLines;
       s.addText(it.label, {
-        x: x + 0.5, y: y + 0.02, w: w - 0.5, h: 0.28,
-        fontFace: FONTS.head, fontSize: 14, bold: true,
+        x: textX, y, w: textW, h: labelH,
+        fontFace: FONTS.head, fontSize: labelSize, bold: true,
         color: COLORS.text, margin: 0, valign: "middle",
       });
       s.addText(it.desc, {
-        x: x + 0.5, y: y + 0.3, w: w - 0.5, h: 0.4,
-        fontFace: FONTS.body, fontSize: 12, color: COLORS.muted,
-        margin: 0, valign: "top", lineSpacingMultiple: 1.1,
+        x: textX, y: y + labelH + rowGap, w: textW, h: descH,
+        fontFace: FONTS.body, fontSize: descSize, color: COLORS.muted,
+        margin: 0, valign: "top", lineSpacingMultiple: 1.12,
       });
+      if (it.tip) {
+        // A two-run array here (bold "Tip:" + a plain run) is what pptxgenjs's
+        // own docs show for mixed formatting, but the library emits a
+        // paragraph-properties block once per run instead of once per
+        // paragraph, malformed OOXML that PowerPoint tolerates and
+        // LibreOffice does not: it silently drops the whole line. One run,
+        // one style, renders correctly everywhere; "Tip:" leans on the colon
+        // and the italic rather than on bolding.
+        s.addText(`Tip: ${it.tip}`, {
+          x: textX, y: y + labelH + rowGap + descH + rowGap, w: textW, h: lineH(tipSize) + 0.04,
+          fontFace: FONTS.body, fontSize: tipSize, color: spec.accent, italic: true,
+          margin: 0, valign: "top", lineSpacingMultiple: 1.05,
+        });
+      }
     });
 
     if (spec.banner) {
-      const y = GEO.bodyTop + 0.25 + perCol * 0.72 + 0.2;
-      C.card(pres, s, { x: GEO.margin, y, w: GEO.contentW, h: 1.0, accent: spec.accent });
+      const y = top + perCol * pitch + bannerGap;
+      C.card(pres, s, { x: GEO.margin, y, w: GEO.contentW, h: bannerH, accent: spec.accent });
+      const bTitleSize = Math.max(16, Math.min(22, 16 * scale));
+      const bTextSize = Math.max(12.5, Math.min(16, 12.5 * scale));
+      const pad = 0.28;
+      const titleH = lineH(bTitleSize) + 0.08;
       s.addText(spec.banner.title, {
-        x: GEO.margin + 0.25, y: y + 0.14, w: GEO.contentW - 0.5, h: 0.32,
-        fontFace: FONTS.head, fontSize: 16, bold: true,
+        x: GEO.margin + pad, y: y + pad - 0.12, w: GEO.contentW - pad * 2, h: titleH,
+        fontFace: FONTS.head, fontSize: bTitleSize, bold: true,
         color: COLORS.text, margin: 0, valign: "middle",
       });
       s.addText(spec.banner.text, {
-        x: GEO.margin + 0.25, y: y + 0.46, w: GEO.contentW - 0.5, h: 0.44,
-        fontFace: FONTS.body, fontSize: 12.5, color: COLORS.muted,
-        margin: 0, valign: "top", lineSpacingMultiple: 1.15,
+        x: GEO.margin + pad, y: y + pad - 0.12 + titleH,
+        w: GEO.contentW - pad * 2, h: bannerH - (pad - 0.12 + titleH) - 0.16,
+        fontFace: FONTS.body, fontSize: bTextSize, color: COLORS.muted,
+        margin: 0, valign: "top", lineSpacingMultiple: 1.18,
       });
     }
   },
@@ -724,7 +815,7 @@ const RENDER = {
   /**
    * One column per platform, ranked, under a strip that shows how the total
    * divides between them. Each column carries the period total, the share, the
-   * first and last month side by side, and the growth between the two — the
+   * first and last month side by side, and the growth between the two, the
    * growth is the point of the slide, so it gets the badge.
    */
   platforms(pres, spec) {
@@ -843,7 +934,7 @@ const RENDER = {
   },
 
   /**
-   * Two columns wired to each other with nothing in between — the "before"
+   * Two columns wired to each other with nothing in between, the "before"
    * picture for the gateway slide. The mesh is the argument: every consumer
    * reaches every provider directly, so no single point can see the spend.
    */
@@ -967,7 +1058,7 @@ const RENDER = {
   /**
    * One total, split two ways, then the lines that make it up.
    *
-   * The bar across the top is the argument — its two segments are drawn to
+   * The bar across the top is the argument, its two segments are drawn to
    * scale, so the split is read before any figure is. The rows beneath are the
    * largest contributors on a single shared scale, each in the colour of the
    * band it belongs to, which is what shows the two kinds of spend interleaved
@@ -1078,11 +1169,11 @@ const RENDER = {
    * One thick horizontal bar per item, name and growth above it, split into two
    * coloured segments to scale, total printed at the end.
    *
-   * Built for a short list — a handful of projects, not a meter table — so each
+   * Built for a short list, a handful of projects, not a meter table, so each
    * row gets real height. That is the whole design brief: the previous version
    * of this slide was a seven-month stacked column with four series and every
    * label under 8pt; this trades the month-by-month detail (which lives on the
-   * slide it came from) for one comparison read at a glance — how big is each
+   * slide it came from) for one comparison read at a glance, how big is each
    * item, and what is it made of.
    */
   projectBars(pres, spec) {
@@ -1129,7 +1220,7 @@ const RENDER = {
     const items = spec.items;
     const max = Math.max(...items.map((it) => it.total), 1);
     // The total sits in its own column to the right of the bar track, not
-    // chasing the end of the bar — the largest item's bar fills the whole
+    // chasing the end of the bar, the largest item's bar fills the whole
     // track, and a label placed past its end would run off the slide.
     const totalW = 1.35, totalGap = 0.15;
     const barMaxW = GEO.contentW - totalW - totalGap;
@@ -1218,7 +1309,7 @@ const RENDER = {
  *
  * The returned height accounts for cells that wrap. PowerPoint grows a row to
  * fit its content, so assuming every row is exactly `rowH` tall understates a
- * table with long labels — and whatever is placed underneath then lands on top
+ * table with long labels, and whatever is placed underneath then lands on top
  * of it.
  */
 function drawTable(pres, s, t, x, y) {
@@ -1266,7 +1357,7 @@ const rtlRow = (row) =>
 /** Renders `content` and writes it to `outFile`. */
 function buildDeck(content, outFile, meta = {}) {
   const pres = new PptxGenJS();
-  pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5 — must be set before any slide
+  pres.layout = "LAYOUT_WIDE"; // 13.333 x 7.5, must be set before any slide
   pres.author = meta.author || "Cloud Infrastructure, DevOps & Databases";
   pres.company = meta.company || "Harel Insurance";
   pres.title = meta.title || "Cloud FinOps - Harel, 2026";
@@ -1284,7 +1375,7 @@ function buildDeck(content, outFile, meta = {}) {
   });
 
   return pres.writeFile({ fileName: outFile }).then(() => {
-    console.log(`Wrote ${outFile} — ${content.length} slides`);
+    console.log(`Wrote ${outFile}, ${content.length} slides`);
   });
 }
 
