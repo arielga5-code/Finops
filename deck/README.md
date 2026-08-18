@@ -98,7 +98,7 @@ a slide can never drift away from the chart beside it. Hard-coded strings
 - `reconcile` — A − B = C across the top, variance table below, stats under that
 - `flow` — consumers → control point → providers
 - `steps` — numbered process cards, optionally badged as gates
-- `criteria` — numbered requirements in two columns, with a closing banner
+- `criteria` — numbered requirements in two columns, with a closing banner. Row height and every font size are derived from how much room the item count actually leaves, not fixed, so a short list gets deliberately large type instead of a band of empty canvas. An item may carry an optional `tip` — a one-line practitioner detail in the accent colour under the description; present on every item or none
 - `bigStat` — one very large figure with a paragraph beside it
 - `platforms` — a share strip over one column per platform: total, share, first and last month, growth
 - `mesh` — two columns wired to each other with nothing in between, plus a panel and stats
@@ -137,7 +137,7 @@ npm run build:patch
 python3 tools/merge-slides.py \
     --into Harel_Cloud_Cost_CIO_Final.pptx \
     --from patch-slides.pptx \
-    --map 6=2,7=4,15=3 \
+    --map 6=2,7=4,15=3,18=5 \
     --out Harel_Cloud_Cost_CIO_Final_fixed.pptx
 ```
 
@@ -190,12 +190,14 @@ it would turn into nonsense.
 `content-ai.js` and `content-vendor.js` have not been through this pass; they
 build decks of their own, not the Final deck.
 
-### The four slides in `content-patch.js`
+### The five slides in `content-patch.js`
 
-Four slides in the Final deck are generated here rather than assembled by hand,
-either because the pasted version came in unreadable (white background, v33's
-8-9pt type) or because the CIO cut needed a different level of detail than the
-operational review it was drawn from. In build order:
+Five slides in the Final deck are generated here rather than assembled by
+hand, either because the pasted version came in unreadable (white background,
+v33's 8-9pt type), because the CIO cut needed a different level of detail than
+the operational review it was drawn from, or because a fixed-size layout was
+leaving real vertical room empty on a screen meant to be read from across a
+room. In build order:
 
 **1 — Spend by AI platform.** Reads from `data/ai-platforms.js`, the same
 source as the "AI went from 4% of the bill to 27%" chart, so the two can never
@@ -258,6 +260,15 @@ servers, the databases, the network — counts as infrastructure. Inference
 running on a plain virtual machine still bills as infrastructure, so the
 infrastructure figure is a floor, not a ceiling.
 
+**5 — Nothing reaches production unowned.** The seven-item ownership criteria
+list, pulled by reference from `content-cio.js` rather than redefined here —
+it is the exact object the combined CIO briefing itself builds, so a change to
+one is a change to both. Each item now carries a one-line practitioner tip
+(`Set the hard quota at 75–85% of budget`, `One key per application, never
+shared`), most of them lifted straight from the enforcement slide's own APIM
+mechanics two slides earlier, so the two read as one argument. See
+`criteria` in the kind list above for how the layout fills the frame.
+
 ### A pptxgenjs colour bug, in `rankChart` and `columnChart`
 
 Both single-series chart wrappers built their options object as
@@ -270,6 +281,25 @@ including the two "Marketplace purchases" slides in the operational review,
 which had been shipping like that unnoticed. Fixed by moving `chartColors`
 after the `...axisStyle` spread, matching the order `stackedChart` already
 used correctly.
+
+### A pptxgenjs paragraph bug, in mixed-run text
+
+`addText` accepts an array of `{ text, options }` runs for mixed formatting
+inside one line — a bold word followed by a plain sentence, say. pptxgenjs's
+own docs show exactly that shape. But its serializer emits a full
+`<a:pPr>` (paragraph properties) block once *per run* rather than once per
+*paragraph*, so a two-run line comes out as invalid OOXML: a second `<a:pPr>`
+sitting between two runs of the same `<a:p>`, which the schema does not
+allow. PowerPoint tolerates it and renders the line normally; LibreOffice
+does not — it silently drops the run (or the whole line) rather than erring,
+which is why this took a while to pin down: the file opens fine, the text
+is present if you read the XML, and nothing complains.
+
+The `criteria` renderer's tip line originally used this pattern for a bold
+`"Tip:"` prefix. Fixed by dropping to one run, one style — the colon and the
+italic carry the "this is an aside" signal well enough on their own. No other
+call in the codebase builds a multi-run array; if you add one, verify it in
+whichever renderer you actually ship from, not just PowerPoint.
 
 ## Source mapping
 
