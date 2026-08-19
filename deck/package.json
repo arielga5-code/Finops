@@ -14,6 +14,7 @@
     "build:aiaug": "node build-aiaug.js",
     "build:aiwindow": "node build-aiwindow.js",
     "build:aiapps": "node build-aiapps.js",
+    "build:aitable": "node build-aitable.js",
     "fix:final": "node build-patch.js && python3 tools/merge-slides.py --into Harel_Cloud_Cost_CIO_Final.pptx --from patch-slides.pptx --map 6=2,7=4,15=3,18=5 --out Harel_Cloud_Cost_CIO_Final_fixed.pptx"
   },
   "dependencies": {

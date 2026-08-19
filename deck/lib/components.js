@@ -421,8 +421,11 @@ function table(pres, s, { x, y, w, cols, rows, fontSize = SIZE.table, rowH = 0.3
           color: c.color || COLORS.text,
           bold: c.bold ?? j === 0,
           align: cols[j].align || "left",
-          fill: { color: i % 2 ? COLORS.cardAlt : COLORS.card },
-          fontSize,
+          // Zebra striping by default, but a cell may name its own fill: a
+          // grouped table needs its group headers to read as headers rather
+          // than as whichever stripe they happened to land on.
+          fill: { color: c.fill || (i % 2 ? COLORS.cardAlt : COLORS.card) },
+          fontSize: c.fontSize || fontSize,
         },
       };
     })

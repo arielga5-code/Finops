@@ -1,6 +1,6 @@
 # Cloud FinOps decks — Harel, 2026
 
-Eight decks and one pair of drop-in slides, from one design system and one set of source data.
+Eight decks and two drop-in slide sets, from one design system and one set of source data.
 
 | Deck | Build | Slides | For |
 |---|---|---|---|
@@ -13,6 +13,7 @@ Eight decks and one pair of drop-in slides, from one design system and one set o
 | **AI cost, August month to date** | `npm run build:aiaug` → `AI_Cost_August_2026_MTD.pptx` | 8 | What changed against July: the daily rate doubled, and why that is adoption rather than price |
 | **AI cost window, for the CIO deck** | `npm run build:aiwindow` → `AI_Cost_Window_Slides.pptx` | 2 | Two slides to paste into the CIO presentation: what the whole window cost, and what drives it |
 | **AI cost by team and application** | `npm run build:aiapps` → `AI_Cost_by_Team_and_Application.pptx` | 8 | The named detail: every application, its team, and how its money splits across the three providers |
+| **AI consumption, one slide** | `npm run build:aitable` → `AI_Consumption_Slide.pptx` | 1 | The whole thing on one slide for the CIO deck: team, application, provider, and what has no name |
 
 ```bash
 cd deck
@@ -26,6 +27,7 @@ npm run build:aijuly       # AI cost, July 2026
 npm run build:aiaug        # AI cost, August month to date
 npm run build:aiwindow     # the two window slides for the CIO deck
 npm run build:aiapps       # AI cost by team and application
+npm run build:aitable      # the one-slide AI consumption table
 npm run build:patch        # the replacement slides on their own
 npm run build:cio -- /path/to/Somewhere_Else.pptx
 ```
@@ -402,6 +404,51 @@ was given:
   crossed the card border; its type now steps down to the 12pt floor instead
 - `statTile` labels wider than the rail still wrap, so the labels here are kept
   short deliberately
+
+## The one-slide AI consumption table
+
+`npm run build:aitable`. One slide for the CIO deck, from `aicostdata.xlsx`,
+1 July to 19 August 2026, derived from the same `data/ai-cost-window.js` as
+everything else so it cannot disagree with the other slides.
+
+Team, application, and the three providers side by side, because those are
+asked as one question. Deliberately a table and not a chart: a CIO reading a
+cost table wants to find a line and point at it.
+
+### What is listed and what is rolled
+
+About twenty rows fit at the deck's 12pt floor and there are 79 application
+names, so the three teams carrying the bill list their largest applications and
+the rest is rolled into one line per team, carrying the count.
+
+Two things are never rolled, whatever their size:
+
+- **every row named `unknown` or `(unlabeled)`**, in red, because the point of
+  the slide is that they are visible
+- **the untagged Bedrock spend and guardrail fees**, $30,125, which have no
+  application row at all and are the largest single line on the slide
+
+The roll-up lines say "N more applications", not "N smaller applications". The
+tail is not all small — insait's contains its fourth largest — and the slide
+should not claim otherwise.
+
+### It is a partition, not a selection
+
+The rows add to $79,448 exactly, and `content-aitable.js` throws at build time
+if they stop doing so. The bar on the CIO summary slide and this table are the
+same money counted two ways.
+
+### Renderer work
+
+- `drawTable`'s height estimate was calibrated against rendered output: a 12pt
+  row measures 0.247", which is one line at 1.15 leading plus the 4pt vertical
+  cell margin. The old constants (1.25 leading, 0.14" padding) ran about an
+  inch and a half long over twenty rows. That was harmless while nothing was
+  positioned against the result, and is not any more.
+- A table that would run past its own footnote is now a build error rather than
+  something to find in a rendered PDF. It caught two existing slides.
+- Table cells can name their own fill, which is what lets the team header rows
+  read as headers instead of as whichever zebra stripe they landed on.
 
 ## Repairing a hand-assembled deck
 

@@ -371,6 +371,16 @@ const RENDER = {
       y = drawTable(pres, s, t, GEO.margin, y) + 0.35;
     });
 
+    // A table that runs past the footnote is not a slide anyone can read, and
+    // it is invisible in a build log, so it stops the build instead.
+    const floor = C.footTop(spec.foot) - 0.06;
+    if (y - 0.35 > floor) {
+      throw new Error(
+        `table slide "${spec.title}": the table ends at ${(y - 0.35).toFixed(2)}" and the ` +
+          `footnote starts at ${floor.toFixed(2)}". Drop rows, reduce rowH, or shorten the footnote.`
+      );
+    }
+
     if (!stats.length) return;
 
     if (railW > 1.8) {
@@ -1476,7 +1486,13 @@ function drawTable(pres, s, t, x, y) {
 
   // ~12 characters per inch at 12pt Calibri, scaling with the font size.
   const perInch = 144 / fontSize;
-  const lineH = (fontSize / 72) * 1.25;
+  // Calibrated against rendered output rather than assumed: a 12pt row in this
+  // table style measures 0.247", which is one line at a 1.15 leading plus the
+  // 4pt of vertical cell margin. The old figures (1.25 leading, 0.14" padding)
+  // ran an inch and a half long over twenty rows, which was harmless while
+  // nothing was positioned against the result and is not any more.
+  const lineH = (fontSize / 72) * 1.15;
+  const pad = 4 / 72;
   const heightOf = (row) => {
     const lines = Math.max(
       1,
@@ -1486,11 +1502,12 @@ function drawTable(pres, s, t, x, y) {
         return Math.ceil(text.length / cap);
       })
     );
-    return Math.max(rowH, lines * lineH + 0.14);
+    return Math.max(rowH, lines * lineH + pad);
   };
 
-  const header = Math.max(rowH, lineH + 0.14);
-  return y + header + C.sum(t.rows.map(heightOf));
+  const header = Math.max(rowH, lineH + pad);
+  // A little slack for the renderer's own rounding.
+  return y + (header + C.sum(t.rows.map(heightOf))) * 1.03;
 }
 
 /** Hebrew tables: mark every cell right-to-left so bidi text lays out correctly. */
