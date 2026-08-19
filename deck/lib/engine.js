@@ -1148,6 +1148,246 @@ const RENDER = {
    * Deliberately sparse: a percentage per band, a figure per row, nothing else.
    * The full meter table belongs in the appendix, not in front of a CIO.
    */
+  /**
+   * One card per team, under a strip that shows how the whole bill divides.
+   *
+   * The same information as the consumption table, laid out to be read from
+   * across a room rather than scanned with a finger. Each card carries the
+   * team's total, how it divides between the providers, the applications
+   * inside it, and how much of it has no application name. Under the cards, a
+   * full-width band for the money that belongs to no team at all, which is the
+   * largest single item and the only one nobody can be asked about.
+   *
+   * Colour means provider here and nowhere else means anything else: the team
+   * accent is used only on the team's own name and the rule above its card, so
+   * a coloured bar is always a vendor and never a team.
+   */
+  teamCards(pres, spec) {
+    // money() rounds, and a line billed a few cents printed as "$0" says the
+    // opposite of what happened.
+    const cash = (v) => (v >= 0.5 ? C.usd(v) : v > 0 ? "<$1" : "$0");
+    const s = C.slide(pres, {
+      eyebrow: spec.eyebrow, accent: spec.accent,
+      title: spec.title, note: spec.note, foot: spec.foot,
+    });
+
+    const cards = spec.cards;
+    const stripTotal = C.sum(spec.strip.map((x) => x.value));
+
+    /* The whole bill as one bar, in the order of the cards beneath it, so the
+       eye can size a team before it reads a figure. A segment under a quarter
+       inch is a smear rather than a share, so it gets a floor and the rest are
+       scaled into what is left. */
+    const stripY = GEO.bodyTop;
+    const stripH = 0.22;
+    const minSeg = 0.26;
+    const gap = 0.05;
+    const spare = GEO.contentW - gap * (spec.strip.length - 1);
+    const raw = spec.strip.map((x) => (x.value / stripTotal) * spare);
+    const lifted = raw.map((w) => Math.max(minSeg, w));
+    const floored = C.sum(lifted.filter((w, i) => raw[i] < minSeg));
+    const scale = (spare - floored) /
+      Math.max(0.01, C.sum(lifted.filter((w, i) => raw[i] >= minSeg)));
+    let sx = GEO.margin;
+    spec.strip.forEach((x, i) => {
+      const w = raw[i] < minSeg ? minSeg : lifted[i] * scale;
+      s.addShape(pres.ShapeType.rect, {
+        x: sx, y: stripY, w, h: stripH,
+        fill: { color: x.color },
+        line: { color: x.color, width: 0 },
+      });
+      // The label sits under its own segment where there is room for it, and
+      // is dropped where there is not: a caption wider than the thing it
+      // describes points at the wrong segment.
+      if (w > 1.0) {
+        s.addText(`${x.label}  ${C.usd(x.value)}`, {
+          x: sx, y: stripY + stripH + 0.04, w: w + 0.6, h: 0.24,
+          fontFace: FONTS.body, fontSize: SIZE.caption, bold: true,
+          color: x.color, margin: 0, valign: "middle",
+        });
+      }
+      sx += w + gap;
+    });
+
+    /* Cards */
+    const top = stripY + stripH + 0.26;
+    const bandH = spec.band ? 1.05 : 0;
+    const bandGap = spec.band ? 0.18 : 0;
+    const bottom = C.footTop(spec.foot) - 0.14;
+    const cardH = bottom - bandH - bandGap - top;
+    const cw = (GEO.contentW - 0.24 * (cards.length - 1)) / cards.length;
+    const pad = 0.22;
+
+    cards.forEach((card, i) => {
+      const x = GEO.margin + i * (cw + 0.24);
+      const iw = cw - pad * 2;
+      s.addShape(pres.ShapeType.roundRect, {
+        x, y: top, w: cw, h: cardH,
+        rectRadius: 0.06,
+        fill: { color: COLORS.card },
+        line: { color: COLORS.border, width: 1 },
+      });
+      s.addShape(pres.ShapeType.rect, {
+        x, y: top, w: cw, h: 0.05,
+        fill: { color: card.accent },
+        line: { color: card.accent, width: 0 },
+      });
+
+      let y = top + 0.14;
+      s.addText(card.name.toUpperCase(), {
+        x: x + pad, y, w: iw, h: 0.26,
+        fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
+        color: card.accent, charSpacing: 1.1, margin: 0, valign: "middle",
+      });
+      y += 0.28;
+      s.addText(C.usd(card.total), {
+        x: x + pad, y, w: iw, h: 0.52,
+        fontFace: FONTS.head, fontSize: 34, bold: true,
+        color: COLORS.text, margin: 0, valign: "middle",
+      });
+      y += 0.52;
+      s.addText(card.sub, {
+        x: x + pad, y, w: iw, h: 0.22,
+        fontFace: FONTS.body, fontSize: SIZE.caption, color: COLORS.muted,
+        margin: 0, valign: "middle",
+      });
+      y += 0.30;
+
+      /* Provider split: one bar, then one line per provider that spent
+         anything. A provider with no spend is left out rather than printed as
+         a dash, so the card only ever says things that happened. */
+      const parts = card.split.filter((p) => p.value >= 1);
+      const partTotal = C.sum(parts.map((p) => p.value));
+      let px = x + pad;
+      parts.forEach((p, j) => {
+        const w = Math.max(0.06, (iw - 0.04 * (parts.length - 1)) * (p.value / partTotal));
+        s.addShape(pres.ShapeType.rect, {
+          x: px, y, w, h: 0.18,
+          fill: { color: p.color },
+          line: { color: p.color, width: 0 },
+        });
+        px += w + 0.04;
+      });
+      y += 0.26;
+      const legendRows = Math.max(...cards.map((c) => c.split.filter((p) => p.value >= 1).length));
+      const legendTop = y;
+      parts.forEach((p) => {
+        s.addShape(pres.ShapeType.rect, {
+          x: x + pad, y: y + 0.06, w: 0.11, h: 0.11,
+          fill: { color: p.color }, line: { color: p.color, width: 0 },
+        });
+        s.addText(p.label, {
+          x: x + pad + 0.2, y, w: iw - 1.4, h: 0.22,
+          fontFace: FONTS.body, fontSize: SIZE.caption, color: COLORS.muted,
+          margin: 0, valign: "middle",
+        });
+        s.addText(C.usd(p.value), {
+          x: x + pad + iw - 1.2, y, w: 1.2, h: 0.21,
+          fontFace: FONTS.head, fontSize: SIZE.caption, bold: true,
+          color: COLORS.text, margin: 0, align: "right", valign: "middle",
+        });
+        y += 0.21;
+      });
+      y = legendTop + legendRows * 0.21;
+
+      /* Applications inside the team. The bar is scaled to the team's own
+         largest, not to the slide's, so a small team's shape is still
+         readable, and the row that has no name is coloured rather than
+         footnoted. */
+      y += 0.10;
+      s.addText("APPLICATIONS", {
+        x: x + pad, y, w: iw, h: 0.22,
+        fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
+        color: COLORS.faint, charSpacing: 1.1, margin: 0, valign: "middle",
+      });
+      y += 0.26;
+
+      // The pitch comes from the busiest card, not this one, so the rows line
+      // up across all three and the eye can read across them.
+      const rows = Math.max(...cards.map((c) => c.apps.length));
+      const rowH = Math.max(0.24, (top + cardH - 0.12 - y) / rows);
+      const appMax = Math.max(...card.apps.map((a) => a.value), 0.01);
+      const labelH = Math.min(0.21, rowH - 0.09);
+      card.apps.forEach((a) => {
+        const color = a.unnamed ? COLORS.danger : a.muted ? COLORS.faint : COLORS.text;
+        s.addText(a.name, {
+          x: x + pad, y, w: iw - 1.15, h: labelH,
+          fontFace: FONTS.body, fontSize: SIZE.caption, color,
+          margin: 0, valign: "middle",
+        });
+        s.addText(cash(a.value), {
+          x: x + pad + iw - 1.15, y, w: 1.15, h: labelH,
+          fontFace: FONTS.head, fontSize: SIZE.caption, bold: true,
+          color, margin: 0, align: "right", valign: "middle",
+        });
+        const barY = y + labelH + 0.05;
+        s.addShape(pres.ShapeType.rect, {
+          x: x + pad, y: barY, w: iw, h: 0.05,
+          fill: { color: COLORS.cardAlt },
+          line: { width: 0, color: COLORS.cardAlt },
+        });
+        s.addShape(pres.ShapeType.rect, {
+          x: x + pad, y: barY, w: Math.max(0.03, iw * (a.value / appMax)), h: 0.05,
+          fill: { color: a.unnamed ? COLORS.danger : a.muted ? COLORS.faint : card.accent },
+          line: { width: 0, color: COLORS.bg },
+        });
+        y += rowH;
+      });
+    });
+
+    if (!spec.band) return;
+
+    /* The money with no team. Given the full width because it is larger than
+       any of the cards above it and belongs to none of them. */
+    const by = top + cardH + bandGap;
+    C.card(pres, s, { x: GEO.margin, y: by, w: GEO.contentW, h: bandH, accent: COLORS.danger });
+
+    s.addText(C.usd(spec.band.value), {
+      x: GEO.margin + 0.3, y: by + 0.14, w: 2.7, h: 0.54,
+      fontFace: FONTS.head, fontSize: 34, bold: true,
+      color: COLORS.danger, margin: 0, valign: "middle",
+    });
+    s.addText(spec.band.valueLabel, {
+      x: GEO.margin + 0.3, y: by + 0.66, w: 2.9, h: 0.24,
+      fontFace: FONTS.body, fontSize: SIZE.caption, bold: true,
+      color: COLORS.muted, margin: 0, valign: "middle",
+    });
+
+    const tx = GEO.margin + 3.4;
+    const tw = GEO.contentW - 3.4 - 2.9;
+    s.addText(spec.band.title, {
+      x: tx, y: by + 0.12, w: tw, h: 0.30,
+      fontFace: FONTS.head, fontSize: 16, bold: true,
+      color: COLORS.text, margin: 0, valign: "middle",
+    });
+    s.addText(spec.band.text, {
+      x: tx, y: by + 0.44, w: tw, h: 0.62,
+      fontFace: FONTS.body, fontSize: SIZE.body, color: COLORS.muted,
+      margin: 0, valign: "top", lineSpacingMultiple: 1.15,
+    });
+
+    // The remainder, kept on the same band so that the cards plus this band
+    // account for the whole bill and the slide is a partition, not a sample.
+    if (spec.band.aside) {
+      const ax = GEO.w - GEO.margin - 2.6;
+      s.addText(spec.band.aside.label.toUpperCase(), {
+        x: ax, y: by + 0.18, w: 2.4, h: 0.22,
+        fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
+        color: COLORS.faint, charSpacing: 1.1, margin: 0, align: "right", valign: "middle",
+      });
+      s.addText(C.usd(spec.band.aside.value), {
+        x: ax, y: by + 0.42, w: 2.4, h: 0.4,
+        fontFace: FONTS.head, fontSize: 24, bold: true,
+        color: COLORS.text, margin: 0, align: "right", valign: "middle",
+      });
+      s.addText(spec.band.aside.note, {
+        x: ax, y: by + 0.82, w: 2.4, h: 0.22,
+        fontFace: FONTS.body, fontSize: SIZE.caption, color: COLORS.muted,
+        margin: 0, align: "right", valign: "middle",
+      });
+    }
+  },
+
   splitBars(pres, spec) {
     const s = C.slide(pres, {
       eyebrow: spec.eyebrow, accent: spec.accent,

@@ -13,7 +13,8 @@ Eight decks and two drop-in slide sets, from one design system and one set of so
 | **AI cost, August month to date** | `npm run build:aiaug` → `AI_Cost_August_2026_MTD.pptx` | 8 | What changed against July: the daily rate doubled, and why that is adoption rather than price |
 | **AI cost window, for the CIO deck** | `npm run build:aiwindow` → `AI_Cost_Window_Slides.pptx` | 2 | Two slides to paste into the CIO presentation: what the whole window cost, and what drives it |
 | **AI cost by team and application** | `npm run build:aiapps` → `AI_Cost_by_Team_and_Application.pptx` | 8 | The named detail: every application, its team, and how its money splits across the three providers |
-| **AI consumption, one slide** | `npm run build:aitable` → `AI_Consumption_Slide.pptx` | 1 | The whole thing on one slide for the CIO deck: team, application, provider, and what has no name |
+| **AI consumption, the CIO slide** | `npm run build:aiboard` → `AI_Consumption_CIO_Slide.pptx` | 1 | The presented version: a share strip, a card per team, and a band for the money with no owner |
+| **AI consumption, the table** | `npm run build:aitable` → `AI_Consumption_Slide.pptx` | 1 | The same numbers as a table, for anyone who wants to audit a line |
 
 ```bash
 cd deck
@@ -27,7 +28,8 @@ npm run build:aijuly       # AI cost, July 2026
 npm run build:aiaug        # AI cost, August month to date
 npm run build:aiwindow     # the two window slides for the CIO deck
 npm run build:aiapps       # AI cost by team and application
-npm run build:aitable      # the one-slide AI consumption table
+npm run build:aiboard      # the AI consumption CIO slide
+npm run build:aitable      # the same numbers as a table
 npm run build:patch        # the replacement slides on their own
 npm run build:cio -- /path/to/Somewhere_Else.pptx
 ```
@@ -404,6 +406,35 @@ was given:
   crossed the card border; its type now steps down to the 12pt floor instead
 - `statTile` labels wider than the rail still wrap, so the labels here are kept
   short deliberately
+
+## The AI consumption CIO slide
+
+`npm run build:aiboard`. The presented version of the consumption table: same
+window, same source, same `data/ai-cost-window.js`, laid out to be read from
+the back of a room rather than scanned with a finger. The table version stays
+because somebody always wants to audit a line.
+
+A new `teamCards` renderer, built for this:
+
+- **A share strip** across the top, so the eye sizes the bill before it reads a
+  figure. Five segments, and the red one on the right is the largest.
+- **One card per team**: the total, calls and unit cost, a provider split bar
+  with the amounts, and the applications inside, each on its own meter.
+- **A full-width band** for the $30,125 that belongs to no team, which gets the
+  width because it is larger than any card above it, with the 13 remaining
+  teams kept on the same band so the slide is a partition of the whole $79,448.
+  The build throws if the cards and the band stop adding up.
+
+### Two rules the layout follows
+
+**Colour is the provider, never the team.** Claude orange, Azure OpenAI blue,
+GCP green, as everywhere else in the deck. A team's accent appears only on its
+own name and the rule above its card, so nothing coloured is ever a team.
+
+**Rows with no application name are forced onto the card above their rank**,
+but only above $100. Showing a $5 unnamed row while a $2,394 named application
+hid in the roll-up would distort the card to make a point the band already
+makes with the full figure.
 
 ## The one-slide AI consumption table
 
