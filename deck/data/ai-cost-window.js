@@ -163,6 +163,61 @@ const unchargeable = unattributable + unnamedBest;
 const namedAttributed = attributed - unnamedBest;
 
 /* ------------------------------------------------------------------ *
+ * Application rollups, with the provider split kept intact
+ *
+ * The Apps sheet carries one row per application per provider, so the same
+ * application appears two or three times when it is served by more than one.
+ * Rolling those together is what turns the sheet into something a person can
+ * read, and keeping the per-provider figures on the rolled row is what lets a
+ * slide show where each application's money actually goes.
+ * ------------------------------------------------------------------ */
+
+const PROVIDERS = ["Claude", "Azure", "GCP"];
+
+function rollup(rows, keyOf) {
+  return [...rows
+    .reduce((m, r) => {
+      const key = keyOf(r);
+      const a = m.get(key) || {
+        key,
+        app: r.app,
+        teams: new Set(),
+        sources: new Set(),
+        Claude: 0, Azure: 0, GCP: 0,
+        total: 0,
+        invocations: 0,
+        unnamed: r.unnamed,
+      };
+      a[r.source] = (a[r.source] || 0) + r.best;
+      a.total += r.best;
+      a.invocations += r.invocations;
+      a.teams.add(r.team.toLowerCase());
+      a.sources.add(r.source);
+      return m.set(key, a);
+    }, new Map())
+    .values()]
+    .map((a) => ({
+      ...a,
+      teams: [...a.teams],
+      sources: [...a.sources],
+      perThousand: a.invocations ? (a.total / a.invocations) * 1000 : 0,
+    }))
+    .sort((x, y) => y.total - x.total);
+}
+
+/** One row per application name, across every team and provider it appears in. */
+const appRollup = rollup(apps, (r) => r.app.toLowerCase());
+
+/** One row per application name inside a single team. */
+const appsFor = (teamName) =>
+  rollup(apps.filter((r) => r.team.toLowerCase() === teamName), (r) => r.app.toLowerCase());
+
+/** Every row whose application name identifies nothing, largest first. */
+const unnamedRows = apps
+  .filter((r) => r.unnamed)
+  .sort((a, b) => b.best - a.best || b.invocations - a.invocations);
+
+/* ------------------------------------------------------------------ *
  * By provider
  *
  * Attribution is an application-level property, so the split is taken from the
@@ -232,6 +287,7 @@ module.exports = {
   label, start: RAW.start, end: RAW.end, days,
 
   apps, teams, ownedTeams, unownedTeams, bySource,
+  PROVIDERS, appRollup, appsFor, unnamedRows,
   invocations, appsBest, attributed,
   untagged, guardrails, unattributable, grand,
   unnamedApps, unnamedBest, unchargeable, namedAttributed,

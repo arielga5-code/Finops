@@ -122,6 +122,18 @@ function drawChart(pres, s, spec, box) {
     });
     return;
   }
+  if (spec.type === "rankStack") {
+    C.stackedRankChart(pres, s, {
+      ...box,
+      cats: c.cats.map((n) => (n.length > 34 ? n.slice(0, 32) + "..." : n)),
+      series,
+      colors: spec.colors,
+      valFmt: spec.valFmt,
+      dataLabels: spec.dataLabels,
+      legend: spec.legend !== false,
+    });
+    return;
+  }
   if (spec.type === "line") {
     C.lineChart(pres, s, {
       ...box, cats: c.cats, series,
@@ -371,12 +383,26 @@ const RENDER = {
         sy += 1.34;
       });
     } else {
-      // Full-width table: the rail has nowhere to go, so run the stats under it.
+      // Full-width table: the rail has nowhere to go, so run the stats under
+      // it. `y` is the real bottom of the table, wrapped cells included, and
+      // the strip starts below it rather than at a fixed height: pinning it to
+      // a ceiling is what used to draw the tiles over a long table's last row.
       const sw = (GEO.contentW - 0.25 * (stats.length - 1)) / stats.length;
-      const sy = Math.min(Math.max(y + 0.25, 4.1), 5.55);
+      const sy = Math.max(y + 0.25, 4.1);
+      const room = C.footTop(spec.foot) - 0.12 - sy;
+      const h = Math.min(1.18, room);
+      // A tile below this is not a tile, it is a clipped one. Better to fail
+      // the build than to ship a slide whose numbers are half drawn.
+      if (h < 0.82) {
+        throw new Error(
+          `table slide "${spec.title}": the table ends at ${y.toFixed(2)}" and leaves ` +
+            `${room.toFixed(2)}" for its ${stats.length} stat tiles. Shorten the table, ` +
+            `reduce rowH, or drop the stats.`
+        );
+      }
       stats.forEach((st, i) => {
         C.statTile(pres, s, {
-          ...st, x: GEO.margin + i * (sw + 0.25), y: sy, w: sw, h: 1.18,
+          ...st, x: GEO.margin + i * (sw + 0.25), y: sy, w: sw, h,
         });
       });
     }
@@ -785,7 +811,7 @@ const RENDER = {
       const y = top + perCol * pitch + bannerGap;
       C.card(pres, s, { x: GEO.margin, y, w: GEO.contentW, h: bannerH, accent: spec.accent });
       const bTitleSize = Math.max(16, Math.min(22, 16 * scale));
-      const bTextSize = Math.max(12.5, Math.min(16, 12.5 * scale));
+      let bTextSize = Math.max(12.5, Math.min(16, 12.5 * scale));
       const pad = 0.28;
       // The banner title wraps like everything else, and reserving one line for
       // it is what drops the body text on top of a two-line headline.
@@ -798,9 +824,21 @@ const RENDER = {
         fontFace: FONTS.head, fontSize: bTitleSize, bold: true,
         color: COLORS.text, margin: 0, valign: "middle",
       });
+      // The body gets whatever height the title left, and its type steps down
+      // until it fits: the card cannot grow, so the alternative is a third line
+      // drawn below the border. Floored at the deck's 12pt, below which the
+      // text would be a document rather than a slide.
+      const bodyW = GEO.contentW - pad * 2;
+      const bodyH = bannerH - (pad - 0.12 + titleH) - 0.16;
+      for (let pass = 0; pass < 4 && bTextSize > 12; pass++) {
+        const lines = linesFor(spec.banner.text, bTextSize, 10.4, bodyW);
+        const needed = lines * (bTextSize / 72) * 1.18;
+        if (needed <= bodyH) break;
+        bTextSize = Math.max(12, bTextSize * (bodyH / needed));
+      }
       s.addText(spec.banner.text, {
         x: GEO.margin + pad, y: y + pad - 0.12 + titleH,
-        w: GEO.contentW - pad * 2, h: bannerH - (pad - 0.12 + titleH) - 0.16,
+        w: bodyW, h: bodyH,
         fontFace: FONTS.body, fontSize: bTextSize, color: COLORS.muted,
         margin: 0, valign: "top", lineSpacingMultiple: 1.18,
       });

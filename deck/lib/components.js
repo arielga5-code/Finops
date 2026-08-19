@@ -144,11 +144,25 @@ function slide(pres, opts = {}) {
   }
 
   if (opts.note) {
+    // Four lines is what fits between the title line and the top of the body
+    // at the deck's 12pt floor, and the box is sized for all four: a note that
+    // needed a fourth line used to have it clipped, or drawn over the first
+    // stat tile. Beyond four there is nowhere left to go, so it is a build
+    // error rather than something to discover in a rendered PDF.
+    const noteW = GEO.w - 9.1 - GEO.margin;
+    const noteLines = Math.ceil(String(opts.note).length / (noteW * 11.4));
+    if (noteLines > 4) {
+      throw new Error(
+        `slide note is ${String(opts.note).length} characters, about ${noteLines} lines, ` +
+          `and only four fit above the body. Shorten it or move it to the footnote: ` +
+          `"${String(opts.note).slice(0, 60)}..."`
+      );
+    }
     s.addText(opts.note, {
       x: 9.1,
       y: GEO.titleY - 0.06,
-      w: GEO.w - 9.1 - GEO.margin,
-      h: 0.72,
+      w: noteW,
+      h: 0.8,
       fontFace: FONTS.body,
       fontSize: SIZE.caption,
       color: COLORS.muted,
@@ -572,8 +586,56 @@ function rankChart(pres, s, { x, y, w, h, cats, vals, color = COLORS.azure, valF
   );
 }
 
+/**
+ * Horizontal bars, one per category, each split into its parts.
+ *
+ * `rankChart` for a value that has components: an application's cost is one
+ * bar, and the bar shows how much of it went to each provider. Horizontal
+ * because the categories are application names, which do not survive being
+ * rotated under a column.
+ *
+ * PowerPoint draws a bar chart's first category at the bottom, so the caller
+ * hands categories in ascending order to get the largest at the top.
+ */
+function stackedRankChart(pres, s, {
+  x, y, w, h, cats, series, colors, valFmt = '"$"#,##0', legend = true,
+  dataLabels = false,
+}) {
+  // Printing the figure inside each segment only works while the segment is
+  // wide enough to hold it, and on a stacked bar most segments are not. The
+  // caller passes a conditional format that blanks anything below a floor, so
+  // the dominant segment is labelled and the slivers beside it stay clean.
+  const labelled = dataLabels
+    ? {
+        showValue: true,
+        dataLabelPosition: "ctr",
+        dataLabelColor: COLORS.bg,
+        dataLabelFontSize: SIZE.table,
+        dataLabelFontBold: true,
+        dataLabelFontFace: FONTS.body,
+        dataLabelFormatCode: dataLabels === true ? '"$"#,##0' : dataLabels,
+      }
+    : {};
+  s.addChart(
+    pres.ChartType.bar,
+    series.map((ser) => ({ name: ser.name, labels: cats, values: ser.vals })),
+    {
+      x, y, w, h,
+      barDir: "bar",
+      barGrouping: "stacked",
+      barGapWidthPct: 45,
+      valAxisLabelFormatCode: valFmt,
+      ...axisStyle,
+      // See rankChart: after the spread, or axisStyle's own palette wins.
+      chartColors: colors || SERIES,
+      ...labelled,
+      ...(legend ? legendStyle : { showLegend: false }),
+    }
+  );
+}
+
 module.exports = {
-  footHeight, footTop,
+  footHeight, footTop, stackedRankChart,
   usd, money, pct, sum, topSeries, totalsByPeriod, change, changeLabel,
   paintBackground, slide, sectionSlide, card, statTile, noteList, table,
   stackedChart, columnChart, lineChart, rankChart,

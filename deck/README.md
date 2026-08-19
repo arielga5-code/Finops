@@ -1,6 +1,6 @@
 # Cloud FinOps decks — Harel, 2026
 
-Seven decks and one pair of drop-in slides, from one design system and one set of source data.
+Eight decks and one pair of drop-in slides, from one design system and one set of source data.
 
 | Deck | Build | Slides | For |
 |---|---|---|---|
@@ -12,6 +12,7 @@ Seven decks and one pair of drop-in slides, from one design system and one set o
 | **AI cost, July 2026** | `npm run build:aijuly` → `AI_Cost_July_2026.pptx` | 7 | The last complete month, on its own terms, as the baseline everything else is measured against |
 | **AI cost, August month to date** | `npm run build:aiaug` → `AI_Cost_August_2026_MTD.pptx` | 8 | What changed against July: the daily rate doubled, and why that is adoption rather than price |
 | **AI cost window, for the CIO deck** | `npm run build:aiwindow` → `AI_Cost_Window_Slides.pptx` | 2 | Two slides to paste into the CIO presentation: what the whole window cost, and what drives it |
+| **AI cost by team and application** | `npm run build:aiapps` → `AI_Cost_by_Team_and_Application.pptx` | 8 | The named detail: every application, its team, and how its money splits across the three providers |
 
 ```bash
 cd deck
@@ -24,6 +25,7 @@ npm run build:aicost       # AI cost by application
 npm run build:aijuly       # AI cost, July 2026
 npm run build:aiaug        # AI cost, August month to date
 npm run build:aiwindow     # the two window slides for the CIO deck
+npm run build:aiapps       # AI cost by team and application
 npm run build:patch        # the replacement slides on their own
 npm run build:cio -- /path/to/Somewhere_Else.pptx
 ```
@@ -325,6 +327,81 @@ useful.
   row the estimate is 7.5% under the billed figure, which is accurate in
   aggregate; `agent` alone is 23.2% under, which is not. Both are in the speaker
   notes, neither is on a slide.
+
+## AI cost by team and application
+
+Same source and same window as the two CIO slides, `aicostdata.xlsx`, 1 July to
+19 August 2026. Built by `npm run build:aiapps` from `data/ai-cost-window.js`,
+so the two never disagree.
+
+This is the level under the CIO slides: the application names, the team each
+belongs to, and how every one's money divides between Claude, Azure OpenAI and
+GCP. It is the document somebody opens when they want to argue with a number.
+
+### Shape
+
+| Slide | What it does |
+|---|---|
+| 1 | Top ten applications, each bar split by provider. Ten names are 97% of the bill |
+| 2 | **Every row with no application name, in full.** No aggregation |
+| 3–5 | One page per team: insait, ai-factory, solugen |
+| 6 | The other 13 teams, in one table |
+| 7 | Four naming rules that would make the file readable |
+
+Colour means the same thing on every chart: Claude orange, Azure OpenAI blue,
+GCP green, as in the rest of the FinOps decks.
+
+### The unnamed slide is the point of the deck
+
+Two of the ten largest applications are called `unknown` and `(unlabeled)`.
+Putting them in a ranked chart and moving on would let a room read them as
+applications, so they get their own slide, early, with all ten rows listed
+rather than summarised:
+
+- `unknown`, Claude, insait, **$2,849** over 31,457 calls
+- `(unlabeled)`, Azure, insait, **$2,260** over 23,227 calls
+- eight more, $378 between them
+
+$5,487, 11.3% of attributed spend. Both of the large ones are priced at $91 and
+$97 per thousand calls, which is production agent traffic rather than a stray
+test. Add the $28,370 of untagged Bedrock that never reaches the application
+table at all and the figure is **$35,612, 44.8% of the bill**.
+
+### What the team pages show
+
+- **insait**, $21,140, 43% of attributed spend. `agent` is $13,870 of it, on
+  both Claude and Azure. The two unnamed rows are here, $5,109, 24% of the team.
+- **ai-factory**, $14,871, the only team using all three providers for three
+  distinct jobs: Azure for `claims-copilot`, Claude for `cli`, GCP for both OCR
+  pipelines. 36 application names, most worth pennies.
+- **solugen**, $11,852, one application. `insureGen` is 643,475 calls, 50% of
+  everything we send to any provider, at $18 per thousand. This is what good
+  looks like.
+
+### Naming defects the deck names
+
+Counted from the file, not asserted: 10 `IVR - *` rows for one service, 7
+pension-copilot rows across two spellings, 34 rows with `test` in the name,
+`microservice-name` in three different teams, personal names (`yacovz`,
+`yakir`, `dvir`, `peled`) used as application names, and two Azure names still
+carrying a percent-encoded em-dash.
+
+### Renderer work this deck required
+
+A horizontal stacked bar (`rankStack`) did not exist and is what makes the
+provider split visible per application. Four layout defects were fixed rather
+than worked around, all the same shape, a box sized for less content than it
+was given:
+
+- the `table` renderer pinned its stat strip to a fixed height, so a long table
+  was drawn underneath it; the strip now starts below the table's real bottom
+  and the build fails rather than shipping a clipped tile
+- a slide note that needed a fourth line was clipped; the box now holds four,
+  and a fifth is a build error
+- the `criteria` banner body did not measure itself, so a three-line paragraph
+  crossed the card border; its type now steps down to the 12pt floor instead
+- `statTile` labels wider than the rail still wrap, so the labels here are kept
+  short deliberately
 
 ## Repairing a hand-assembled deck
 
