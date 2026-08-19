@@ -1,6 +1,6 @@
 # Cloud FinOps decks — Harel, 2026
 
-Seven decks, one design system, one set of source data.
+Seven decks and one pair of drop-in slides, from one design system and one set of source data.
 
 | Deck | Build | Slides | For |
 |---|---|---|---|
@@ -11,6 +11,7 @@ Seven decks, one design system, one set of source data.
 | **AI cost by application** | `npm run build:aicost` → `AI_Cost_by_Application.pptx` | 8 | Which application spent the AI budget, and how much of the figure can be proved |
 | **AI cost, July 2026** | `npm run build:aijuly` → `AI_Cost_July_2026.pptx` | 7 | The last complete month, on its own terms, as the baseline everything else is measured against |
 | **AI cost, August month to date** | `npm run build:aiaug` → `AI_Cost_August_2026_MTD.pptx` | 8 | What changed against July: the daily rate doubled, and why that is adoption rather than price |
+| **AI cost window, for the CIO deck** | `npm run build:aiwindow` → `AI_Cost_Window_Slides.pptx` | 2 | Two slides to paste into the CIO presentation: what the whole window cost, and what drives it |
 
 ```bash
 cd deck
@@ -22,6 +23,7 @@ npm run build:vendor       # consumption by vendor
 npm run build:aicost       # AI cost by application
 npm run build:aijuly       # AI cost, July 2026
 npm run build:aiaug        # AI cost, August month to date
+npm run build:aiwindow     # the two window slides for the CIO deck
 npm run build:patch        # the replacement slides on their own
 npm run build:cio -- /path/to/Somewhere_Else.pptx
 ```
@@ -251,6 +253,78 @@ actual in July and is within 0.4% in August.
   reconciled against them. July plus August comes to $43,914 against that
   workbook's $43,547; near, but not the same extract, so the three decks each
   state their own source and none of them adds the others up.
+
+## The two window slides for the CIO deck
+
+Built from `aicostdata.xlsx`, extracted by `tools/extract-window.py` into
+`data/ai-cost-window.json` and turned into every figure by
+`data/ai-cost-window.js`. The window is **1 July to 19 August 2026, 50 days**.
+
+```bash
+python3 tools/extract-window.py /path/to/aicostdata.xlsx --out data/ai-cost-window.json
+npm run build:aiwindow
+```
+
+Two slides, not a deck: they are meant to be pasted into the CIO presentation
+and they carry the same tokens as everything else in it.
+
+### This workbook supersedes the July and August period decks
+
+Same window, later pull, and far better documented. It counts 1,290,499 calls
+against the 1,251,594 in the two separate exports, and it is the only source
+that states the untagged Bedrock and guardrail figures. The two period decks
+are kept because the July-against-August comparison is not in this file, but
+where the two disagree, this one is newer.
+
+### The numbers
+
+| | |
+|---|---|
+| Grand total, 50 days | **$79,448** |
+| Attributed to a team | $49,323, 62.1% |
+| Untagged Bedrock spend | $28,370 |
+| Guardrail fees | $1,754 |
+| Rows named `unknown` or `(unlabeled)` | $5,487, 10 rows |
+| **Cannot be charged to a named application** | **$35,612, 44.8%** |
+| Run rate | $1,589/day, about $48,300/month |
+
+### Slide 1: nearly half the bill has no name on it
+
+The four rows are a true partition of the grand total, so the split bar above
+and the list below are the same money counted two ways. The line that lands:
+**the untagged Bedrock bucket alone ($28,370) is larger than our largest team**
+(insait, $21,140), and 57% of everything we spend on Bedrock has no application
+on it.
+
+### Slide 2: volume is not the cost driver
+
+Two columns, the same four groups, in almost the opposite order. solugen makes
+**51% of the calls for 24% of the cost**; insait makes **15% of the calls for
+43%**. Cost per 1,000 calls runs $17.92 to $112.40, a **6.3x spread**.
+
+The slide states plainly that unit cost is a property of the work rather than a
+score — an agent turn is not a classification call, and insait is not being
+wasteful for costing more. The point is the size of the lever: a 6.3x spread
+means the bill is set by which model handles which call, and there is no target
+on that today. Presenting it as a league table would be both unfair and less
+useful.
+
+### What the slides deliberately do not do
+
+- **They never split the untagged bucket by team.** It is billed on AWS with no
+  application tag; any allocation would be invented.
+- **They follow the workbook's own instruction on which sheet wins.** Its README
+  says Teams is authoritative for dollars and Apps for ranking within a team,
+  because the source report still estimates the most recent day. The two
+  disagree by $753, 1.5%, on identical call volumes. Slide 1 says so in its
+  footnote rather than picking the bigger number.
+- **They do not treat `apim`, `azure` or `unknown` as owners.** The workbook
+  names them as gateway and default rows. They stay in every total and are kept
+  out of the ownership comparison.
+- **They do not present the estimator as unreliable.** Across every reconcilable
+  row the estimate is 7.5% under the billed figure, which is accurate in
+  aggregate; `agent` alone is 23.2% under, which is not. Both are in the speaker
+  notes, neither is on a slide.
 
 ## Repairing a hand-assembled deck
 

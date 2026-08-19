@@ -161,16 +161,10 @@ function slide(pres, opts = {}) {
   }
 
   if (opts.foot) {
-    // Lift the footnote when it runs to more than two lines, so a long one
-    // grows upward into the empty band instead of off the bottom edge.
-    const footLines = Math.max(
-      1,
-      Math.ceil(String(opts.foot).length / (GEO.contentW * 11.4))
-    );
-    const footH = footLines * 0.19 + 0.06;
+    const footH = footHeight(opts.foot);
     s.addText(opts.foot, {
       x: GEO.margin,
-      y: Math.min(GEO.footY, GEO.h - 0.12 - footH),
+      y: footTop(opts.foot),
       w: GEO.contentW,
       h: footH,
       fontFace: FONTS.body,
@@ -183,6 +177,27 @@ function slide(pres, opts = {}) {
   }
 
   return s;
+}
+
+/**
+ * Where the footnote starts, and how tall it is.
+ *
+ * A footnote that runs to more than two lines grows upward into the body rather
+ * than off the bottom edge, which means the bottom of the usable canvas is not
+ * a constant. Any renderer that anchors something to the bottom of the slide
+ * has to ask, or it will place a card underneath a three-line footnote and
+ * across a two-line one.
+ */
+function footHeight(foot) {
+  if (!foot) return 0;
+  // ~11.4 characters per inch at 12pt Calibri.
+  const lines = Math.max(1, Math.ceil(String(foot).length / (GEO.contentW * 11.4)));
+  return lines * 0.19 + 0.06;
+}
+
+function footTop(foot) {
+  if (!foot) return GEO.h - 0.12;
+  return Math.min(GEO.footY, GEO.h - 0.12 - footHeight(foot));
 }
 
 /** Full-bleed divider that opens each part of the deck. */
@@ -445,6 +460,10 @@ const legendStyle = {
 function stackedChart(pres, s, {
   x, y, w, h, series, cats, legend = true, valFmt = '"$"#,##0',
   colors: override, grouping = "stacked", dataLabels = false,
+  // A chart whose bars are shares needs its axis pinned, or the renderer picks
+  // a round number above the data and draws a 120% gridline on a scale that
+  // stops at 100.
+  axisMax, axisMin,
 }) {
   // With a single series pptxgenjs hands each *point* the next palette colour,
   // which reads as three unrelated bars. Pin it to one colour instead.
@@ -475,6 +494,8 @@ function stackedChart(pres, s, {
       valAxisLabelFormatCode: valFmt,
       ...axisStyle,
       chartColors: colors,
+      ...(axisMax === undefined ? {} : { valAxisMaxVal: axisMax }),
+      ...(axisMin === undefined ? {} : { valAxisMinVal: axisMin }),
       ...labelled,
       ...(legend ? legendStyle : { showLegend: false }),
     }
@@ -552,6 +573,7 @@ function rankChart(pres, s, { x, y, w, h, cats, vals, color = COLORS.azure, valF
 }
 
 module.exports = {
+  footHeight, footTop,
   usd, money, pct, sum, topSeries, totalsByPeriod, change, changeLabel,
   paintBackground, slide, sectionSlide, card, statTile, noteList, table,
   stackedChart, columnChart, lineChart, rankChart,

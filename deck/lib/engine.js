@@ -137,6 +137,8 @@ function drawChart(pres, s, spec, box) {
     grouping: spec.grouping,
     valFmt: spec.valFmt,
     dataLabels: spec.dataLabels,
+    axisMax: spec.axisMax,
+    axisMin: spec.axisMin,
   });
 }
 
@@ -1175,8 +1177,14 @@ const RENDER = {
       calloutH = 0.12 + calloutTitleH + 0.04 + calloutTextH + 0.14;
     }
 
-    const rowsBottom = spec.callout ? GEO.footY - 0.14 - calloutH - 0.2 : GEO.footY - 0.1;
-    const pitch = Math.min(0.42, (rowsBottom - top) / spec.items.length);
+    // Anchored to where the footnote actually begins, not to GEO.footY: a
+    // three-line footnote lifts itself and would otherwise be written over.
+    const bottom = C.footTop(spec.foot) - 0.14;
+    const rowsBottom = spec.callout ? bottom - calloutH - 0.2 : bottom + 0.04;
+    // Rows take the room they are given, up to a ceiling. A three-row list on a
+    // slide sized for six should not leave a hand's width of empty canvas above
+    // the callout just because the pitch was pinned to what six rows needed.
+    const pitch = Math.min(0.62, (rowsBottom - top) / spec.items.length);
 
     spec.items.forEach((it, i) => {
       const y = top + i * pitch;
@@ -1207,7 +1215,7 @@ const RENDER = {
     });
 
     if (spec.callout) {
-      const y = GEO.footY - 0.14 - calloutH;
+      const y = bottom - calloutH;
       C.card(pres, s, { x: GEO.margin, y, w: GEO.contentW, h: calloutH, accent: spec.accent });
       s.addText(spec.callout.title, {
         x: GEO.margin + calloutPad, y: y + 0.12, w: calloutInnerW, h: calloutTitleH,
