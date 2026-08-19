@@ -1,6 +1,6 @@
 # Cloud FinOps decks — Harel, 2026
 
-Four decks, one design system, one set of source data.
+Five decks, one design system, one set of source data.
 
 | Deck | Build | Slides | For |
 |---|---|---|---|
@@ -8,6 +8,7 @@ Four decks, one design system, one set of source data.
 | **CIO briefing (v34)** | `npm run build:cio` → `Harel_Cloud_Cost_CIO_v34.pptx` | 40 | The combined executive deck: v33's narrative plus the operational findings |
 | **FinOps for AI** | `npm run build:ai` → `FinOps_for_AI_CIO.pptx` | 11 | Executive cut of the five AI cost levers and the one-page usage policy |
 | **Consumption by vendor** | `npm run build:vendor` → `Cloud_Consumption_by_Vendor.pptx` | 8 | One question: what does each cloud cost per month, and how much of it is AI |
+| **AI cost by application** | `npm run build:aicost` → `AI_Cost_by_Application.pptx` | 8 | Which application spent the AI budget, and how much of the figure can be proved |
 
 ```bash
 cd deck
@@ -16,14 +17,15 @@ npm run build              # operational review
 npm run build:cio          # combined CIO briefing
 npm run build:ai           # FinOps for AI
 npm run build:vendor       # consumption by vendor
-npm run build:patch        # the three replacement slides on their own
+npm run build:aicost       # AI cost by application
+npm run build:patch        # the replacement slides on their own
 npm run build:cio -- /path/to/Somewhere_Else.pptx
 ```
 
 There is also `npm run fix:final`, which repairs a hand-assembled deck —
 see [Repairing a hand-assembled deck](#repairing-a-hand-assembled-deck).
 
-All four are 13.333" × 7.5", dark theme, native PowerPoint charts and tables
+All five are 13.333" × 7.5", dark theme, native PowerPoint charts and tables
 (everything stays editable in PowerPoint — nothing is a picture).
 
 ### Sized for a meeting-room screen
@@ -62,9 +64,12 @@ adapt, but dense tables will need rows cut rather than type shrunk.
 | `content-ai.js` | The FinOps for AI briefing. |
 | `content-vendor.js` | Consumption by vendor, AI against everything else. |
 | `content-patch.js` | Replacement slides for the hand-assembled Final deck. |
+| `content-aicost.js` | AI cost by application, from the AI_cost_table workbook. |
 | `data/charts.json` | The numeric series, extracted from the source `.pptx` chart parts. |
 | `data/vendor-split.js` | Derives the vendor × AI split from `charts.json` at build time. |
 | `data/ai-platforms.js` | The five AI platforms, Jan–Jul. Shared by every slide that cites one. |
+| `data/ai-cost-apps.json` | The AI_cost_table Details sheet, extracted verbatim. |
+| `data/ai-cost-apps.js` | Derives the per-application, per-team and reconciliation figures from it. |
 | `build*.js` | Thin wrappers that hand a content array to the engine. |
 | `tools/merge-slides.py` | Splices generated slides into a hand-assembled deck and repairs its background. |
 | `tools/plain-text.py` | Rewrites em dashes, middots, arrows and × into plain typed punctuation. |
@@ -103,7 +108,7 @@ a slide can never drift away from the chart beside it. Hard-coded strings
 - `platforms` — a share strip over one column per platform: total, share, first and last month, growth
 - `mesh` — two columns wired to each other with nothing in between, plus a panel and stats
 - `splitBars` — one total split two ways, then the largest lines on a shared scale, coloured by side
-- `projectBars` — one thick bar per item, split into two colours to scale, total and growth labelled — for a short list, not a meter table
+- `projectBars` — one thick bar per item, split into two colours to scale, total and badge labelled — for a short list, not a meter table. Name the split with `split: { aLabel, bLabel, aColor, bColor }` and give items `a`/`b`; `infra`/`ai` still work as aliases
 - `closing` — sign-off
 
 A chart spec can carry `inline: { cats, series }` instead of an `id`, for
@@ -115,6 +120,49 @@ map in `lib/engine.js` rather than special-casing an existing one.
 **Wide charts.** Source workbooks carry up to 38 series per chart. Each chart
 spec takes `top: n` — the n largest series are kept and the rest are rolled into
 a single "All other" band. Raise or lower it per slide.
+
+## AI cost by application
+
+Built from `AI_cost_table.xlsx`, whose Details sheet is extracted verbatim into
+`data/ai-cost-apps.json` and turned into every figure on the deck by
+`data/ai-cost-apps.js`. $43,547 estimated across 101 application rows and
+1,250,052 invocations.
+
+The deck leads with confidence rather than with the total, because two
+properties of the source change how every other number should be read.
+
+**Just under half the estimate cannot be checked.** The workbook's `CE Actual`
+reconciliation column is blank on all 50 Azure rows — $21,067, 48.4% of the
+estimate, with nothing to compare against. The workbook's own Notes sheet says
+so, and says the deltas only mean anything where the column exists.
+
+**Where it can be checked, the estimate runs low.** On the Claude rows carrying
+both figures the estimate says $19,248 and the actual says $21,673, 12.6% high.
+GCP is deliberately excluded from that comparison: its estimate equals its
+actual to the cent on all 17 rows, so the two columns are one number rather
+than two measurements, and counting it would dilute a real variance with rows
+that cannot disagree by construction. Claude is the only genuine check in the
+workbook.
+
+The deck states the 12.6% as a sensitivity applied to the unreconciled half
+(about $2,654), never as a finding — there is no evidence yet that Azure
+behaves like Claude, and the slide notes say so explicitly.
+
+**Two defects in the workbook's own summary tabs**, both fixed here rather than
+reproduced:
+
+- `Summary_Team` lists ai-factory twice, as `AI-Factory` and `ai-factory`, each
+  carrying the full figure. It totals $56,501 against the Details sheet's
+  $43,547 — the difference is exactly the duplicated row — and every share on
+  that tab is computed against the inflated denominator. `data/ai-cost-apps.js`
+  folds team names case-insensitively, so its totals reconcile with
+  `Summary_Source` instead.
+- Nine rows are named `unknown` or `(unlabeled)`, $5,342 between them: money
+  that cannot be charged to anyone regardless of what the reconciliation says.
+
+**No date range is recorded anywhere in the workbook**, so nothing in the deck
+claims a period. That is on the fix-it slide, because without it no figure here
+can become a run-rate.
 
 ## Repairing a hand-assembled deck
 

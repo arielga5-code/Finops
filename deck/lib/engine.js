@@ -685,17 +685,25 @@ const RENDER = {
     // size, so the second pass lands exactly.
     //
     // Tips are written and reviewed as one-liners (see content-cio.js), so the
-    // reservation is one line plus a small pad rather than a full second line
-    //, reserving two, "just in case", was costing every row nearly half an
-    // inch and dragging label and description down with it whenever a tip was
-    // present. The 12pt floor below is what actually protects a tip that runs
-    // long in a future edit; it wraps a little tight rather than shrinking
-    // under the deck's type-scale minimum.
+    // reservation for those is one line plus a small pad. Descriptions are not
+    // constrained that way and routinely run to two, so the number of lines
+    // they need is measured from the longest one rather than assumed: guessing
+    // one line and getting two is what puts a tip on top of a description.
     const lineH = (pt) => (pt / 72) * 1.25;
-    const descLines = hasTip ? 1 : 2;
     const rowGap = 0.05;
+    const textW = w - (circleD + 0.16);
+    // ~11.5 characters per inch at 12pt Calibri, scaling with the font size.
+    // The head face is bold and set larger, so it fits noticeably fewer.
+    const linesFor = (text, pt, cpi = 11.5) =>
+      Math.max(1, Math.ceil(String(text).length / Math.max(8, textW * cpi * (12 / pt))));
+    // Labels wrap too. Assuming one line and getting two is what dropped the
+    // description of a long-titled item on top of its own tip.
+    const labelLines = () =>
+      Math.max(1, ...spec.items.map((it) => linesFor(it.label, labelSize, 9.2)));
+    const descLines = () =>
+      Math.max(1, ...spec.items.map((it) => linesFor(it.desc, descSize)));
     const stackH = () =>
-      lineH(labelSize) + rowGap + lineH(descSize) * descLines +
+      lineH(labelSize) * labelLines() + rowGap + lineH(descSize) * descLines() +
       (hasTip ? rowGap + lineH(tipSize) + 0.04 : 0);
 
     const room = pitch - 0.1; // leave a sliver between rows
@@ -711,7 +719,6 @@ const RENDER = {
       const row = i % perCol;
       const x = GEO.margin + col * (w + gap);
       const y = top + row * pitch;
-      const textW = w - (circleD + 0.16);
       const textX = x + circleD + 0.16;
 
       s.addShape(pres.ShapeType.ellipse, {
@@ -725,8 +732,8 @@ const RENDER = {
         color: spec.accent, margin: 0, align: "center", valign: "middle",
       });
 
-      const labelH = lineH(labelSize);
-      const descH = lineH(descSize) * descLines;
+      const labelH = lineH(labelSize) * labelLines();
+      const descH = lineH(descSize) * descLines();
       s.addText(it.label, {
         x: textX, y, w: textW, h: labelH,
         fontFace: FONTS.head, fontSize: labelSize, bold: true,
@@ -1166,7 +1173,7 @@ const RENDER = {
   },
 
   /**
-   * One thick horizontal bar per item, name and growth above it, split into two
+   * One thick horizontal bar per item, name and badge above it, split into two
    * coloured segments to scale, total printed at the end.
    *
    * Built for a short list, a handful of projects, not a meter table, so each
@@ -1175,8 +1182,21 @@ const RENDER = {
    * label under 8pt; this trades the month-by-month detail (which lives on the
    * slide it came from) for one comparison read at a glance, how big is each
    * item, and what is it made of.
+   *
+   * The split is named by `spec.split`, defaulting to the infrastructure/AI
+   * pair this was first built for. Items carry `a` and `b` for the two parts;
+   * `infra` and `ai` are still read as aliases so the AI Factory slide did not
+   * have to be rewritten when a second deck wanted the same shape for
+   * verified against unverified spend.
    */
   projectBars(pres, spec) {
+    const split = spec.split || {};
+    const aLabel = split.aLabel || "infrastructure";
+    const bLabel = split.bLabel || "AI";
+    const aColor = split.aColor || COLORS.azure;
+    const bColor = split.bColor || COLORS.ai;
+    const first = (it) => (it.a !== undefined ? it.a : it.infra) || 0;
+
     const s = C.slide(pres, {
       eyebrow: spec.eyebrow, accent: spec.accent,
       title: spec.title, note: spec.note, foot: spec.foot,
@@ -1199,7 +1219,9 @@ const RENDER = {
       if (spec.legend) {
         let lx = GEO.w - GEO.margin;
         [...spec.legend].reverse().forEach((it) => {
-          const tw = it.label.length * 0.072 + 0.05;
+          // ~0.088" per character at 12pt Calibri, plus slack. Undersizing
+          // this wraps the legend label onto two lines in its own box.
+          const tw = it.label.length * 0.088 + 0.12;
           lx -= tw;
           s.addText(it.label, {
             x: lx, y: top, w: tw, h: 0.26,
@@ -1227,13 +1249,35 @@ const RENDER = {
 
     // Row height is derived from the space actually available, not fixed, so
     // four items on their own slide get large, deliberate bars while a longer
-    // list still fits without spilling into the footnote. Everything below the
-    // name is squeezed proportionally out of what is left.
-    const nameH = 0.3, gapToBar = 0.08, gapToCaption = 0.05, captionH = 0.22;
+    // list still fits without spilling into the footnote.
+    //
+    // The name, the bar and the caption have to fit inside one pitch together.
+    // Taking the bar as the only variable and flooring it does not achieve
+    // that: past about five rows the floor wins, the stack grows taller than
+    // the pitch, and each row's caption lands on the next row's name. So the
+    // whole stack is scaled to whatever pitch we ended up with, and the type
+    // scales with it, down to the deck's 12pt floor, below which the caption
+    // is dropped rather than set unreadably small.
     const pitch = Math.min(1.55, (GEO.footY - 0.12 - top) / items.length);
+    const IDEAL = { name: 0.3, gapToBar: 0.08, bar: 0.62, gapToCaption: 0.05, caption: 0.22 };
+    const idealH = IDEAL.name + IDEAL.gapToBar + IDEAL.bar + IDEAL.gapToCaption + IDEAL.caption;
+    const fit = Math.min(1, (pitch - 0.06) / idealH);
+
+    const nameSize = Math.max(12, 16 * fit);
+    const captionSize = Math.max(12, SIZE.caption * fit);
+    const totalSize = Math.max(13, 18 * fit);
+    // Once the type has hit its floor the boxes must not keep shrinking under
+    // it, so heights are taken from the larger of the scaled figure and what
+    // the text at its floored size actually needs.
+    const lineH = (pt) => (pt / 72) * 1.25;
+    const nameH = Math.max(IDEAL.name * fit, lineH(nameSize));
+    const captionH = Math.max(IDEAL.caption * fit, lineH(captionSize));
+    const gapToBar = IDEAL.gapToBar * fit;
+    const gapToCaption = IDEAL.gapToCaption * fit;
+    const showCaption = pitch - (nameH + gapToBar + gapToCaption + captionH) >= 0.26;
     const barH = Math.max(
-      0.32,
-      Math.min(0.85, pitch - nameH - gapToBar - gapToCaption - captionH)
+      0.26,
+      pitch - 0.06 - nameH - gapToBar - (showCaption ? gapToCaption + captionH : 0)
     );
 
     items.forEach((it, i) => {
@@ -1241,13 +1285,13 @@ const RENDER = {
 
       s.addText(it.name, {
         x: GEO.margin, y, w: GEO.contentW - 2.6, h: nameH,
-        fontFace: FONTS.head, fontSize: 16, bold: true,
+        fontFace: FONTS.head, fontSize: nameSize, bold: true,
         color: COLORS.text, margin: 0, valign: "middle",
       });
       if (it.badge) {
         s.addText(it.badge, {
           x: GEO.w - GEO.margin - 2.4, y, w: 2.4, h: nameH,
-          fontFace: FONTS.body, fontSize: SIZE.caption, bold: true,
+          fontFace: FONTS.body, fontSize: captionSize, bold: true,
           color: COLORS.muted, margin: 0, align: "right", valign: "middle",
         });
       }
@@ -1262,41 +1306,42 @@ const RENDER = {
       });
 
       const barW = Math.max(0.02, barMaxW * (it.total / max));
-      const infraW = it.total ? barW * (it.infra / it.total) : 0;
-      const aiW = barW - infraW;
-      if (infraW > 0.015) {
+      const aW = it.total ? barW * (first(it) / it.total) : 0;
+      const bW = barW - aW;
+      if (aW > 0.015) {
         s.addShape(pres.ShapeType.rect, {
-          x: GEO.margin, y: barY, w: infraW, h: barH,
-          fill: { color: COLORS.azure },
-          line: { color: COLORS.azure, width: 0 },
+          x: GEO.margin, y: barY, w: aW, h: barH,
+          fill: { color: aColor },
+          line: { color: aColor, width: 0 },
         });
       }
-      if (aiW > 0.015) {
+      if (bW > 0.015) {
         s.addShape(pres.ShapeType.rect, {
-          x: GEO.margin + infraW, y: barY, w: aiW, h: barH,
-          fill: { color: COLORS.ai },
-          line: { color: COLORS.ai, width: 0 },
+          x: GEO.margin + aW, y: barY, w: bW, h: barH,
+          fill: { color: bColor },
+          line: { color: bColor, width: 0 },
         });
       }
 
       s.addText(C.usd(it.total), {
         x: GEO.margin + barMaxW + totalGap, y: barY, w: totalW, h: barH,
-        fontFace: FONTS.head, fontSize: 18, bold: true,
+        fontFace: FONTS.head, fontSize: totalSize, bold: true,
         color: COLORS.text, margin: 0, valign: "middle",
       });
 
-      const share = it.total ? Math.round((it.infra / it.total) * 100) : 0;
+      if (!showCaption) return;
+      const share = it.total ? Math.round((first(it) / it.total) * 100) : 0;
       s.addText(
         it.total === 0
           ? "no spend"
-          : it.infra === 0
-          ? "entirely AI, no infrastructure"
-          : it.infra === it.total
-          ? "entirely infrastructure"
-          : `${share}% infrastructure, ${100 - share}% AI`,
+          : first(it) === 0
+          ? `entirely ${bLabel}`
+          : first(it) === it.total
+          ? `entirely ${aLabel}`
+          : `${share}% ${aLabel}, ${100 - share}% ${bLabel}`,
         {
           x: GEO.margin, y: barY + barH + gapToCaption, w: barMaxW, h: captionH,
-          fontFace: FONTS.body, fontSize: SIZE.caption, color: COLORS.muted,
+          fontFace: FONTS.body, fontSize: captionSize, color: COLORS.muted,
           margin: 0, valign: "middle",
         }
       );

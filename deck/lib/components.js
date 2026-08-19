@@ -203,20 +203,45 @@ function sectionSlide(pres, { kicker, title, sub, accent = COLORS.aws }) {
     line: { color: COLORS.cyan, width: 0, transparency: 100 },
   });
 
+  // The title block is measured, not assumed. A divider title is usually three
+  // or four words and fits one line at 40pt, but a longer one (or one carrying
+  // its own newline) wraps, and with fixed offsets the extra lines run back
+  // over the kicker above and the subtitle below. Sizing the box to the lines
+  // actually needed, and centring the whole group, keeps a long title readable
+  // instead of overlapping its neighbours.
+  const titleW = 9.2;
+  const titleSize = 40;
+  // ~0.44" per character at 40pt bold Calibri.
+  const perLine = Math.max(10, Math.floor(titleW / 0.44));
+  const lines = String(title)
+    .split("\n")
+    .reduce((n, l) => n + Math.max(1, Math.ceil(l.length / perLine)), 0);
+  const titleH = lines * (titleSize / 72) * 1.22;
+
+  const kickerH = 0.3;
+  const subH = sub ? 0.5 : 0;
+  const gapAfterKicker = 0.08;
+  const gapBeforeSub = 0.14;
+  const blockH = kickerH + gapAfterKicker + titleH + (sub ? gapBeforeSub + subH : 0);
+  const top = Math.max(0.9, (GEO.h - blockH) / 2);
+
   s.addText(kicker.toUpperCase(), {
-    x: GEO.margin, y: 2.55, w: 9, h: 0.3,
+    x: GEO.margin, y: top, w: 9, h: kickerH,
     fontFace: FONTS.head, fontSize: SIZE.eyebrow, bold: true,
-    color: accent, charSpacing: 3, margin: 0,
+    color: accent, charSpacing: 3, margin: 0, valign: "middle",
   });
   s.addText(title, {
-    x: GEO.margin, y: 2.9, w: 9.2, h: 1.1,
-    fontFace: FONTS.head, fontSize: 40, bold: true,
+    x: GEO.margin, y: top + kickerH + gapAfterKicker, w: titleW, h: titleH,
+    fontFace: FONTS.head, fontSize: titleSize, bold: true,
     color: COLORS.text, margin: 0, valign: "middle",
   });
   if (sub) {
     s.addText(sub, {
-      x: GEO.margin, y: 4.05, w: 8.6, h: 0.5,
+      x: GEO.margin,
+      y: top + kickerH + gapAfterKicker + titleH + gapBeforeSub,
+      w: 8.6, h: subH,
       fontFace: FONTS.body, fontSize: 15, color: COLORS.muted, margin: 0,
+      valign: "top",
     });
   }
   return s;
