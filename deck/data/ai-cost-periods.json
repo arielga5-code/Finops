@@ -1,0 +1,1022 @@
+{
+ "july": {
+  "start": "01/07/2026",
+  "end": "31/07/2026",
+  "rows": [
+   {
+    "app": "agent",
+    "source": "Claude",
+    "team": "insait",
+    "invocations": 60707,
+    "est": 7378.46,
+    "ce": 9841.51
+   },
+   {
+    "app": "ai-factory-idp-ocr-hybrid",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 9218,
+    "est": 1484.53,
+    "ce": 1484.53
+   },
+   {
+    "app": "idp-ocr-hybrid",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 3606,
+    "est": 702.08,
+    "ce": 702.08
+   },
+   {
+    "app": "cli",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 12882,
+    "est": 468.92,
+    "ce": 468.68
+   },
+   {
+    "app": "onedoc-processor-worker",
+    "source": "Claude",
+    "team": "onedoc",
+    "invocations": 5321,
+    "est": 149.26,
+    "ce": 148.86
+   },
+   {
+    "app": "ai-factory-yacovz",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 461,
+    "est": 91.35,
+    "ce": 91.35
+   },
+   {
+    "app": "(unlabeled)",
+    "source": "GCP",
+    "team": "unknown",
+    "invocations": 1008,
+    "est": 35.75,
+    "ce": 35.75
+   },
+   {
+    "app": "yacovz",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 2119,
+    "est": 8.79,
+    "ce": 8.86
+   },
+   {
+    "app": "extraction-plugin",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 122,
+    "est": 6.02,
+    "ce": 6.07
+   },
+   {
+    "app": "ai-factory-yakir",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 44,
+    "est": 4.68,
+    "ce": 4.68
+   },
+   {
+    "app": "agent-marketing-poc",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 167,
+    "est": 1.23,
+    "ce": 4.29
+   },
+   {
+    "app": "responsible_ai",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 27,
+    "est": 0.98,
+    "ce": 3.02
+   },
+   {
+    "app": "(unlabeled)",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 64,
+    "est": 2.36,
+    "ce": 2.36
+   },
+   {
+    "app": "ai-factory-pdf-pii",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 4,
+    "est": 0.09,
+    "ce": 0.09
+   },
+   {
+    "app": "devops-test",
+    "source": "Claude",
+    "team": "insait",
+    "invocations": 7,
+    "est": 0.01,
+    "ce": 0.04
+   },
+   {
+    "app": "aigw_discovery",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 623,
+    "est": 0.02,
+    "ce": 0.03
+   },
+   {
+    "app": "ai-factory-test",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 11,
+    "est": 0.02,
+    "ce": 0.02
+   },
+   {
+    "app": "dvir",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 154,
+    "est": 0.01,
+    "ce": 0.01
+   },
+   {
+    "app": "claim-assessor",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 92,
+    "est": 0.01,
+    "ce": 0.01
+   },
+   {
+    "app": "claims",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 66,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "microservice-name",
+    "source": "Claude",
+    "team": "onedoc",
+    "invocations": 4,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "test-app",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 3,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "langfuse",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 1,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "ai-factory-test-app",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 13,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "claims-copilot",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 15,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "ai-factory-dvir",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 6,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "ai-factory-langfuse",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 3,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "dvir",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 4,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "automation-skills-agents-service",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 1,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "test",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 3,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "aigw_discovery",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 3,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "(unlabeled)",
+    "source": "GCP",
+    "team": "solugen",
+    "invocations": 2,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "bedrock-session",
+    "source": "Claude",
+    "team": "apim",
+    "invocations": 8393,
+    "est": 473.5,
+    "ce": null
+   },
+   {
+    "app": "(unlabeled)",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 128,
+    "est": 2.63,
+    "ce": null
+   },
+   {
+    "app": "(unlabeled)",
+    "source": "Azure",
+    "team": "solugen",
+    "invocations": 17502,
+    "est": 309.23,
+    "ce": null
+   },
+   {
+    "app": "(unlabeled)",
+    "source": "Azure",
+    "team": "unknown",
+    "invocations": 1053,
+    "est": 25.93,
+    "ce": null
+   },
+   {
+    "app": "claim-assessor",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 4756,
+    "est": 93.67,
+    "ce": null
+   },
+   {
+    "app": "claims-copilot",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 103259,
+    "est": 2374.22,
+    "ce": null
+   },
+   {
+    "app": "test-app",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 1,
+    "est": 0.01,
+    "ce": null
+   },
+   {
+    "app": "insureGen",
+    "source": "Azure",
+    "team": "solugen",
+    "invocations": 319917,
+    "est": 5697.82,
+    "ce": null
+   },
+   {
+    "app": "LTS",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 22,
+    "est": 12.3,
+    "ce": null
+   },
+   {
+    "app": "AIGW_DISCOVERY",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 597,
+    "est": 4.09,
+    "ce": null
+   },
+   {
+    "app": "agent-marketing-poc",
+    "source": "Azure",
+    "team": "solugen",
+    "invocations": 205,
+    "est": 5.28,
+    "ce": null
+   },
+   {
+    "app": "test",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 11,
+    "est": 0.11,
+    "ce": null
+   },
+   {
+    "app": "agent",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 7437,
+    "est": 15.86,
+    "ce": null
+   },
+   {
+    "app": "idp-ocr-hybrid",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 105,
+    "est": 0.11,
+    "ce": null
+   },
+   {
+    "app": "use-case-flow",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 21,
+    "est": 1.31,
+    "ce": null
+   },
+   {
+    "app": "extraction-plugin",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 7,
+    "est": 0.01,
+    "ce": null
+   },
+   {
+    "app": "idp-claims-extraction",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 37,
+    "est": 0.04,
+    "ce": null
+   },
+   {
+    "app": "test",
+    "source": "Azure",
+    "team": "mint",
+    "invocations": 1,
+    "est": 0.01,
+    "ce": null
+   },
+   {
+    "app": "idp-ocr-hybrid",
+    "source": "Azure",
+    "team": "AI-Factory",
+    "invocations": 14,
+    "est": 0.01,
+    "ce": null
+   }
+  ],
+  "unattributed": [],
+  "source": "3313a8c3-AI_cost_July_full.xlsx",
+  "dated": "from the sheet title"
+ },
+ "august": {
+  "start": "01/08/2026",
+  "end": "19/08/2026",
+  "rows": [
+   {
+    "app": "cli",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 64407,
+    "est": 3931.96,
+    "ce": 3767.33
+   },
+   {
+    "app": "agent",
+    "source": "Claude",
+    "team": "insait",
+    "invocations": 13768,
+    "est": 3368.05,
+    "ce": 3400.18
+   },
+   {
+    "app": "unknown",
+    "source": "Claude",
+    "team": "insait",
+    "invocations": 30396,
+    "est": 2780.03,
+    "ce": 2849.14
+   },
+   {
+    "app": "jeff---pension-copilot",
+    "source": "Claude",
+    "team": "insait",
+    "invocations": 7460,
+    "est": 1128.56,
+    "ce": 1151.13
+   },
+   {
+    "app": "ai-factory-idp-ocr-hybrid",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 5270,
+    "est": 891.92,
+    "ce": 891.92
+   },
+   {
+    "app": "onedoc-processor-worker",
+    "source": "Claude",
+    "team": "onedoc",
+    "invocations": 5721,
+    "est": 200.49,
+    "ce": 197.13
+   },
+   {
+    "app": "helper",
+    "source": "Claude",
+    "team": "insait",
+    "invocations": 189,
+    "est": 55.6,
+    "ce": 56.4
+   },
+   {
+    "app": "jeff---pension-copilot-preprod",
+    "source": "Claude",
+    "team": "insait",
+    "invocations": 272,
+    "est": 38.33,
+    "ce": 38.5
+   },
+   {
+    "app": "life-insurance-preprod",
+    "source": "Claude",
+    "team": "insait",
+    "invocations": 122,
+    "est": 21.85,
+    "ce": 22.11
+   },
+   {
+    "app": "ai-factory-yakir",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 153,
+    "est": 18.57,
+    "ce": 18.57
+   },
+   {
+    "app": "life-insurance-v2-21-july",
+    "source": "Claude",
+    "team": "insait",
+    "invocations": 52,
+    "est": 14.05,
+    "ce": 14.1
+   },
+   {
+    "app": "life-insurance-test",
+    "source": "Claude",
+    "team": "insait",
+    "invocations": 48,
+    "est": 13.87,
+    "ce": 13.87
+   },
+   {
+    "app": "responsible_ai",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 78,
+    "est": 5.63,
+    "ce": 5.65
+   },
+   {
+    "app": "idp-claims-extraction",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 37,
+    "est": 0.75,
+    "ce": 0.76
+   },
+   {
+    "app": "jeff---pension-copilot-test",
+    "source": "Claude",
+    "team": "insait",
+    "invocations": 3,
+    "est": 0.74,
+    "ce": 0.74
+   },
+   {
+    "app": "jeff---pension-copilot--gilad-s-version",
+    "source": "Claude",
+    "team": "insait",
+    "invocations": 2,
+    "est": 0.2,
+    "ce": 0.2
+   },
+   {
+    "app": "(unlabeled)",
+    "source": "GCP",
+    "team": "unknown",
+    "invocations": 268,
+    "est": 0.03,
+    "ce": 0.03
+   },
+   {
+    "app": "claim-assessor",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 18,
+    "est": 0.02,
+    "ce": 0.02
+   },
+   {
+    "app": "claims",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 414,
+    "est": 0.02,
+    "ce": 0.02
+   },
+   {
+    "app": "aigw_discovery",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 345,
+    "est": 0.02,
+    "ce": 0.02
+   },
+   {
+    "app": "ai-factory-test",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 14,
+    "est": 0.02,
+    "ce": 0.02
+   },
+   {
+    "app": "microservice-name",
+    "source": "Claude",
+    "team": "onedoc",
+    "invocations": 11,
+    "est": 0.01,
+    "ce": 0.01
+   },
+   {
+    "app": "microservice-name",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 8,
+    "est": 0.01,
+    "ce": 0.01
+   },
+   {
+    "app": "test",
+    "source": "Claude",
+    "team": "onedoc",
+    "invocations": 5,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "test",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 4,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "cloudops-test",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 7,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "ai-factory-sfafa",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 2,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "ai-factory-fsafa",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 2,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "claims-copilot",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 5,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "microservice-name",
+    "source": "Claude",
+    "team": "insait",
+    "invocations": 1,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "unknown",
+    "source": "Claude",
+    "team": "ai-factory",
+    "invocations": 1,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "ai-factory-unknown",
+    "source": "GCP",
+    "team": "ai-factory",
+    "invocations": 5,
+    "est": 0,
+    "ce": 0.0
+   },
+   {
+    "app": "agent",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 38004,
+    "est": 611.55,
+    "ce": null
+   },
+   {
+    "app": "insureGen",
+    "source": "Azure",
+    "team": "solugen",
+    "invocations": 321521,
+    "est": 5802.66,
+    "ce": null
+   },
+   {
+    "app": "AIGW_DISCOVERY",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 287,
+    "est": 1.72,
+    "ce": null
+   },
+   {
+    "app": "claims-copilot",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 170756,
+    "est": 2971.06,
+    "ce": null
+   },
+   {
+    "app": "idp-claims-extraction",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 2156,
+    "est": 2.64,
+    "ce": null
+   },
+   {
+    "app": "use-case-flow",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 232,
+    "est": 13.65,
+    "ce": null
+   },
+   {
+    "app": "test",
+    "source": "Azure",
+    "team": "devops",
+    "invocations": 2,
+    "est": 0.01,
+    "ce": null
+   },
+   {
+    "app": "test-only",
+    "source": "Azure",
+    "team": "mint",
+    "invocations": 18,
+    "est": 0.54,
+    "ce": null
+   },
+   {
+    "app": "test",
+    "source": "Azure",
+    "team": "mint",
+    "invocations": 15,
+    "est": 0.14,
+    "ce": null
+   },
+   {
+    "app": "idp-ocr-hybrid",
+    "source": "Azure",
+    "team": "AI-Factory",
+    "invocations": 130,
+    "est": 0.13,
+    "ce": null
+   },
+   {
+    "app": "IVR - Dev v2",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 2,
+    "est": 0.16,
+    "ce": null
+   },
+   {
+    "app": "IVR - Main Stable",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 513,
+    "est": 40.02,
+    "ce": null
+   },
+   {
+    "app": "IVR - Main Stable (2)",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 6,
+    "est": 0.49,
+    "ce": null
+   },
+   {
+    "app": "(unlabeled)",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 22100,
+    "est": 2251.33,
+    "ce": null
+   },
+   {
+    "app": "claim-assessor",
+    "source": "Azure",
+    "team": "ai-factory",
+    "invocations": 4106,
+    "est": 69.1,
+    "ce": null
+   },
+   {
+    "app": "Harel Travel Insurance Bot %E2%80%94 July 28",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 2,
+    "est": 0.83,
+    "ce": null
+   },
+   {
+    "app": "Harel Travel Insurance Bot %E2%80%94 Aug 10",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 183,
+    "est": 48.46,
+    "ce": null
+   },
+   {
+    "app": "Testing",
+    "source": "Azure",
+    "team": "Core-Systems-Division",
+    "invocations": 1,
+    "est": 0.01,
+    "ce": null
+   },
+   {
+    "app": "New Agent (Single Prompt)",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 4,
+    "est": 0.12,
+    "ce": null
+   },
+   {
+    "app": "peled",
+    "source": "Azure",
+    "team": "peled",
+    "invocations": 25,
+    "est": 0.2,
+    "ce": null
+   },
+   {
+    "app": "pii-test",
+    "source": "Azure",
+    "team": "unknown",
+    "invocations": 10,
+    "est": 0.12,
+    "ce": null
+   },
+   {
+    "app": "Testing",
+    "source": "Azure",
+    "team": "afunana",
+    "invocations": 5,
+    "est": 0.05,
+    "ce": null
+   },
+   {
+    "app": "Test",
+    "source": "Azure",
+    "team": "databi",
+    "invocations": 1,
+    "est": 0.01,
+    "ce": null
+   },
+   {
+    "app": "genai",
+    "source": "Azure",
+    "team": "datainfra",
+    "invocations": 15,
+    "est": 3.66,
+    "ce": null
+   },
+   {
+    "app": "Test",
+    "source": "Azure",
+    "team": "datainfra",
+    "invocations": 2,
+    "est": 0.02,
+    "ce": null
+   },
+   {
+    "app": "IVR - Main Stable - latest",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 33,
+    "est": 3.21,
+    "ce": null
+   },
+   {
+    "app": "Jeff - Pension Copilot",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 513,
+    "est": 5.66,
+    "ce": null
+   },
+   {
+    "app": "Jeff - Pension Copilot preprod",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 200,
+    "est": 81.28,
+    "ce": null
+   },
+   {
+    "app": "voice stress test mike",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 529,
+    "est": 91.78,
+    "ce": null
+   },
+   {
+    "app": "IVR - DeStable - 17.8",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 1,
+    "est": 0.1,
+    "ce": null
+   },
+   {
+    "app": "IVR - Dev - 17.8",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 37,
+    "est": 3.74,
+    "ce": null
+   },
+   {
+    "app": "IVR - Main Stable - 17/08",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 3,
+    "est": 0.29,
+    "ce": null
+   },
+   {
+    "app": "IVR - Main Stable - 17.8",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 803,
+    "est": 82.68,
+    "ce": null
+   },
+   {
+    "app": "IVR - Main Stable - 17.8 (Copy)",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 1,
+    "est": 0.1,
+    "ce": null
+   },
+   {
+    "app": "IVR - Main Stable - latest (Copy)",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 1,
+    "est": 0.1,
+    "ce": null
+   },
+   {
+    "app": "Test",
+    "source": "Azure",
+    "team": "peled",
+    "invocations": 5,
+    "est": 0.05,
+    "ce": null
+   },
+   {
+    "app": "testapp",
+    "source": "Azure",
+    "team": "devops",
+    "invocations": 2,
+    "est": 0.02,
+    "ce": null
+   },
+   {
+    "app": "testapp1",
+    "source": "Azure",
+    "team": "devops",
+    "invocations": 2,
+    "est": 0.02,
+    "ce": null
+   },
+   {
+    "app": "Jeff - Pension Copilot test",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 3,
+    "est": 0.03,
+    "ce": null
+   },
+   {
+    "app": "Life Insurance test",
+    "source": "Azure",
+    "team": "insait",
+    "invocations": 48,
+    "est": 4.71,
+    "ce": null
+   },
+   {
+    "app": "mint",
+    "source": "Azure",
+    "team": "mint",
+    "invocations": 2,
+    "est": 0.02,
+    "ce": null
+   }
+  ],
+  "unattributed": [
+   {
+    "item": "Bedrock CE Actual לא מתויג",
+    "amount": 9183.98,
+    "note": "מופיע בהערת המקור כלא משויך לאפליקציה ולכן לא חולק לצוותים."
+   },
+   {
+    "item": "Bedrock Guardrail Fees",
+    "amount": 665.66,
+    "note": "חיוב נפרד שלא נכלל ב-CE Actual בטבלה."
+   }
+  ],
+  "source": "48df3556-AI_cost_by_team_20260801_to_20260819.xlsx"
+ }
+}

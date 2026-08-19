@@ -2,7 +2,7 @@
   "name": "harel-cloud-finops-deck",
   "version": "1.0.0",
   "private": true,
-  "description": "Generates the Harel Cloud FinOps 2026 decks \u2014 operational review and combined CIO briefing",
+  "description": "Generates the Harel Cloud FinOps 2026 decks — operational review, CIO briefing, and the AI cost cuts",
   "scripts": {
     "build": "node build.js",
     "build:cio": "node build-cio.js",
@@ -10,6 +10,8 @@
     "build:vendor": "node build-vendor.js",
     "build:patch": "node build-patch.js",
     "build:aicost": "node build-aicost.js",
+    "build:aijuly": "node build-aijuly.js",
+    "build:aiaug": "node build-aiaug.js",
     "fix:final": "node build-patch.js && python3 tools/merge-slides.py --into Harel_Cloud_Cost_CIO_Final.pptx --from patch-slides.pptx --map 6=2,7=4,15=3,18=5 --out Harel_Cloud_Cost_CIO_Final_fixed.pptx"
   },
   "dependencies": {

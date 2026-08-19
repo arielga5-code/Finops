@@ -314,9 +314,17 @@ function statTile(pres, s, { x, y, w, h = 1.18, label, value, note, accent = COL
     color: COLORS.text, margin: 0, valign: "middle",
   });
   if (note) {
+    // The note is the only part of the tile that wraps, so it is the only part
+    // that can run past the bottom edge. Its box ends where the tile does, and
+    // the type steps down if two lines will not otherwise fit: a caller that
+    // asked for a short tile gets a smaller note, not a note hanging out of it.
+    const noteY = y + 0.76;
+    const noteH = Math.max(0.18, y + h - 0.05 - noteY);
+    const noteSize =
+      noteH >= 0.35 ? SIZE.statNote : Math.max(10, (noteH / 0.35) * SIZE.statNote);
     s.addText(note, {
-      x: px, y: y + 0.76, w: pw, h: 0.36,
-      fontFace: FONTS.body, fontSize: SIZE.statNote, bold: true,
+      x: px, y: noteY, w: pw, h: noteH,
+      fontFace: FONTS.body, fontSize: noteSize, bold: true,
       color: accent, margin: 0, valign: "top", lineSpacingMultiple: 1.05,
     });
   }

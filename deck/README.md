@@ -1,6 +1,6 @@
 # Cloud FinOps decks — Harel, 2026
 
-Five decks, one design system, one set of source data.
+Seven decks, one design system, one set of source data.
 
 | Deck | Build | Slides | For |
 |---|---|---|---|
@@ -9,6 +9,8 @@ Five decks, one design system, one set of source data.
 | **FinOps for AI** | `npm run build:ai` → `FinOps_for_AI_CIO.pptx` | 11 | Executive cut of the five AI cost levers and the one-page usage policy |
 | **Consumption by vendor** | `npm run build:vendor` → `Cloud_Consumption_by_Vendor.pptx` | 8 | One question: what does each cloud cost per month, and how much of it is AI |
 | **AI cost by application** | `npm run build:aicost` → `AI_Cost_by_Application.pptx` | 8 | Which application spent the AI budget, and how much of the figure can be proved |
+| **AI cost, July 2026** | `npm run build:aijuly` → `AI_Cost_July_2026.pptx` | 7 | The last complete month, on its own terms, as the baseline everything else is measured against |
+| **AI cost, August month to date** | `npm run build:aiaug` → `AI_Cost_August_2026_MTD.pptx` | 8 | What changed against July: the daily rate doubled, and why that is adoption rather than price |
 
 ```bash
 cd deck
@@ -18,6 +20,8 @@ npm run build:cio          # combined CIO briefing
 npm run build:ai           # FinOps for AI
 npm run build:vendor       # consumption by vendor
 npm run build:aicost       # AI cost by application
+npm run build:aijuly       # AI cost, July 2026
+npm run build:aiaug        # AI cost, August month to date
 npm run build:patch        # the replacement slides on their own
 npm run build:cio -- /path/to/Somewhere_Else.pptx
 ```
@@ -25,7 +29,7 @@ npm run build:cio -- /path/to/Somewhere_Else.pptx
 There is also `npm run fix:final`, which repairs a hand-assembled deck —
 see [Repairing a hand-assembled deck](#repairing-a-hand-assembled-deck).
 
-All five are 13.333" × 7.5", dark theme, native PowerPoint charts and tables
+All seven are 13.333" × 7.5", dark theme, native PowerPoint charts and tables
 (everything stays editable in PowerPoint — nothing is a picture).
 
 ### Sized for a meeting-room screen
@@ -163,6 +167,90 @@ reproduced:
 **No date range is recorded anywhere in the workbook**, so nothing in the deck
 claims a period. That is on the fix-it slide, because without it no figure here
 can become a run-rate.
+
+## The two period decks: July and August month to date
+
+Built from `AI_cost_July_full.xlsx` and
+`AI_cost_by_team_20260801_to_20260819.xlsx`. Both are extracted by
+`tools/extract-periods.py` into `data/ai-cost-periods.json`, one row per
+application per provider, and every figure on both decks is derived from there
+by `data/ai-cost-periods.js`.
+
+```bash
+python3 tools/extract-periods.py \
+    --july   /path/to/AI_cost_July_full.xlsx \
+    --august /path/to/AI_cost_by_team_20260801_to_20260819.xlsx \
+    --out    data/ai-cost-periods.json
+npm run build:aijuly && npm run build:aiaug
+```
+
+`tools/xlsx-dump.py` is the reader underneath it, and is useful on its own for
+surveying any workbook without openpyxl installed:
+
+```bash
+python3 tools/xlsx-dump.py book.xlsx --rows 40
+python3 tools/xlsx-dump.py book.xlsx --json out.json
+```
+
+### 19 days is not comparable to 31
+
+The single thing that makes these two files easy to misread. July is a complete
+month, August runs to the 19th. Compared as totals, $24,563 against $19,351
+reads as 27% growth. Compared per day, $1,293 against $624 is **2.07x**.
+
+Everything comparative in `data/ai-cost-periods.js` is therefore a daily rate,
+and everything describing a single period on its own is a period total. The
+August deck says which is which on every slide that shows both, and its cover
+quotes the daily figures rather than the totals for exactly this reason.
+
+### What the two decks say
+
+**July is the baseline** and never mentions August. $19,350.71 across 45
+applications and 560,227 calls. Azure $8,543 and Claude $8,487 are within $55
+of each other on wildly different volumes (455,073 calls against 90,707), which
+is the whole unit-cost argument. Two applications are 68% of the month. Just
+under half of it — $9,016, every Azure row — has no reconciliation figure, and
+on the Claude rows that do carry one the estimate runs 30.8% low.
+
+**August is the change.** The daily rate doubled, and it decomposes exactly:
+2.01x the calls per day at 1.03x the price per 1,000, giving 2.07x the cost.
+That is an adoption curve, not a pricing problem, and the deck says so before
+it says anything else — there is nothing to renegotiate in a 2.9% price move.
+
+Three findings sit behind it:
+
+- **$9,849.64 belongs to nobody.** The August export lists two Bedrock charges
+  outside every application row and every team total: $9,183.98 of untagged
+  actual spend and $665.66 of guardrail fees. That is 44% of all Bedrock actual
+  we can see, and 29% of everything we know we spent on AI this month. The
+  month to date is $34,413, not $24,563.
+- **Tagging went backwards.** Spend with no application name went from $376
+  (1.9%) in July to $5,031 (20.5%) in August. July's largest application,
+  `agent` on Claude, shrank while a new `unknown` row appeared on the same team
+  and the same provider — very likely the same workload having lost its label.
+  The deck says "likely", not "is".
+- **The largest single mover is internal.** `cli` on Claude, the AI Factory's
+  developer command line, went from $15 to $207 a day, 13.7x, which is 29% of
+  the entire increase on its own.
+
+One thing did improve, and both decks say so: the estimator was 30.8% under the
+actual in July and is within 0.4% in August.
+
+### What is deliberately not claimed
+
+- **July's export names no unattributed bucket.** That is not the same as there
+  not having been one, so nothing claims the Bedrock charges are new — only
+  that this export shows them and the previous one did not.
+- **GCP is excluded from every estimate-against-actual check**, in both months,
+  because its estimate equals its actual to the cent on every row. Those two
+  columns are one number, not two measurements.
+- **The full-month projection is a run-rate, not a forecast.** $40,077 assumes
+  the remaining days look like the first 19, and the last day in the export may
+  itself be partial.
+- **`AI_cost_table.xlsx` is a different cut** from these two files and is not
+  reconciled against them. July plus August comes to $43,914 against that
+  workbook's $43,547; near, but not the same extract, so the three decks each
+  state their own source and none of them adds the others up.
 
 ## Repairing a hand-assembled deck
 

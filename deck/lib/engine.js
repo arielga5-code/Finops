@@ -674,44 +674,62 @@ const RENDER = {
     let descSize = Math.max(12, Math.min(16, 12 * scale));
     let tipSize = Math.max(12, Math.min(14, 12 * scale));
 
-    // Each row stacks label, description and (if present) a tip line, and the
+    // Each row stacks a label, a description and (if present) a tip, and the
     // three must fit inside one `pitch` regardless of what the clamps above
-    // picked, a longer item list, or adding tips to a slide that did not have
-    // them, changes pitch independently of font size. Rather than hand-tune
-    // constants for one item count, size every block from its own font size
-    // using the table renderer's line-height convention, then if the stack
-    // does not fit, shrink all three fonts by the one factor that makes it
-    // fit and lay out again. Two passes, never more: height is linear in font
-    // size, so the second pass lands exactly.
+    // picked: a longer item list, or adding tips to a slide that did not have
+    // them, changes pitch independently of font size. So every block is sized
+    // from its own font size using the table renderer's line-height
+    // convention, and none of the three is assumed to be one line. Labels wrap,
+    // descriptions routinely run to three, and tips are not always the
+    // one-liners they were first written as.
     //
-    // Tips are written and reviewed as one-liners (see content-cio.js), so the
-    // reservation for those is one line plus a small pad. Descriptions are not
-    // constrained that way and routinely run to two, so the number of lines
-    // they need is measured from the longest one rather than assumed: guessing
-    // one line and getting two is what puts a tip on top of a description.
+    // Font size and line count depend on each other, which is the trap here.
+    // Shrinking the type to make a three-line description fit can make it a
+    // two-line description, and measuring at one size while laying out at
+    // another is exactly how a description's last line ends up under its own
+    // tip. The two are settled together below, and the counts the final sizes
+    // produced are the counts the layout uses.
     const lineH = (pt) => (pt / 72) * 1.25;
     const rowGap = 0.05;
     const textW = w - (circleD + 0.16);
-    // ~11.5 characters per inch at 12pt Calibri, scaling with the font size.
-    // The head face is bold and set larger, so it fits noticeably fewer.
-    const linesFor = (text, pt, cpi = 11.5) =>
-      Math.max(1, Math.ceil(String(text).length / Math.max(8, textW * cpi * (12 / pt))));
-    // Labels wrap too. Assuming one line and getting two is what dropped the
-    // description of a long-titled item on top of its own tip.
-    const labelLines = () =>
-      Math.max(1, ...spec.items.map((it) => linesFor(it.label, labelSize, 9.2)));
-    const descLines = () =>
-      Math.max(1, ...spec.items.map((it) => linesFor(it.desc, descSize)));
-    const stackH = () =>
-      lineH(labelSize) * labelLines() + rowGap + lineH(descSize) * descLines() +
-      (hasTip ? rowGap + lineH(tipSize) + 0.04 : 0);
+    // Characters per inch at 12pt Calibri, scaling with the font size: about
+    // 11.5 for the body face and 12.5 for the bold head face, discounted here
+    // by a tenth because wrapping happens at word boundaries and a line is
+    // rarely filled to the last character. Being a little pessimistic reserves
+    // a little too much height, which costs nothing; being optimistic rounds a
+    // full line away and drops the next block on top of it.
+    const linesFor = (text, pt, cpi = 10.4, boxW = textW) =>
+      Math.max(1, Math.ceil(String(text).length / Math.max(8, boxW * cpi * (12 / pt))));
+    const measure = (pick, size, cpi) =>
+      Math.max(1, ...spec.items.map((it) => linesFor(pick(it) || "", size, cpi)));
 
     const room = pitch - 0.1; // leave a sliver between rows
-    const over = stackH() / room;
-    if (over > 1) {
-      labelSize = Math.max(13, labelSize / over);
-      descSize = Math.max(12, descSize / over);
-      tipSize = Math.max(12, tipSize / over);
+    let labelLines = 1;
+    let descLines = 1;
+    let tipLines = 1;
+    // Height is linear in font size, so one shrink usually lands; the loop is
+    // there because a shrink can change the line counts underneath it. It
+    // stops as soon as the stack fits or the fonts reach the deck's floor.
+    for (let pass = 0; pass < 4; pass++) {
+      labelLines = measure((it) => it.label, labelSize, 11.2);
+      descLines = measure((it) => it.desc, descSize);
+      tipLines = hasTip ? measure((it) => it.tip, tipSize) : 0;
+      const stackH =
+        lineH(labelSize) * labelLines + rowGap + lineH(descSize) * descLines +
+        (hasTip ? rowGap + lineH(tipSize) * tipLines + 0.04 : 0);
+      const over = stackH / room;
+      if (over <= 1) break;
+      const shrunk = [
+        Math.max(13, labelSize / over),
+        Math.max(12, descSize / over),
+        Math.max(12, tipSize / over),
+      ];
+      const stuck =
+        Math.abs(shrunk[0] - labelSize) < 0.01 &&
+        Math.abs(shrunk[1] - descSize) < 0.01 &&
+        Math.abs(shrunk[2] - tipSize) < 0.01;
+      [labelSize, descSize, tipSize] = shrunk;
+      if (stuck) break; // at the 12pt floor, nothing further to give
     }
 
     spec.items.forEach((it, i) => {
@@ -732,8 +750,8 @@ const RENDER = {
         color: spec.accent, margin: 0, align: "center", valign: "middle",
       });
 
-      const labelH = lineH(labelSize) * labelLines();
-      const descH = lineH(descSize) * descLines();
+      const labelH = lineH(labelSize) * labelLines;
+      const descH = lineH(descSize) * descLines;
       s.addText(it.label, {
         x: textX, y, w: textW, h: labelH,
         fontFace: FONTS.head, fontSize: labelSize, bold: true,
@@ -753,7 +771,8 @@ const RENDER = {
         // one style, renders correctly everywhere; "Tip:" leans on the colon
         // and the italic rather than on bolding.
         s.addText(`Tip: ${it.tip}`, {
-          x: textX, y: y + labelH + rowGap + descH + rowGap, w: textW, h: lineH(tipSize) + 0.04,
+          x: textX, y: y + labelH + rowGap + descH + rowGap,
+          w: textW, h: lineH(tipSize) * tipLines + 0.04,
           fontFace: FONTS.body, fontSize: tipSize, color: spec.accent, italic: true,
           margin: 0, valign: "top", lineSpacingMultiple: 1.05,
         });
@@ -766,7 +785,12 @@ const RENDER = {
       const bTitleSize = Math.max(16, Math.min(22, 16 * scale));
       const bTextSize = Math.max(12.5, Math.min(16, 12.5 * scale));
       const pad = 0.28;
-      const titleH = lineH(bTitleSize) + 0.08;
+      // The banner title wraps like everything else, and reserving one line for
+      // it is what drops the body text on top of a two-line headline.
+      const titleH =
+        lineH(bTitleSize) *
+          linesFor(spec.banner.title, bTitleSize, 11.2, GEO.contentW - pad * 2) +
+        0.08;
       s.addText(spec.banner.title, {
         x: GEO.margin + pad, y: y + pad - 0.12, w: GEO.contentW - pad * 2, h: titleH,
         fontFace: FONTS.head, fontSize: bTitleSize, bold: true,
@@ -1126,7 +1150,33 @@ const RENDER = {
     const trackW = GEO.w - GEO.margin - valueW - 0.15 - trackX;
     const max = Math.max(...spec.items.map((it) => it.value));
     const top = headY + 0.42;
-    const pitch = 0.42;
+
+    // The callout is measured before the rows are placed, not after, because
+    // it is the block that has to fit: it carries the sentence the slide is
+    // making. Its height comes from its own text, it is anchored just above
+    // the footnote, and the rows take whatever is left. Laying the rows out
+    // first on a fixed pitch and hoping the card fits underneath is what put a
+    // three-line callout across the footnote.
+    const calloutPad = 0.25;
+    const calloutInnerW = GEO.contentW - calloutPad * 2;
+    const calloutTitleSize = 16;
+    const lineH = (pt) => (pt / 72) * 1.25;
+    const linesIn = (text, pt, cpi) =>
+      Math.max(1, Math.ceil(String(text).length / Math.max(8, calloutInnerW * cpi * (12 / pt))));
+    let calloutTitleH = 0;
+    let calloutTextH = 0;
+    let calloutH = 0;
+    if (spec.callout) {
+      calloutTitleH = Math.max(
+        0.32,
+        lineH(calloutTitleSize) * linesIn(spec.callout.title, calloutTitleSize, 11.2)
+      );
+      calloutTextH = lineH(SIZE.body) * 1.15 * linesIn(spec.callout.text, SIZE.body, 10.4);
+      calloutH = 0.12 + calloutTitleH + 0.04 + calloutTextH + 0.14;
+    }
+
+    const rowsBottom = spec.callout ? GEO.footY - 0.14 - calloutH - 0.2 : GEO.footY - 0.1;
+    const pitch = Math.min(0.42, (rowsBottom - top) / spec.items.length);
 
     spec.items.forEach((it, i) => {
       const y = top + i * pitch;
@@ -1157,17 +1207,18 @@ const RENDER = {
     });
 
     if (spec.callout) {
-      const y = top + spec.items.length * pitch + 0.2;
-      C.card(pres, s, { x: GEO.margin, y, w: GEO.contentW, h: 0.85, accent: spec.accent });
+      const y = GEO.footY - 0.14 - calloutH;
+      C.card(pres, s, { x: GEO.margin, y, w: GEO.contentW, h: calloutH, accent: spec.accent });
       s.addText(spec.callout.title, {
-        x: GEO.margin + 0.25, y: y + 0.12, w: GEO.contentW - 0.5, h: 0.32,
-        fontFace: FONTS.head, fontSize: 16, bold: true,
+        x: GEO.margin + calloutPad, y: y + 0.12, w: calloutInnerW, h: calloutTitleH,
+        fontFace: FONTS.head, fontSize: calloutTitleSize, bold: true,
         color: COLORS.text, margin: 0, valign: "middle",
       });
       s.addText(spec.callout.text, {
-        x: GEO.margin + 0.25, y: y + 0.42, w: GEO.contentW - 0.5, h: 0.36,
+        x: GEO.margin + calloutPad, y: y + 0.12 + calloutTitleH + 0.04,
+        w: calloutInnerW, h: calloutTextH,
         fontFace: FONTS.body, fontSize: SIZE.body, color: COLORS.muted,
-        margin: 0, valign: "middle",
+        margin: 0, valign: "top", lineSpacingMultiple: 1.15,
       });
     }
   },
@@ -1208,10 +1259,10 @@ const RENDER = {
       const sw = (GEO.contentW - 0.25 * (stats.length - 1)) / stats.length;
       stats.forEach((st, i) => {
         C.statTile(pres, s, {
-          ...st, x: GEO.margin + i * (sw + 0.25), y: top, w: sw, h: 1.05,
+          ...st, x: GEO.margin + i * (sw + 0.25), y: top, w: sw, h: 1.18,
         });
       });
-      top += 1.28;
+      top += 1.4;
     }
 
     if (spec.rowsTitle) {
@@ -1330,7 +1381,11 @@ const RENDER = {
       });
 
       if (!showCaption) return;
-      const share = it.total ? Math.round((first(it) / it.total) * 100) : 0;
+      const raw = it.total ? (first(it) / it.total) * 100 : 0;
+      const share = Math.round(raw);
+      // A sliver that rounds to nothing must not be reported as nothing. A row
+      // that is 99.8% one thing is not "100% / 0%", and printing it that way
+      // claims a completeness the data does not have.
       s.addText(
         it.total === 0
           ? "no spend"
@@ -1338,6 +1393,10 @@ const RENDER = {
           ? `entirely ${bLabel}`
           : first(it) === it.total
           ? `entirely ${aLabel}`
+          : share === 100
+          ? `over 99% ${aLabel}, the rest ${bLabel}`
+          : share === 0
+          ? `under 1% ${aLabel}, the rest ${bLabel}`
           : `${share}% ${aLabel}, ${100 - share}% ${bLabel}`,
         {
           x: GEO.margin, y: barY + barH + gapToCaption, w: barMaxW, h: captionH,
