@@ -13,7 +13,8 @@ Eight decks and two drop-in slide sets, from one design system and one set of so
 | **AI cost, August month to date** | `npm run build:aiaug` → `AI_Cost_August_2026_MTD.pptx` | 8 | What changed against July: the daily rate doubled, and why that is adoption rather than price |
 | **AI cost window, for the CIO deck** | `npm run build:aiwindow` → `AI_Cost_Window_Slides.pptx` | 2 | Two slides to paste into the CIO presentation: what the whole window cost, and what drives it |
 | **AI cost by team and application** | `npm run build:aiapps` → `AI_Cost_by_Team_and_Application.pptx` | 8 | The named detail: every application, its team, and how its money splits across the three providers |
-| **AI consumption, the CIO slide** | `npm run build:aiboard` → `AI_Consumption_CIO_Slide.pptx` | 1 | The presented version: a share strip, a card per team, and a band for the money with no owner |
+| **AI consumption, drawn to scale** | `npm run build:aimosaic` → `AI_Consumption_Mosaic.pptx` | 1 | The strongest version: a mosaic where every block's area is a dollar figure |
+| **AI consumption, the card slide** | `npm run build:aiboard` → `AI_Consumption_CIO_Slide.pptx` | 1 | A share strip, a card per team, and a band for the money with no owner |
 | **AI consumption, the table** | `npm run build:aitable` → `AI_Consumption_Slide.pptx` | 1 | The same numbers as a table, for anyone who wants to audit a line |
 
 ```bash
@@ -28,7 +29,8 @@ npm run build:aijuly       # AI cost, July 2026
 npm run build:aiaug        # AI cost, August month to date
 npm run build:aiwindow     # the two window slides for the CIO deck
 npm run build:aiapps       # AI cost by team and application
-npm run build:aiboard      # the AI consumption CIO slide
+npm run build:aimosaic     # the AI consumption mosaic, drawn to scale
+npm run build:aiboard      # the AI consumption card slide
 npm run build:aitable      # the same numbers as a table
 npm run build:patch        # the replacement slides on their own
 npm run build:cio -- /path/to/Somewhere_Else.pptx
@@ -406,6 +408,49 @@ was given:
   crossed the card border; its type now steps down to the 12pt floor instead
 - `statTile` labels wider than the rail still wrap, so the labels here are kept
   short deliberately
+
+## The AI consumption mosaic
+
+`npm run build:aimosaic`. The third and best cut of the same numbers: same
+window, same `data/ai-cost-window.js`, drawn so that area is money.
+
+    column width   what the team spent
+    band height    that application's share of its team
+    block width    which provider was paid, inside that application
+
+A block's area is therefore exactly team x application x provider, and the
+whole rectangle is the whole bill. The question the slide answers is three
+questions at once, which is how it gets asked; a bar chart answers one of them
+and puts the other two in a legend.
+
+The sentence it makes without being explained: **the widest column on the slide
+is the one nobody owns.**
+
+### What it refuses to do
+
+- **It will not draw the 13 small teams.** They are $1,461, 1.8%. At true scale
+  that column is a fifth of an inch, too narrow to label, and drawn wide enough
+  to label it would be five times its real size. On a chart where area is money
+  that is not a rounding choice, it is a false statement. The figure is in the
+  footnote and the four columns are 97% of the bill.
+- **It will not hide an unnamed row in a roll-up.** Rows named `unknown` or
+  `(unlabeled)` get their own band whatever their size, because they are what
+  the slide exists to show. Where a band is too short to carry a label, the
+  column's sub-line carries the figure in red instead.
+- **It will not colour the no-owner column red.** That money is Bedrock, and
+  orange means Bedrock everywhere in these decks. The red outline and red header
+  carry "no owner"; the fill keeps telling the truth about who was paid.
+- **It will not ship if it does not reconcile.** The build throws if a column's
+  bands do not add to the column, if a band's provider blocks do not add to the
+  band, or if the unshown remainder exceeds the small teams plus the workbook's
+  own $704 inter-sheet difference.
+
+### Named applications get folded below 7%
+
+Seven percent of a column is where a band stops being tall enough to hold its
+own label. A named application drawn as an unlabelled stripe is worse than one
+folded into a line that says how many were folded, so the floor is set where
+the type gives out rather than at a round number.
 
 ## The AI consumption CIO slide
 

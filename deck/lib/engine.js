@@ -1388,6 +1388,194 @@ const RENDER = {
     }
   },
 
+  /**
+   * A mosaic: every dollar in the bill drawn as area.
+   *
+   * One column per team, its width proportional to what the team spent. Inside
+   * the column, one band per application, its height proportional to that
+   * application's share of the team. Inside the band, one block per provider.
+   * So a block's area is exactly team x application x provider, and the whole
+   * rectangle is the whole bill. Nothing is a category axis and nothing is a
+   * legend entry that has to be looked up: the biggest thing on the slide is
+   * the biggest number in the bill.
+   *
+   * It reads in one sentence, which is why it beats a table here: the widest
+   * column is the one nobody owns.
+   *
+   * Colour stays the provider, as everywhere else in these decks. A team is
+   * identified by its own header and by the rule above its column, never by a
+   * fill, so no coloured area on the slide means two different things.
+   */
+  mosaic(pres, spec) {
+    const s = C.slide(pres, {
+      eyebrow: spec.eyebrow, accent: spec.accent,
+      title: spec.title, note: spec.note, foot: spec.foot,
+    });
+
+    const cols = spec.columns;
+    const grand = C.sum(cols.map((c) => c.total));
+    const gap = 0.08;
+    const usable = GEO.contentW - gap * (cols.length - 1);
+
+    const headY = GEO.bodyTop;
+    const headH = 0.9;
+    const bodyY = headY + headH;
+    const stripH = spec.strip ? 0.34 : 0;
+    const stripCap = spec.strip ? 0.24 : 0;
+    const bottom = C.footTop(spec.foot) - 0.2;
+    const bodyH = bottom - stripH - stripCap - 0.18 - bodyY;
+
+    let x = GEO.margin;
+    cols.forEach((col) => {
+      const cw = (col.total / grand) * usable;
+
+      /* Header: the team, what it spent, and what of it has no name. */
+      s.addShape(pres.ShapeType.rect, {
+        x, y: headY + headH - 0.05, w: cw, h: 0.05,
+        fill: { color: col.accent },
+        line: { color: col.accent, width: 0 },
+      });
+      // A narrow column cannot hold a label, so it does not get one; its figure
+      // is carried in the footnote instead of printed over its neighbour.
+      if (cw > 1.05) {
+        s.addText(col.name.toUpperCase(), {
+          x, y: headY, w: cw, h: 0.24,
+          fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
+          color: col.accent, charSpacing: 1.1, margin: 0, valign: "middle",
+        });
+        s.addText(C.usd(col.total), {
+          x, y: headY + 0.24, w: cw, h: 0.4,
+          fontFace: FONTS.head, fontSize: 26, bold: true,
+          color: COLORS.text, margin: 0, valign: "middle",
+        });
+        s.addText(col.sub, {
+          x, y: headY + 0.63, w: cw, h: 0.22,
+          fontFace: FONTS.body, fontSize: SIZE.caption, bold: true,
+          color: col.subColor || COLORS.muted, margin: 0, valign: "middle",
+        });
+      }
+
+      /* Body: one band per application, split across providers. */
+      const rowGap = 0.025;
+      const spare = bodyH - rowGap * (col.rows.length - 1);
+      let y = bodyY;
+      col.rows.forEach((row) => {
+        const rh = (row.value / col.total) * spare;
+        const parts = row.parts.filter((p) => p.value > 0);
+        const partTotal = C.sum(parts.map((p) => p.value)) || 1;
+        let px = x;
+        parts.forEach((p) => {
+          const pw = (p.value / partTotal) * cw;
+          s.addShape(pres.ShapeType.rect, {
+            x: px, y, w: pw, h: rh,
+            fill: { color: row.muted ? COLORS.cardHi : p.color },
+            line: { color: COLORS.bg, width: 0.75 },
+          });
+          px += pw;
+        });
+
+        /* A band carries a label only when the label fits inside it. Printed
+           over a band shorter than the type it belongs to the band above, and
+           an application name wrapped onto a second line inside a 0.3" band
+           does the same thing.
+
+           Two shapes, depending on how much room there is. A tall band gets the
+           name on one line and the figure under it, each with the full width of
+           the column, which is what lets a long name like
+           ai-factory-idp-ocr-hybrid stay readable in a narrow column. A short
+           band puts the two side by side and trims the name to what actually
+           fits, because there is only one line to work with. */
+        const ink = row.muted ? COLORS.muted : COLORS.bg;
+        const inkVal = row.muted ? COLORS.text : COLORS.bg;
+        // ~11.4 characters per inch at 12pt Calibri, discounted for word wrap.
+        const fits = (w) => Math.max(4, Math.floor(w * 10.6));
+        const trim = (t, w) => (t.length <= fits(w) ? t : t.slice(0, fits(w) - 3) + "...");
+
+        if (rh >= 0.44 && cw >= 1.0) {
+          s.addText(trim(row.name, cw - 0.2), {
+            x: x + 0.1, y: y + 0.01, w: cw - 0.2, h: 0.21,
+            fontFace: FONTS.body, fontSize: SIZE.caption, bold: true,
+            color: ink, margin: 0, valign: "middle",
+          });
+          s.addText(C.usd(row.value), {
+            x: x + 0.1, y: y + 0.22, w: cw - 0.2, h: 0.25,
+            fontFace: FONTS.head, fontSize: 14, bold: true,
+            color: inkVal, margin: 0, valign: "middle",
+          });
+        } else if (rh >= 0.28 && cw >= 1.0) {
+          const valW = cw > 1.5 ? 1.0 : 0;
+          s.addText(trim(row.name, cw - 0.2 - valW), {
+            x: x + 0.1, y, w: cw - 0.2 - valW, h: Math.min(rh, 0.26),
+            fontFace: FONTS.body, fontSize: SIZE.caption, bold: true,
+            color: ink, margin: 0, valign: "middle",
+          });
+          if (valW) {
+            s.addText(C.usd(row.value), {
+              x: x + cw - 0.1 - valW, y, w: valW, h: Math.min(rh, 0.26),
+              fontFace: FONTS.head, fontSize: SIZE.caption, bold: true,
+              color: inkVal, margin: 0, align: "right", valign: "middle",
+            });
+          }
+        }
+        y += rh + rowGap;
+      });
+
+      /* An outline around the whole column, so a column reads as one thing.
+         Drawn last, unfilled, so it sits over the blocks rather than under. */
+      s.addShape(pres.ShapeType.rect, {
+        x, y: bodyY, w: cw, h: bodyH,
+        fill: { type: "none" },
+        line: { color: col.outline || COLORS.border, width: col.outline ? 1.5 : 0.75 },
+      });
+
+      x += cw + gap;
+    });
+
+    if (!spec.strip) return;
+
+    /* The provider totals, which double as the colour key. */
+    const capY = bottom - stripH - stripCap;
+    s.addText(spec.strip.title.toUpperCase(), {
+      x: GEO.margin, y: capY, w: GEO.contentW, h: 0.22,
+      fontFace: FONTS.head, fontSize: SIZE.statLabel, bold: true,
+      color: COLORS.faint, charSpacing: 1.1, margin: 0, valign: "middle",
+    });
+
+    const sy = bottom - stripH;
+    const stripTotal = C.sum(spec.strip.parts.map((p) => p.value));
+    let sx = GEO.margin;
+    spec.strip.parts.forEach((p) => {
+      const w = (p.value / stripTotal) * GEO.contentW;
+      s.addShape(pres.ShapeType.rect, {
+        x: sx, y: sy, w, h: stripH,
+        fill: { color: p.color },
+        line: { color: COLORS.bg, width: 0.75 },
+      });
+      const share = `${((p.value / stripTotal) * 100).toFixed(0)}%`;
+      if (w > 1.2) {
+        s.addText(
+          w > 2.2 ? `${p.label}   ${C.usd(p.value)}   ${share}` : `${p.label}  ${C.usd(p.value)}`,
+          {
+            x: sx + 0.1, y: sy, w: w - 0.2, h: stripH,
+            fontFace: FONTS.head, fontSize: SIZE.caption, bold: true,
+            color: COLORS.bg, margin: 0, valign: "middle",
+          }
+        );
+      } else {
+        // Too narrow to hold anything legibly, so its figure goes above the
+        // strip in its own colour, right-aligned over the segment it belongs
+        // to. Dropping the label instead is what makes a reader take the
+        // segment for rounding error rather than for $4,540.
+        s.addText(`${p.label}  ${C.usd(p.value)}  ${share}`, {
+          x: sx + w - 2.4, y: sy - 0.26, w: 2.4, h: 0.24,
+          fontFace: FONTS.head, fontSize: SIZE.caption, bold: true,
+          color: p.color, margin: 0, align: "right", valign: "middle",
+        });
+      }
+      sx += w;
+    });
+  },
+
   splitBars(pres, spec) {
     const s = C.slide(pres, {
       eyebrow: spec.eyebrow, accent: spec.accent,
