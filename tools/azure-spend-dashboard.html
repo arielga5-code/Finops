@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Azure Spend Dashboard</title>
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --surface-2:#f0f2f5; --border:#dfe3e8;
+  --text:#11161d; --muted:#5b6673; --dim:#8b96a3;
+  --accent:#0b6bcb; --pos:#1a7f5a; --warn:#b26a00; --neg:#c0392b;
+  --c1:#0b6bcb; --c2:#1a9e8f; --c3:#b26a00; --c4:#8155c6; --c5:#c0392b;
+  --c6:#2b7a3d; --c7:#0f7c9c; --c8:#a6417f; --c9:#6b7280; --c10:#8a6d1f;
+  --shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08);
+  --radius:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0e1116; --surface:#161b22; --surface-2:#1c222b; --border:#2a313c;
+    --text:#e8edf3; --muted:#9aa7b5; --dim:#6d7986;
+    --accent:#5aa9ff; --pos:#43c08b; --warn:#e0a13a; --neg:#ff7b72;
+    --c1:#5aa9ff; --c2:#3fd0bd; --c3:#e0a13a; --c4:#b08cff; --c5:#ff7b72;
+    --c6:#5fd07f; --c7:#4fc3e8; --c8:#ec7fc0; --c9:#9aa7b5; --c10:#d4b95e;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 1px 3px rgba(0,0,0,.3);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0e1116; --surface:#161b22; --surface-2:#1c222b; --border:#2a313c;
+  --text:#e8edf3; --muted:#9aa7b5; --dim:#6d7986;
+  --accent:#5aa9ff; --pos:#43c08b; --warn:#e0a13a; --neg:#ff7b72;
+  --c1:#5aa9ff; --c2:#3fd0bd; --c3:#e0a13a; --c4:#b08cff; --c5:#ff7b72;
+  --c6:#5fd07f; --c7:#4fc3e8; --c8:#ec7fc0; --c9:#9aa7b5; --c10:#d4b95e;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 1px 3px rgba(0,0,0,.3);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--text);
+  font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1360px;margin:0 auto;padding:24px 16px 64px}
+header.top{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+h1{font-size:22px;margin:0 0 4px;letter-spacing:-.2px}
+.sub{color:var(--muted);font-size:13px;margin:0}
+.spacer{flex:1 1 auto}
+button,.btn{
+  font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:7px 12px;cursor:pointer;box-shadow:var(--shadow);
+}
+button:hover,.btn:hover{background:var(--surface-2)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{filter:brightness(1.08)}
+
+/* drop zone */
+#drop{
+  border:1.5px dashed var(--border); border-radius:var(--radius); background:var(--surface);
+  padding:40px 20px; text-align:center; transition:border-color .15s,background .15s;
+}
+#drop.hot{border-color:var(--accent);background:var(--surface-2)}
+#drop h2{margin:0 0 6px;font-size:17px}
+#drop p{margin:0 auto 16px;color:var(--muted);max-width:60ch}
+.hint{font-size:12px;color:var(--dim);margin-top:14px}
+code{background:var(--surface-2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:12px}
+
+/* layout */
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr));margin-bottom:14px}
+.cols2{grid-template-columns:repeat(auto-fit,minmax(420px,1fr))}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px}
+.card h3{margin:0 0 2px;font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--muted)}
+.card .note{margin:0 0 12px;font-size:12px;color:var(--dim)}
+.kpi .v{font-size:26px;font-weight:650;letter-spacing:-.4px;margin-top:6px;font-variant-numeric:tabular-nums}
+.kpi .d{font-size:12px;color:var(--dim);margin-top:2px}
+.accent-1{color:var(--c1)}.accent-2{color:var(--c2)}.accent-3{color:var(--c3)}
+.accent-4{color:var(--c4)}.accent-5{color:var(--c5)}
+
+/* filters */
+.filters{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:0 0 14px}
+select{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:7px 10px;max-width:260px}
+.filters label{font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+
+/* tables */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--border);vertical-align:top}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);font-weight:600;
+   position:sticky;top:0;background:var(--surface)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+tbody tr:hover{background:var(--surface-2)}
+.scroll{max-height:360px;overflow:auto;margin:0 -4px;padding:0 4px}
+.trunc{max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* bars */
+.bars{display:flex;flex-direction:column;gap:9px}
+.bar-row{display:grid;grid-template-columns:1fr 84px;gap:10px;align-items:center}
+.bar-label{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{height:7px;background:var(--surface-2);border-radius:4px;overflow:hidden;margin-top:4px}
+.bar-fill{height:100%;border-radius:4px}
+.bar-val{text-align:right;font-variant-numeric:tabular-nums;font-size:12.5px;color:var(--muted)}
+.pct{color:var(--dim);font-size:11px}
+
+svg{display:block;width:100%;height:auto;overflow:visible}
+.axis{fill:var(--dim);font-size:10px}
+.gridline{stroke:var(--border)}
+.warnbox{border-left:3px solid var(--warn);background:var(--surface-2);padding:10px 12px;border-radius:0 8px 8px 0;font-size:13px;color:var(--muted)}
+.err{border-left-color:var(--neg);color:var(--neg)}
+.hide{display:none!important}
+@media (max-width:640px){
+  .wrap{padding:16px 16px 48px}
+  .kpi .v{font-size:22px}
+  .trunc{max-width:160px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div>
+    <h1>Azure Spend Dashboard</h1>
+    <p class="sub" id="sub">Enterprise Agreement usage detail &mdash; load an export to begin</p>
+  </div>
+  <div class="spacer"></div>
+  <button id="themeBtn" title="Toggle light / dark">&#9681; Theme</button>
+  <button id="resetBtn" class="hide">Load another file</button>
+</header>
+
+<section id="drop">
+  <h2>Drop your usage detail export here</h2>
+  <p>The file is read entirely inside this page &mdash; nothing is uploaded anywhere.
+     Expected: the Azure EA portal usage export, e.g.
+     <code>Detail_Enrollment_51378402_202608_en.csv</code></p>
+  <input type="file" id="file" accept=".csv,text/csv" style="display:none">
+  <button class="primary" id="pick">Choose CSV file</button>
+  <div class="hint">Also accepts Cost Management exports (<code>CostInBillingCurrency</code>) &mdash; columns are detected automatically.</div>
+  <div id="loadmsg" class="hint"></div>
+</section>
+
+<main id="dash" class="hide">
+  <div id="warnings"></div>
+
+  <div class="filters" id="filters">
+    <label>Subscription
+      <select id="fSub"><option value="">All subscriptions</option></select>
+    </label>
+    <label>Resource group
+      <select id="fRg"><option value="">All resource groups</option></select>
+    </label>
+    <label>Service
+      <select id="fSvc"><option value="">All services</option></select>
+    </label>
+    <div class="spacer"></div>
+    <button id="clearF">Clear filters</button>
+    <button id="csvBtn">Export summary CSV</button>
+  </div>
+
+  <div class="grid kpis" id="kpis"></div>
+
+  <div class="card" style="margin-bottom:14px">
+    <h3>Daily spend</h3>
+    <p class="note" id="dailyNote"></p>
+    <div id="dailyChart"></div>
+  </div>
+
+  <div class="grid cols2" style="margin-bottom:14px">
+    <div class="card">
+      <h3>Top services</h3>
+      <p class="note">By meter category / consumed service</p>
+      <div class="bars" id="svcBars"></div>
+    </div>
+    <div class="card">
+      <h3>Top resource groups</h3>
+      <p class="note">Where the money is actually landing</p>
+      <div class="bars" id="rgBars"></div>
+    </div>
+  </div>
+
+  <div class="grid cols2" style="margin-bottom:14px">
+    <div class="card">
+      <h3>Subscriptions</h3>
+      <p class="note">Full breakdown</p>
+      <div class="scroll"><table id="subTable"></table></div>
+    </div>
+    <div class="card">
+      <h3>Top resources</h3>
+      <p class="note">Individual resources by cost</p>
+      <div class="scroll"><table id="resTable"></table></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Meter detail</h3>
+    <p class="note">Every meter, largest first &mdash; the line items behind the totals above</p>
+    <div class="scroll"><table id="meterTable"></table></div>
+  </div>
+</main>
+
+</div>
+
+<script>
+'use strict';
+
+/* ---------------------------------------------------------------- theme */
+const themeBtn = document.getElementById('themeBtn');
+themeBtn.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme');
+  const dark = cur ? cur === 'dark'
+    : matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.setAttribute('data-theme', dark ? 'light' : 'dark');
+  if (state.rows) render();
+});
+
+/* ------------------------------------------------------------ csv parse */
+// Index scanner: handles quoted fields, embedded commas, CRLF and "" escapes.
+// Only slices the columns we actually need, which matters on 100MB+ exports.
+function scanCSV(text, wanted, onRow, onHeader) {
+  const n = text.length;
+  let i = 0, col = 0, out = null, headerDone = false, header = [];
+  let fieldStart = 0, quoted = false, hadQuote = false;
+
+  const field = (end) => {
+    let s = text.slice(fieldStart, end);
+    if (hadQuote) s = s.slice(1, -1).replace(/""/g, '"');
+    return s;
+  };
+
+  while (i <= n) {
+    const ch = i < n ? text[i] : '\n';
+    if (quoted) {
+      if (ch === '"') {
+        if (text[i + 1] === '"') { i += 2; continue; }
+        quoted = false;
+      }
+      i++;
+      continue;
+    }
+    if (ch === '"' && i === fieldStart) { quoted = true; hadQuote = true; i++; continue; }
+    if (ch === ',' || ch === '\n' || ch === '\r' || i === n) {
+      let end = i;
+      if (ch === '\r') end = i;
+      if (!headerDone) {
+        header.push(field(end));
+      } else if (out && wanted.has(col)) {
+        out[wanted.get(col)] = field(end);
+      }
+      col++;
+      const eol = (ch === '\n' || ch === '\r' || i === n);
+      if (ch === '\r' && text[i + 1] === '\n') i++;
+      i++;
+      fieldStart = i; hadQuote = false;
+      if (eol) {
+        if (!headerDone) {
+          headerDone = true;
+          onHeader(header);
+          out = {};
+        } else if (out) {
+          if (col > 1) onRow(out);
+          out = {};
+        }
+        col = 0;
+      }
+      continue;
+    }
+    i++;
+  }
+}
+
+/* -------------------------------------------------------- column mapping */
+const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, '');
+const ALIASES = {
+  date:     ['date','usagedate','usagedatetime','billingperioddate'],
+  cost:     ['extendedcost','costinbillingcurrency','pretaxcost','costusd','cost','paygcostinbillingcurrency'],
+  qty:      ['consumedquantity','quantity'],
+  uom:      ['unitofmeasure'],
+  svc:      ['metercategory','servicefamily','consumedservice','servicename'],
+  meter:    ['metername','metersubcategory'],
+  subcat:   ['metersubcategory'],
+  rg:       ['resourcegroup','resourcegroupname'],
+  sub:      ['subscriptionname','subscriptionguid','subscriptionid'],
+  res:      ['instanceid','resourceid','resourceuri','instancename'],
+  region:   ['resourcelocation','meterregion','location','resourcelocationnormalized'],
+  tags:     ['tags'],
+  cc:       ['costcenter'],
+  dept:     ['departmentname'],
+  currency: ['billingcurrency','currency','currencycode'],
+};
+
+function mapColumns(header) {
+  const normd = header.map(norm);
+  const wanted = new Map();       // csv column index -> role
+  const found = {};
+  for (const role of Object.keys(ALIASES)) {
+    for (const alias of ALIASES[role]) {
+      const idx = normd.indexOf(alias);
+      if (idx !== -1) { wanted.set(idx, role); found[role] = header[idx]; break; }
+    }
+  }
+  return { wanted, found };
+}
+
+/* ------------------------------------------------------------- numbers */
+function num(s) {
+  if (!s) return 0;
+  let t = s.trim();
+  if (!t) return 0;
+  let neg = false;
+  if (t[0] === '(' && t[t.length - 1] === ')') { neg = true; t = t.slice(1, -1); }
+  t = t.replace(/[^0-9.eE+-]/g, '');
+  const v = parseFloat(t);
+  if (!isFinite(v)) return 0;
+  return neg ? -v : v;
+}
+
+// EA exports are usually MM/DD/YYYY; Cost Management uses YYYY-MM-DD.
+function parseDate(s) {
+  if (!s) return null;
+  const t = s.trim();
+  let m = /^(\d{4})-(\d{2})-(\d{2})/.exec(t);
+  if (m) return { y: +m[1], mo: +m[2], d: +m[3] };
+  m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(t);
+  if (m) return { y: +m[3], mo: +m[1], d: +m[2] };
+  m = /^(\d{4})(\d{2})(\d{2})$/.exec(t);
+  if (m) return { y: +m[1], mo: +m[2], d: +m[3] };
+  const dt = new Date(t);
+  if (!isNaN(dt)) return { y: dt.getFullYear(), mo: dt.getMonth() + 1, d: dt.getDate() };
+  return null;
+}
+const key = (p) => p.y * 10000 + p.mo * 100 + p.d;
+
+/* --------------------------------------------------------------- state */
+const state = {
+  rows: null, names: null, dict: null, dayKeys: null,
+  currency: 'USD', file: '', total: 0, count: 0, badDates: 0, missingCols: [],
+  filters: { sub: '', rg: '', svc: '' },
+};
+
+function makeStore() {
+  const kinds = ['svc','rg','sub','res','meter','region','cc'];
+  const dict = {}, names = {};
+  kinds.forEach(k => { dict[k] = new Map(); names[k] = []; });
+  return {
+    dict, names,
+    rows: { day: [], cost: [], qty: [], svc: [], rg: [], sub: [], res: [], meter: [], region: [], cc: [] },
+    id(kind, v) {
+      const m = dict[kind];
+      let i = m.get(v);
+      if (i === undefined) { i = names[kind].length; m.set(v, i); names[kind].push(v); }
+      return i;
+    },
+  };
+}
+
+/* ------------------------------------------------------------- ingest */
+function ingest(text, fileName) {
+  const store = makeStore();
+  const R = store.rows;
+  let wanted = null, roles = null, found = null;
+  let total = 0, count = 0, badDates = 0, currency = '';
+  const dayIndex = new Map(); const dayKeys = [];
+
+  scanCSV(text, new Map(), () => {}, () => {}); // no-op guard for empty files
+
+  let headerSeen = false;
+  scanCSVWithHeaderSearch(text, (header) => {
+    const m = mapColumns(header);
+    wanted = m.wanted; found = m.found; headerSeen = true;
+    return wanted;
+  }, (row) => {
+    const p = parseDate(row.date);
+    if (!p) { badDates++; return; }
+    const k = key(p);
+    let di = dayIndex.get(k);
+    if (di === undefined) { di = dayKeys.length; dayIndex.set(k, di); dayKeys.push(k); }
+
+    const cost = num(row.cost);
+    total += cost; count++;
+    if (!currency && row.currency) currency = row.currency.trim();
+
+    let resName = row.res || '';
+    if (resName.indexOf('/') !== -1) resName = resName.slice(resName.lastIndexOf('/') + 1);
+
+    R.day.push(di);
+    R.cost.push(cost);
+    R.qty.push(num(row.qty));
+    R.svc.push(store.id('svc', (row.svc || 'Unclassified').trim() || 'Unclassified'));
+    R.rg.push(store.id('rg', (row.rg || '(no resource group)').trim() || '(no resource group)'));
+    R.sub.push(store.id('sub', (row.sub || '(no subscription)').trim() || '(no subscription)'));
+    R.res.push(store.id('res', resName || '(no resource)'));
+    R.meter.push(store.id('meter', (row.meter || 'Unnamed meter').trim() || 'Unnamed meter'));
+    R.region.push(store.id('region', (row.region || '(none)').trim() || '(none)'));
+    R.cc.push(store.id('cc', (row.cc || '').trim()));
+  });
+
+  if (!headerSeen) throw new Error('No header row found. Is this a CSV export?');
+  if (found.cost === undefined) throw new Error('No cost column found (looked for ExtendedCost / CostInBillingCurrency / PreTaxCost).');
+  if (found.date === undefined) throw new Error('No date column found (looked for Date / UsageDate).');
+
+  // Re-index days chronologically.
+  const order = dayKeys.map((k, i) => [k, i]).sort((a, b) => a[0] - b[0]);
+  const remap = new Array(dayKeys.length);
+  order.forEach(([, oldI], newI) => { remap[oldI] = newI; });
+  for (let i = 0; i < R.day.length; i++) R.day[i] = remap[R.day[i]];
+
+  state.rows = R; state.names = store.names; state.dict = store.dict;
+  state.dayKeys = order.map(([k]) => k);
+  state.currency = currency || 'USD';
+  state.file = fileName; state.total = total; state.count = count; state.badDates = badDates;
+  state.missingCols = ['rg','sub','res','region','cc','qty'].filter(r => found[r] === undefined);
+  state.foundCols = found;
+}
+
+// Some exports carry a preamble before the header; find the first line that
+// maps to at least a date and a cost column.
+function scanCSVWithHeaderSearch(text, onHeader, onRow) {
+  let offset = 0, tries = 0;
+  while (tries < 25) {
+    const nl = text.indexOf('\n', offset);
+    const line = text.slice(offset, nl === -1 ? text.length : nl);
+    const cells = line.split(',').map(s => s.replace(/^"|"$/g, ''));
+    const m = mapColumns(cells);
+    if (m.found.cost !== undefined && m.found.date !== undefined) {
+      const wanted = onHeader(cells);
+      scanBody(text, offset, wanted, onRow);
+      return;
+    }
+    if (nl === -1) break;
+    offset = nl + 1; tries++;
+  }
+  // fall back: treat first line as header anyway
+  const nl = text.indexOf('\n');
+  const cells = text.slice(0, nl === -1 ? text.length : nl).split(',');
+  const wanted = onHeader(cells);
+  scanBody(text, 0, wanted, onRow);
+}
+
+function scanBody(text, offset, wanted, onRow) {
+  let first = true;
+  scanCSV(text.slice(offset), wanted, onRow, () => {});
+  void first;
+}
+
+/* ------------------------------------------------------------ aggregate */
+function agg() {
+  const R = state.rows, N = R.cost.length, f = state.filters;
+  const fSub = f.sub === '' ? -1 : +f.sub;
+  const fRg  = f.rg  === '' ? -1 : +f.rg;
+  const fSvc = f.svc === '' ? -1 : +f.svc;
+
+  const byDay = new Float64Array(state.dayKeys.length);
+  const bySvc = new Float64Array(state.names.svc.length);
+  const byRg  = new Float64Array(state.names.rg.length);
+  const bySub = new Float64Array(state.names.sub.length);
+  const byRes = new Float64Array(state.names.res.length);
+  const byMeter = new Float64Array(state.names.meter.length);
+  const byRegion = new Float64Array(state.names.region.length);
+  const meterQty = new Float64Array(state.names.meter.length);
+  const resSvc = new Int32Array(state.names.res.length).fill(-1);
+  const resRg  = new Int32Array(state.names.res.length).fill(-1);
+  const meterSvc = new Int32Array(state.names.meter.length).fill(-1);
+
+  let total = 0, rows = 0, untagged = 0;
+  const ccEmpty = state.dict.cc.get('');
+
+  for (let i = 0; i < N; i++) {
+    if (fSub !== -1 && R.sub[i] !== fSub) continue;
+    if (fRg  !== -1 && R.rg[i]  !== fRg)  continue;
+    if (fSvc !== -1 && R.svc[i] !== fSvc) continue;
+    const c = R.cost[i];
+    total += c; rows++;
+    byDay[R.day[i]] += c;
+    bySvc[R.svc[i]] += c;
+    byRg[R.rg[i]] += c;
+    bySub[R.sub[i]] += c;
+    byRes[R.res[i]] += c;
+    byMeter[R.meter[i]] += c;
+    byRegion[R.region[i]] += c;
+    meterQty[R.meter[i]] += R.qty[i];
+    if (resSvc[R.res[i]] === -1) { resSvc[R.res[i]] = R.svc[i]; resRg[R.res[i]] = R.rg[i]; }
+    if (meterSvc[R.meter[i]] === -1) meterSvc[R.meter[i]] = R.svc[i];
+    if (ccEmpty !== undefined && R.cc[i] === ccEmpty) untagged += c;
+  }
+  return { byDay, bySvc, byRg, bySub, byRes, byMeter, byRegion, meterQty,
+           resSvc, resRg, meterSvc, total, rows, untagged };
+}
+
+function topN(arr, names, n) {
+  const out = [];
+  for (let i = 0; i < arr.length; i++) if (arr[i] !== 0) out.push({ i, name: names[i], v: arr[i] });
+  out.sort((a, b) => b.v - a.v);
+  return n ? out.slice(0, n) : out;
+}
+
+/* -------------------------------------------------------------- format */
+let fmtMoney, fmtMoney0;
+function setFormatters() {
+  const cur = state.currency;
+  const opts = { style: 'currency', currency: /^[A-Z]{3}$/.test(cur) ? cur : 'USD' };
+  try {
+    fmtMoney = new Intl.NumberFormat(undefined, { ...opts, maximumFractionDigits: 2 });
+    fmtMoney0 = new Intl.NumberFormat(undefined, { ...opts, maximumFractionDigits: 0 });
+  } catch (e) {
+    fmtMoney = fmtMoney0 = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
+  }
+}
+const money = (v) => fmtMoney.format(v);
+const money0 = (v) => (Math.abs(v) >= 1000 ? fmtMoney0 : fmtMoney).format(v);
+const fmtNum = (v) => new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(v);
+const pct = (v, t) => t ? (100 * v / t).toFixed(1) + '%' : '0%';
+const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+function dayLabel(k, short) {
+  const y = Math.floor(k / 10000), mo = Math.floor(k / 100) % 100, d = k % 100;
+  const dt = new Date(Date.UTC(y, mo - 1, d));
+  return dt.toLocaleDateString(undefined, short
+    ? { day: 'numeric', month: 'short', timeZone: 'UTC' }
+    : { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
+}
+function periodLabel() {
+  const ks = state.dayKeys;
+  if (!ks.length) return '';
+  const a = ks[0], b = ks[ks.length - 1];
+  const sameMonth = Math.floor(a / 100) === Math.floor(b / 100);
+  const y = Math.floor(a / 10000), mo = Math.floor(a / 100) % 100;
+  if (sameMonth) {
+    return new Date(Date.UTC(y, mo - 1, 1))
+      .toLocaleDateString(undefined, { month: 'long', year: 'numeric', timeZone: 'UTC' });
+  }
+  return dayLabel(a) + ' – ' + dayLabel(b);
+}
+
+/* -------------------------------------------------------------- charts */
+function areaChart(el, values, labels) {
+  const W = 1000, H = 260, pl = 62, pr = 16, pt = 14, pb = 34;
+  const iw = W - pl - pr, ih = H - pt - pb;
+  const n = values.length;
+  const max = Math.max(1, ...values);
+  const nice = niceMax(max);
+  const X = (i) => n === 1 ? pl + iw / 2 : pl + iw * i / (n - 1);
+  const Y = (v) => pt + ih - ih * v / nice;
+
+  let grid = '', ticks = 4;
+  for (let t = 0; t <= ticks; t++) {
+    const v = nice * t / ticks, y = Y(v);
+    grid += `<line class="gridline" x1="${pl}" y1="${y.toFixed(1)}" x2="${pl + iw}" y2="${y.toFixed(1)}"/>`;
+    grid += `<text class="axis" x="${pl - 8}" y="${(y + 3.5).toFixed(1)}" text-anchor="end">${esc(money0(v))}</text>`;
+  }
+  let line = '', area = `M ${X(0).toFixed(1)} ${Y(0).toFixed(1)} `;
+  values.forEach((v, i) => {
+    const cmd = i === 0 ? 'M' : 'L';
+    line += `${cmd} ${X(i).toFixed(1)} ${Y(v).toFixed(1)} `;
+    area += `L ${X(i).toFixed(1)} ${Y(v).toFixed(1)} `;
+  });
+  area += `L ${X(n - 1).toFixed(1)} ${Y(0).toFixed(1)} Z`;
+
+  let xlab = '';
+  const step = Math.max(1, Math.ceil(n / 12));
+  for (let i = 0; i < n; i += step) {
+    xlab += `<text class="axis" x="${X(i).toFixed(1)}" y="${H - 12}" text-anchor="middle">${esc(labels[i])}</text>`;
+  }
+  let dots = '';
+  values.forEach((v, i) => {
+    dots += `<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="${n > 40 ? 2 : 3}" fill="var(--c1)">`
+         +  `<title>${esc(labels[i])}: ${esc(money(v))}</title></circle>`;
+  });
+
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Daily spend">
+    ${grid}
+    <path d="${area}" fill="var(--c1)" opacity=".12"/>
+    <path d="${line}" fill="none" stroke="var(--c1)" stroke-width="2"/>
+    ${dots}${xlab}
+  </svg>`;
+}
+function niceMax(v) {
+  const p = Math.pow(10, Math.floor(Math.log10(v)));
+  const r = v / p;
+  const s = r <= 1 ? 1 : r <= 2 ? 2 : r <= 2.5 ? 2.5 : r <= 5 ? 5 : 10;
+  return s * p;
+}
+
+function bars(el, items, total, startColor) {
+  const max = Math.max(...items.map(i => i.v), 1);
+  el.innerHTML = items.map((it, k) => {
+    const col = `var(--c${((startColor + k - 1) % 10) + 1})`;
+    return `<div class="bar-row">
+      <div>
+        <div class="bar-label" title="${esc(it.name)}">${esc(it.name)}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(100 * it.v / max).toFixed(1)}%;background:${col}"></div></div>
+      </div>
+      <div class="bar-val">${esc(money0(it.v))}<div class="pct">${pct(it.v, total)}</div></div>
+    </div>`;
+  }).join('') || '<p class="note">No spend in the current selection.</p>';
+}
+
+/* -------------------------------------------------------------- render */
+function render() {
+  const a = agg();
+  const N = state.names;
+
+  // KPIs
+  const days = state.dayKeys.length;
+  const daily = Array.from(a.byDay);
+  const peakI = daily.indexOf(Math.max(...daily));
+  const activeDays = daily.filter(v => v !== 0).length || 1;
+  const topSvc = topN(a.bySvc, N.svc, 1)[0];
+  const resCount = Array.from(a.byRes).filter(v => v !== 0).length;
+
+  const kpis = [
+    { l: 'Total spend', v: money(a.total), d: periodLabel(), c: 'accent-1' },
+    { l: 'Daily average', v: money(a.total / activeDays), d: `${activeDays} day${activeDays === 1 ? '' : 's'} with usage`, c: 'accent-2' },
+    { l: 'Peak day', v: money(daily[peakI] || 0), d: peakI >= 0 && days ? dayLabel(state.dayKeys[peakI]) : '—', c: 'accent-3' },
+    { l: 'Largest service', v: topSvc ? pct(topSvc.v, a.total) : '—', d: topSvc ? topSvc.name : '—', c: 'accent-4' },
+    { l: 'Billed resources', v: new Intl.NumberFormat().format(resCount), d: `${new Intl.NumberFormat().format(a.rows)} line items`, c: 'accent-5' },
+  ];
+  document.getElementById('kpis').innerHTML = kpis.map(k =>
+    `<div class="card kpi"><h3>${esc(k.l)}</h3><div class="v ${k.c}">${esc(k.v)}</div><div class="d">${esc(k.d)}</div></div>`
+  ).join('');
+
+  // Daily chart
+  areaChart(document.getElementById('dailyChart'), daily,
+            state.dayKeys.map(k => dayLabel(k, true)));
+  const trend = daily.length > 6
+    ? (() => {
+        const h = daily.slice(0, Math.floor(daily.length / 2)).reduce((s, v) => s + v, 0);
+        const t = daily.slice(Math.floor(daily.length / 2)).reduce((s, v) => s + v, 0);
+        if (!h) return '';
+        const ch = 100 * (t - h) / h;
+        return ` · second half of the period ran ${Math.abs(ch).toFixed(0)}% ${ch >= 0 ? 'higher' : 'lower'} than the first`;
+      })()
+    : '';
+  document.getElementById('dailyNote').textContent =
+    `${periodLabel()} · ${money(a.total)} across ${days} day${days === 1 ? '' : 's'}${trend}`;
+
+  bars(document.getElementById('svcBars'), topN(a.bySvc, N.svc, 10), a.total, 1);
+  bars(document.getElementById('rgBars'), topN(a.byRg, N.rg, 10), a.total, 2);
+
+  // Subscriptions
+  const subs = topN(a.bySub, N.sub, 0);
+  document.getElementById('subTable').innerHTML =
+    `<thead><tr><th>Subscription</th><th class="num">Cost</th><th class="num">Share</th></tr></thead><tbody>` +
+    (subs.map(s => `<tr><td class="trunc" title="${esc(s.name)}">${esc(s.name)}</td>
+      <td class="num">${esc(money(s.v))}</td><td class="num">${pct(s.v, a.total)}</td></tr>`).join('')
+     || '<tr><td colspan="3">No data</td></tr>') + '</tbody>';
+
+  // Top resources
+  const res = topN(a.byRes, N.res, 20);
+  document.getElementById('resTable').innerHTML =
+    `<thead><tr><th>Resource</th><th>Service</th><th class="num">Cost</th></tr></thead><tbody>` +
+    (res.map(r => `<tr>
+        <td class="trunc" title="${esc(r.name)}">${esc(r.name)}</td>
+        <td class="trunc">${esc(a.resSvc[r.i] >= 0 ? N.svc[a.resSvc[r.i]] : '—')}</td>
+        <td class="num">${esc(money(r.v))}</td></tr>`).join('')
+     || '<tr><td colspan="3">No data</td></tr>') + '</tbody>';
+
+  // Meters
+  const meters = topN(a.byMeter, N.meter, 60);
+  document.getElementById('meterTable').innerHTML =
+    `<thead><tr><th>Meter</th><th>Service</th><th class="num">Quantity</th><th class="num">Cost</th><th class="num">Share</th></tr></thead><tbody>` +
+    (meters.map(m => `<tr>
+        <td class="trunc" title="${esc(m.name)}">${esc(m.name)}</td>
+        <td class="trunc">${esc(a.meterSvc[m.i] >= 0 ? N.svc[a.meterSvc[m.i]] : '—')}</td>
+        <td class="num">${esc(fmtNum(a.meterQty[m.i]))}</td>
+        <td class="num">${esc(money(m.v))}</td>
+        <td class="num">${pct(m.v, a.total)}</td></tr>`).join('')
+     || '<tr><td colspan="5">No data</td></tr>') + '</tbody>';
+
+  // Warnings
+  const w = [];
+  if (a.untagged > 0 && state.foundCols.cc !== undefined) {
+    w.push(`<div class="warnbox">${esc(money(a.untagged))} (${pct(a.untagged, a.total)}) carries no cost centre — that spend cannot be charged back to an owner.</div>`);
+  }
+  if (state.badDates) {
+    w.push(`<div class="warnbox">${new Intl.NumberFormat().format(state.badDates)} row(s) had an unreadable date and were skipped.</div>`);
+  }
+  if (state.missingCols.length) {
+    w.push(`<div class="warnbox">Columns not present in this export: ${esc(state.missingCols.join(', '))}. Panels that depend on them show a placeholder.</div>`);
+  }
+  document.getElementById('warnings').innerHTML = w.join('');
+  window.__agg = a;
+}
+
+/* -------------------------------------------------------------- filters */
+function fillFilters() {
+  const N = state.names;
+  const fill = (el, names, keep) => {
+    const opts = names.map((n, i) => ({ n, i }))
+      .sort((x, y) => x.n.localeCompare(y.n));
+    el.innerHTML = `<option value="">${keep}</option>` +
+      opts.map(o => `<option value="${o.i}">${esc(o.n)}</option>`).join('');
+  };
+  fill(document.getElementById('fSub'), N.sub, 'All subscriptions');
+  fill(document.getElementById('fRg'), N.rg, 'All resource groups');
+  fill(document.getElementById('fSvc'), N.svc, 'All services');
+}
+['fSub','fRg','fSvc'].forEach((id, k) => {
+  document.getElementById(id).addEventListener('change', (e) => {
+    state.filters[['sub','rg','svc'][k]] = e.target.value;
+    render();
+  });
+});
+document.getElementById('clearF').addEventListener('click', () => {
+  state.filters = { sub: '', rg: '', svc: '' };
+  ['fSub','fRg','fSvc'].forEach(id => { document.getElementById(id).value = ''; });
+  render();
+});
+
+/* ------------------------------------------------------------- csv out */
+document.getElementById('csvBtn').addEventListener('click', () => {
+  const a = window.__agg, N = state.names;
+  const q = (s) => `"${String(s).replace(/"/g, '""')}"`;
+  const lines = ['section,name,cost,share'];
+  const push = (sec, arr, names) => topN(arr, names, 0).forEach(r =>
+    lines.push([q(sec), q(r.name), r.v.toFixed(4), (100 * r.v / a.total).toFixed(2)].join(',')));
+  lines.push([q('total'), q(periodLabel()), a.total.toFixed(4), '100.00'].join(','));
+  state.dayKeys.forEach((k, i) =>
+    lines.push([q('day'), q(dayLabel(k)), a.byDay[i].toFixed(4), (100 * a.byDay[i] / a.total).toFixed(2)].join(',')));
+  push('service', a.bySvc, N.svc);
+  push('resource_group', a.byRg, N.rg);
+  push('subscription', a.bySub, N.sub);
+  push('meter', a.byMeter, N.meter);
+  const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a2 = document.createElement('a');
+  a2.href = url; a2.download = 'azure-spend-summary.csv'; a2.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
+
+/* --------------------------------------------------------------- load */
+const drop = document.getElementById('drop');
+const fileInput = document.getElementById('file');
+const loadmsg = document.getElementById('loadmsg');
+document.getElementById('pick').addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', (e) => { if (e.target.files[0]) load(e.target.files[0]); });
+['dragenter','dragover'].forEach(ev => document.addEventListener(ev, (e) => {
+  e.preventDefault(); drop.classList.add('hot');
+}));
+['dragleave','drop'].forEach(ev => document.addEventListener(ev, (e) => {
+  e.preventDefault();
+  if (ev === 'dragleave' && e.relatedTarget) return;
+  drop.classList.remove('hot');
+}));
+document.addEventListener('drop', (e) => {
+  const f = e.dataTransfer && e.dataTransfer.files[0];
+  if (f) load(f);
+});
+document.getElementById('resetBtn').addEventListener('click', () => {
+  document.getElementById('dash').classList.add('hide');
+  drop.classList.remove('hide');
+  document.getElementById('resetBtn').classList.add('hide');
+  loadmsg.textContent = '';
+  fileInput.value = '';
+});
+
+function load(file) {
+  loadmsg.textContent = `Reading ${file.name} (${(file.size / 1048576).toFixed(1)} MB)…`;
+  const reader = new FileReader();
+  reader.onerror = () => { loadmsg.innerHTML = '<span style="color:var(--neg)">Could not read that file.</span>'; };
+  reader.onload = () => {
+    setTimeout(() => {
+      try {
+        const t0 = performance.now();
+        ingest(reader.result, file.name);
+        setFormatters();
+        fillFilters();
+        state.filters = { sub: '', rg: '', svc: '' };
+        render();
+        drop.classList.add('hide');
+        document.getElementById('dash').classList.remove('hide');
+        document.getElementById('resetBtn').classList.remove('hide');
+        document.getElementById('sub').textContent =
+          `${file.name} · ${periodLabel()} · ${new Intl.NumberFormat().format(state.count)} line items · parsed in ${((performance.now() - t0) / 1000).toFixed(1)}s`;
+      } catch (err) {
+        loadmsg.innerHTML = `<span style="color:var(--neg)">${esc(err.message)}</span>`;
+      }
+    }, 20);
+  };
+  reader.readAsText(file);
+}
+</script>
+</body>
+</html>
