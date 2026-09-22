@@ -5,7 +5,7 @@ Eight decks and two drop-in slide sets, from one design system and one set of so
 | Deck | Build | Slides | For |
 |---|---|---|---|
 | **Operational review** | `npm run build` → `Cloud_FinOps_Harel_2026.pptx` | 40 | The monthly FinOps walkthrough, Jan–Jul 2026 |
-| **CIO briefing (v34)** | `npm run build:cio` → `Harel_Cloud_Cost_CIO_v34.pptx` | 40 | The combined executive deck: v33's narrative plus the operational findings |
+| **CIO briefing (v34)** | `npm run build:cio` → `Harel_Cloud_Cost_CIO_v34.pptx` | 42 | The combined executive deck: v33's narrative plus the operational findings |
 | **FinOps for AI** | `npm run build:ai` → `FinOps_for_AI_CIO.pptx` | 11 | Executive cut of the five AI cost levers and the one-page usage policy |
 | **Consumption by vendor** | `npm run build:vendor` → `Cloud_Consumption_by_Vendor.pptx` | 8 | One question: what does each cloud cost per month, and how much of it is AI |
 | **AI cost by application** | `npm run build:aicost` → `AI_Cost_by_Application.pptx` | 8 | Which application spent the AI budget, and how much of the figure can be proved |
@@ -410,6 +410,35 @@ was given:
   crossed the card border; its type now steps down to the 12pt floor instead
 - `statTile` labels wider than the rail still wrap, so the labels here are kept
   short deliberately
+
+## The two AI mosaics inside the CIO briefing
+
+`content-cio.js` pulls both mosaic slides straight out of their own content
+files rather than rebuilding them, so the slide in the deck and the standalone
+file someone may already be holding are the same slide and cannot drift apart:
+
+```js
+const MOSAIC_WINDOW = require("./content-aimosaic")[0];
+const MOSAIC_AUGUST = { ...require("./content-augmosaic")[0], title: "…" };
+```
+
+They sit at **slides 9 and 10**, immediately after "Most of the AI bill is not
+models" and before the $16,100 credit reconciliation. That position is the
+argument: the deck has just said how big the AI bill is and what it is made of,
+and these two say whose it is and that nearly half of it is nobody's. Putting
+them after the $16,100 slide would have made a single reversed charge read as
+the larger finding.
+
+Two things the placement has to handle honestly:
+
+- **Their window is later than the deck around them.** The surrounding slides
+  are January to July 2026; these are July to August. Each states its own
+  period in its eyebrow, so the two are never read as the same months.
+- **The August slide is retitled in this deck only.** On its own it is "the
+  whole AI bill", which is correct; directly under the July-to-August one it
+  would be the second slide in a row with the same headline, so here it reads
+  "August on its own, at the same scale". The override lives in `content-cio.js`
+  and the standalone file is untouched.
 
 ## The AI consumption mosaic
 

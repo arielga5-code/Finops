@@ -21,6 +21,21 @@ const { COLORS } = require("./lib/theme");
 const operational = require("./content");
 const AI_PLATFORMS = require("./data/ai-platforms");
 
+/**
+ * The two AI consumption mosaics, taken from their own content files rather
+ * than rebuilt here, so the slide in this deck and the standalone one someone
+ * may already be holding are the same slide and cannot drift apart.
+ */
+const MOSAIC_WINDOW = require("./content-aimosaic")[0];
+// Retitled for this deck only. On its own the August slide is "the whole AI
+// bill" and that is the right title; sitting directly under the July-to-August
+// one it would be the second slide in a row with the same headline, and the
+// pair has to say how they relate.
+const MOSAIC_AUGUST = {
+  ...require("./content-augmosaic")[0],
+  title: "August on its own, at the same scale",
+};
+
 const AWS = COLORS.aws;
 const AZURE = COLORS.azure;
 const GCP = COLORS.gcp;
@@ -329,6 +344,18 @@ const core = [
     ],
     foot: "Not automatically wrong, inference needs somewhere to run, but it is the part of the AI bill that right-sizing can actually move, and it is the part nobody is looking at.",
   },
+
+  /* The deck has just said how big the AI bill is and what it is made of. These
+     two say whose it is, and that nearly half of it is nobody's. They sit here
+     rather than in the appendix because the ownership gap is the finding, not
+     the detail, and because the slide that follows is about a single $16,100
+     charge, which reads as small change directly after $30,125 with no owner.
+
+     Their window is July to August, later than the January-to-July data around
+     them. Each states its own period in its eyebrow, so the two never get read
+     as the same months. */
+  MOSAIC_WINDOW,
+  MOSAIC_AUGUST,
 
   {
     kind: "reconcile",
