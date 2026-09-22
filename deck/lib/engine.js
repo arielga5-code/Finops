@@ -1503,15 +1503,23 @@ const RENDER = {
             color: inkVal, margin: 0, valign: "middle",
           });
         } else if (rh >= 0.28 && cw >= 1.0) {
-          const valW = cw > 1.5 ? 1.0 : 0;
-          s.addText(trim(row.name, cw - 0.2 - valW), {
-            x: x + 0.1, y, w: cw - 0.2 - valW, h: Math.min(rh, 0.26),
+          // One line for both. Where the name will not fit beside the figure
+          // but would fit without it, the figure goes: a band's value can be
+          // read off the column and the axis, and a name cut to
+          // "ai-factory-id..." cannot be read off anything.
+          const full = cw - 0.2;
+          const withVal = cw > 1.5 ? full - 1.0 : full;
+          const showVal = withVal !== full &&
+            (row.name.length <= fits(withVal) || row.name.length > fits(full));
+          const nameW = showVal ? withVal : full;
+          s.addText(trim(row.name, nameW), {
+            x: x + 0.1, y, w: nameW, h: Math.min(rh, 0.26),
             fontFace: FONTS.body, fontSize: SIZE.caption, bold: true,
             color: ink, margin: 0, valign: "middle",
           });
-          if (valW) {
+          if (showVal) {
             s.addText(C.usd(row.value), {
-              x: x + cw - 0.1 - valW, y, w: valW, h: Math.min(rh, 0.26),
+              x: x + cw - 1.1, y, w: 1.0, h: Math.min(rh, 0.26),
               fontFace: FONTS.head, fontSize: SIZE.caption, bold: true,
               color: inkVal, margin: 0, align: "right", valign: "middle",
             });

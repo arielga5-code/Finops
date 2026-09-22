@@ -14,6 +14,7 @@ Eight decks and two drop-in slide sets, from one design system and one set of so
 | **AI cost window, for the CIO deck** | `npm run build:aiwindow` → `AI_Cost_Window_Slides.pptx` | 2 | Two slides to paste into the CIO presentation: what the whole window cost, and what drives it |
 | **AI cost by team and application** | `npm run build:aiapps` → `AI_Cost_by_Team_and_Application.pptx` | 8 | The named detail: every application, its team, and how its money splits across the three providers |
 | **AI consumption, drawn to scale** | `npm run build:aimosaic` → `AI_Consumption_Mosaic.pptx` | 1 | The strongest version: a mosaic where every block's area is a dollar figure |
+| **AI consumption, August only** | `npm run build:augmosaic` → `AI_Consumption_Mosaic_August.pptx` | 1 | The same mosaic for 1 to 19 August on its own |
 | **AI consumption, the card slide** | `npm run build:aiboard` → `AI_Consumption_CIO_Slide.pptx` | 1 | A share strip, a card per team, and a band for the money with no owner |
 | **AI consumption, the table** | `npm run build:aitable` → `AI_Consumption_Slide.pptx` | 1 | The same numbers as a table, for anyone who wants to audit a line |
 
@@ -30,6 +31,7 @@ npm run build:aiaug        # AI cost, August month to date
 npm run build:aiwindow     # the two window slides for the CIO deck
 npm run build:aiapps       # AI cost by team and application
 npm run build:aimosaic     # the AI consumption mosaic, drawn to scale
+npm run build:augmosaic    # the same mosaic, August only
 npm run build:aiboard      # the AI consumption card slide
 npm run build:aitable      # the same numbers as a table
 npm run build:patch        # the replacement slides on their own
@@ -451,6 +453,31 @@ Seven percent of a column is where a band stops being tall enough to hold its
 own label. A named application drawn as an unlabelled stripe is worse than one
 folded into a line that says how many were folded, so the floor is set where
 the type gives out rather than at a round number.
+
+### August on its own
+
+`npm run build:augmosaic`. The same slide for **1 to 19 August 2026** alone,
+from `data/ai-cost-august.js`, which reshapes the August period already in
+`data/ai-cost-periods.json` to the interface the window module exposes.
+
+The slide itself is not written twice. `lib/mosaic-slide.js` builds it from
+whichever data module it is handed, and everything period-specific is derived:
+which teams get columns, how many are left out, and whether there is an
+inter-sheet difference to disclose. The July-to-August slide is byte-identical
+before and after that refactor.
+
+Three things about the August period, all stated on the slide or in its notes:
+
+- **It is nineteen days, not a month.** The export stops on the 19th. Nothing
+  is scaled to a month except the run rate, which is labelled as one.
+- **It has one table, not two,** so there is no inter-sheet difference and the
+  footnote has nothing to disclose about one. `sheetGap` is zero.
+- **Nearly half of insait has no application name.** `unknown` at $2,849 and
+  `(unlabeled)` at $2,251 are the second and third bands in its column, against
+  `agent` at $4,012.
+
+Headline: **$34,370** over nineteen days, of which **$9,850 has no owner** and
+**$14,950, 43.5%, carries no application name.**
 
 ## The AI consumption CIO slide
 
