@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EA Export Aggregator</title>
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#fff; --surface-2:#f0f2f5; --border:#dfe3e8;
+  --text:#11161d; --muted:#5b6673; --dim:#8b96a3;
+  --accent:#0b6bcb; --pos:#1a7f5a; --warn:#b26a00; --neg:#c0392b;
+  --shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08); --radius:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0e1116; --surface:#161b22; --surface-2:#1c222b; --border:#2a313c;
+  --text:#e8edf3; --muted:#9aa7b5; --dim:#6d7986;
+  --accent:#5aa9ff; --pos:#43c08b; --warn:#e0a13a; --neg:#ff7b72;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 1px 3px rgba(0,0,0,.3);}}
+:root[data-theme="dark"]{
+  --bg:#0e1116; --surface:#161b22; --surface-2:#1c222b; --border:#2a313c;
+  --text:#e8edf3; --muted:#9aa7b5; --dim:#6d7986;
+  --accent:#5aa9ff; --pos:#43c08b; --warn:#e0a13a; --neg:#ff7b72;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:14px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:24px 16px 64px}
+h1{font-size:22px;margin:0 0 4px;letter-spacing:-.2px}
+.sub{color:var(--muted);font-size:13px;margin:0 0 20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:18px;margin-bottom:14px}
+h2{font-size:13px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted)}
+button{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;padding:8px 14px;cursor:pointer;box-shadow:var(--shadow)}
+button:hover{background:var(--surface-2)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.primary:hover{filter:brightness(1.08)}
+button:disabled{opacity:.5;cursor:default}
+code{background:var(--surface-2);border:1px solid var(--border);border-radius:4px;padding:1px 5px;font-size:12px}
+#drop{border:1.5px dashed var(--border);border-radius:var(--radius);background:var(--surface);
+  padding:36px 20px;text-align:center}
+#drop.hot{border-color:var(--accent);background:var(--surface-2)}
+.bar{height:8px;background:var(--surface-2);border-radius:5px;overflow:hidden;margin:14px 0 6px}
+.bar>div{height:100%;background:var(--accent);width:0;transition:width .2s}
+.mono{font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:6px 8px;border-bottom:1px solid var(--border)}
+th{font-size:11px;text-transform:uppercase;color:var(--muted);letter-spacing:.03em}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.scroll{max-height:300px;overflow:auto}
+.note{color:var(--dim);font-size:12px;margin:8px 0 0}
+.warnbox{border-left:3px solid var(--warn);background:var(--surface-2);padding:10px 12px;
+  border-radius:0 8px 8px 0;font-size:13px;color:var(--muted);margin-top:10px}
+.err{border-left-color:var(--neg);color:var(--neg)}
+.hide{display:none!important}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:5px 0;border-bottom:1px solid var(--border)}
+.kv:last-child{border-bottom:0}
+.kv b{font-weight:600;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>EA Export Aggregator</h1>
+  <p class="sub">Reduces a multi-gigabyte Azure enrollment export to the few kilobytes of aggregates a monthly deck needs. Streams the file in chunks, so size is not a limit and nothing is uploaded.</p>
+
+  <div class="card" id="drop">
+    <p style="margin:0 0 14px">Drop <code>Detail_Enrollment_&lt;id&gt;_&lt;YYYYMM&gt;_en.csv</code> here</p>
+    <input type="file" id="file" accept=".csv,text/csv" style="display:none">
+    <button class="primary" id="pick">Choose CSV file</button>
+    <div class="bar hide" id="barWrap"><div id="bar"></div></div>
+    <p class="note mono" id="prog"></p>
+    <div id="msg"></div>
+  </div>
+
+  <div id="out" class="hide">
+    <div class="card">
+      <h2>Summary</h2>
+      <div class="grid">
+        <div id="kpi"></div>
+        <div id="cols"></div>
+      </div>
+      <div id="warn"></div>
+      <p style="margin:16px 0 0">
+        <button class="primary" id="dl">Download aggregates (CSV)</button>
+        <button id="dlj">Download aggregates (JSON)</button>
+      </p>
+      <p class="note">This is the file to send on. It contains totals only &mdash; no resource names, no line items.</p>
+    </div>
+    <div class="grid">
+      <div class="card"><h2>By subscription</h2><div class="scroll"><table id="tSub"></table></div></div>
+      <div class="card"><h2>By service (meter category)</h2><div class="scroll"><table id="tSvc"></table></div></div>
+      <div class="card"><h2>By Project tag</h2><div class="scroll"><table id="tPrj"></table></div></div>
+      <div class="card"><h2>By CostCenter tag</h2><div class="scroll"><table id="tCC"></table></div></div>
+      <div class="card"><h2>By resource group</h2><div class="scroll"><table id="tRg"></table></div></div>
+      <div class="card"><h2>Top meters</h2><div class="scroll"><table id="tMet"></table></div></div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g,'');
+const ALIASES = {
+  date:['date','usagedate','usagedatetime'],
+  cost:['extendedcost','costinbillingcurrency','pretaxcost','cost'],
+  qty:['consumedquantity','quantity'],
+  svc:['metercategory','servicefamily','consumedservice'],
+  meter:['metername'],
+  subcat:['metersubcategory'],
+  rg:['resourcegroup','resourcegroupname'],
+  sub:['subscriptionname','subscriptionguid'],
+  region:['resourcelocation','meterregion'],
+  tags:['tags'],
+  cc:['costcenter'],
+  currency:['billingcurrency','currency','currencycode'],
+};
+
+// Splits one CSV line, honouring quotes and "" escapes.
+function splitLine(line){
+  const out=[]; let i=0,start=0,q=false;
+  for(;i<line.length;i++){
+    const c=line[i];
+    if(q){ if(c==='"'){ if(line[i+1]==='"'){i++;continue;} q=false; } continue; }
+    if(c==='"'&&i===start){ q=true; continue; }
+    if(c===','){ out.push(line.slice(start,i)); start=i+1; }
+  }
+  out.push(line.slice(start));
+  return out.map(s=>{
+    s=s.trim();
+    if(s.length>1&&s[0]==='"'&&s[s.length-1]==='"') s=s.slice(1,-1).replace(/""/g,'"');
+    return s;
+  });
+}
+function num(s){
+  if(!s) return 0;
+  let t=s.trim(); if(!t) return 0;
+  let neg=false;
+  if(t[0]==='('&&t[t.length-1]===')'){neg=true;t=t.slice(1,-1);}
+  t=t.replace(/[^0-9.eE+-]/g,'');
+  const v=parseFloat(t);
+  return isFinite(v)?(neg?-v:v):0;
+}
+function parseDate(s){
+  if(!s) return null;
+  const t=s.trim();
+  let m=/^(\d{4})-(\d{2})-(\d{2})/.exec(t); if(m) return m[1]+'-'+m[2]+'-'+m[3];
+  m=/^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(t);
+  if(m) return m[3]+'-'+String(m[1]).padStart(2,'0')+'-'+String(m[2]).padStart(2,'0');
+  const d=new Date(t);
+  if(!isNaN(d)) return d.toISOString().slice(0,10);
+  return null;
+}
+// Tags ship either as JSON ({"Project":"BI"}) or as k=v;k=v. The enrollment's own
+// CostCenter column is empty on every line, so the tag is the only source.
+function tagValue(raw, want){
+  if(!raw) return '';
+  const w=want.toLowerCase();
+  const t=raw.trim();
+  if(t.startsWith('{')){
+    try{
+      const o=JSON.parse(t);
+      for(const k in o) if(k.toLowerCase()===w) return String(o[k]).trim();
+    }catch(e){
+      const m=new RegExp('"'+want+'"\\s*:\\s*"([^"]*)"','i').exec(t);
+      if(m) return m[1].trim();
+    }
+    return '';
+  }
+  for(const part of t.split(/[;,]/)){
+    const eq=part.indexOf('=');
+    if(eq>0 && part.slice(0,eq).trim().toLowerCase().replace(/^"|"$/g,'')===w)
+      return part.slice(eq+1).trim().replace(/^"|"$/g,'');
+  }
+  return '';
+}
+
+const add=(m,k,v)=>m.set(k,(m.get(k)||0)+v);
+const state={};
+
+async function run(file){
+  const msg=document.getElementById('msg'); msg.innerHTML='';
+  document.getElementById('barWrap').classList.remove('hide');
+  const bar=document.getElementById('bar'), prog=document.getElementById('prog');
+
+  const A={ sub:new Map(), svc:new Map(), meter:new Map(), rg:new Map(),
+            prj:new Map(), cc:new Map(), day:new Map(), qty:new Map() };
+  let total=0, rows=0, badDate=0, idx=null, currency='', header=null;
+  let read=0, t0=performance.now();
+
+  const stream=file.stream().pipeThrough(new TextDecodeStreamSafe());
+  const reader=stream.getReader();
+  let buf='';
+  for(;;){
+    const {done,value}=await reader.read();
+    if(done) break;
+    read+=value.length;
+    buf+=value;
+    let nl, from=0;
+    // Process complete lines only; a quoted newline would be rare in EA exports,
+    // and an unterminated quote is carried into the next chunk by the buffer.
+    while((nl=buf.indexOf('\n',from))!==-1){
+      let line=buf.slice(from,nl);
+      from=nl+1;
+      if(line.endsWith('\r')) line=line.slice(0,-1);
+      if(!line) continue;
+      if(!header){
+        const cells=splitLine(line);
+        const map={}; const nd=cells.map(norm);
+        for(const role in ALIASES)
+          for(const al of ALIASES[role]){
+            const i=nd.indexOf(al);
+            if(i!==-1){ map[role]=i; break; }
+          }
+        if(map.cost===undefined||map.date===undefined) continue; // skip preamble
+        header=cells; idx=map;
+        continue;
+      }
+      const f=splitLine(line);
+      const d=parseDate(f[idx.date]);
+      if(!d){ badDate++; continue; }
+      const c=num(f[idx.cost]);
+      total+=c; rows++;
+      if(!currency&&idx.currency!==undefined&&f[idx.currency]) currency=f[idx.currency].trim();
+      add(A.day,d,c);
+      add(A.sub, (idx.sub!==undefined&&f[idx.sub]||'(none)').trim()||'(none)', c);
+      const svc=(idx.svc!==undefined&&f[idx.svc]||'(none)').trim()||'(none)';
+      add(A.svc, svc, c);
+      const mn=(idx.meter!==undefined&&f[idx.meter]||'(none)').trim()||'(none)';
+      add(A.meter, svc+' │ '+mn, c);
+      if(idx.qty!==undefined) add(A.qty, svc+' │ '+mn, num(f[idx.qty]));
+      add(A.rg, (idx.rg!==undefined&&f[idx.rg]||'(none)').trim()||'(none)', c);
+      const tags=idx.tags!==undefined?f[idx.tags]:'';
+      add(A.prj, tagValue(tags,'Project')||'(untagged)', c);
+      let cc=tagValue(tags,'CostCenter');
+      if(!cc&&idx.cc!==undefined) cc=(f[idx.cc]||'').trim();
+      add(A.cc, cc||'(untagged)', c);
+    }
+    buf=buf.slice(from);
+    const p=Math.min(100, 100*read/Math.max(file.size,1));
+    bar.style.width=p.toFixed(1)+'%';
+    prog.textContent=`${(read/1048576).toFixed(0)} MB · ${rows.toLocaleString()} rows · ${((performance.now()-t0)/1000).toFixed(0)}s`;
+    await new Promise(r=>setTimeout(r,0));
+  }
+  if(!header){ msg.innerHTML='<div class="warnbox err">No header row with a date and a cost column was found.</div>'; return; }
+
+  state.A=A; state.total=total; state.rows=rows; state.currency=currency||'USD';
+  state.file=file.name; state.badDate=badDate;
+  state.months=[...new Set([...A.day.keys()].map(d=>d.slice(0,7)))].sort();
+  bar.style.width='100%';
+  prog.textContent=`done · ${rows.toLocaleString()} rows · ${((performance.now()-t0)/1000).toFixed(0)}s`;
+  show();
+}
+
+// TextDecoderStream is not in every browser build; fall back to a manual decoder.
+function TextDecodeStreamSafe(){
+  if(typeof TextDecoderStream!=='undefined') return new TextDecoderStream();
+  const dec=new TextDecoder();
+  return new TransformStream({
+    transform(chunk,ctrl){ ctrl.enqueue(dec.decode(chunk,{stream:true})); },
+    flush(ctrl){ ctrl.enqueue(dec.decode()); }
+  });
+}
+
+const fmt=v=>new Intl.NumberFormat(undefined,{style:'currency',
+  currency:/^[A-Z]{3}$/.test(state.currency)?state.currency:'USD',maximumFractionDigits:0}).format(v);
+const fmt2=v=>new Intl.NumberFormat(undefined,{maximumFractionDigits:2}).format(v);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const sorted=m=>[...m.entries()].sort((a,b)=>b[1]-a[1]);
+
+function table(el,rows,total,limit){
+  const list=sorted(rows).slice(0,limit||9999);
+  document.getElementById(el).innerHTML=
+    '<thead><tr><th>Name</th><th class="num">Cost</th><th class="num">Share</th></tr></thead><tbody>'+
+    list.map(([k,v])=>`<tr><td>${esc(k)}</td><td class="num">${esc(fmt(v))}</td><td class="num">${(100*v/total).toFixed(1)}%</td></tr>`).join('')+
+    '</tbody>';
+}
+
+function show(){
+  const {A,total}=state;
+  document.getElementById('out').classList.remove('hide');
+  const untagPrj=A.prj.get('(untagged)')||0, untagCC=A.cc.get('(untagged)')||0;
+  document.getElementById('kpi').innerHTML=[
+    ['Total cost',fmt(total)],
+    ['Line items',state.rows.toLocaleString()],
+    ['Period',state.months.join(', ')],
+    ['Days with usage',A.day.size],
+    ['Subscriptions',A.sub.size],
+    ['Distinct meters',A.meter.size],
+  ].map(([k,v])=>`<div class="kv"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+  document.getElementById('cols').innerHTML=[
+    ['Untagged (Project)',`${fmt(untagPrj)} · ${(100*untagPrj/total).toFixed(1)}%`],
+    ['Untagged (CostCenter)',`${fmt(untagCC)} · ${(100*untagCC/total).toFixed(1)}%`],
+    ['Projects found',A.prj.size],
+    ['Cost centres found',A.cc.size],
+    ['Resource groups',A.rg.size],
+    ['Rows skipped (bad date)',state.badDate.toLocaleString()],
+  ].map(([k,v])=>`<div class="kv"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+
+  const w=[];
+  if(state.months.length>1) w.push(`<div class="warnbox">This export spans more than one month (${state.months.join(', ')}). The daily section below lets the months be separated.</div>`);
+  if(untagPrj/total>0.1) w.push(`<div class="warnbox">${(100*untagPrj/total).toFixed(1)}% of spend carries no Project tag.</div>`);
+  document.getElementById('warn').innerHTML=w.join('');
+
+  table('tSub',A.sub,total);
+  table('tSvc',A.svc,total);
+  table('tPrj',A.prj,total);
+  table('tCC',A.cc,total);
+  table('tRg',A.rg,total,40);
+  table('tMet',A.meter,total,80);
+}
+
+function buildCsv(){
+  const {A,total}=state;
+  const q=s=>`"${String(s).replace(/"/g,'""')}"`;
+  const L=['section,name,cost,quantity,share_pct'];
+  L.push(['total',q(state.file),total.toFixed(4),'',(100).toFixed(2)].join(','));
+  L.push(['meta',q('currency'),'','',q(state.currency)].join(','));
+  L.push(['meta',q('rows'),'','',state.rows].join(','));
+  const dump=(sec,m,qm)=>sorted(m).forEach(([k,v])=>
+    L.push([sec,q(k),v.toFixed(4),qm&&qm.get(k)!==undefined?qm.get(k).toFixed(4):'',(100*v/total).toFixed(3)].join(',')));
+  dump('day',A.day); dump('subscription',A.sub); dump('service',A.svc);
+  dump('meter',A.meter,A.qty); dump('resource_group',A.rg);
+  dump('project_tag',A.prj); dump('costcenter_tag',A.cc);
+  return L.join('\n');
+}
+function dl(name,text,type){
+  const b=new Blob([text],{type});
+  const u=URL.createObjectURL(b);
+  const a=document.createElement('a'); a.href=u; a.download=name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(u),1000);
+}
+document.getElementById('dl').addEventListener('click',()=>{
+  dl(state.file.replace(/\.csv$/i,'')+'_aggregates.csv',buildCsv(),'text/csv');
+});
+document.getElementById('dlj').addEventListener('click',()=>{
+  const {A}=state;
+  const o={file:state.file,currency:state.currency,rows:state.rows,total:state.total,
+    months:state.months};
+  for(const k of ['day','subscription','service','meter','resource_group','project_tag','costcenter_tag']){
+    const src={day:A.day,subscription:A.sub,service:A.svc,meter:A.meter,
+      resource_group:A.rg,project_tag:A.prj,costcenter_tag:A.cc}[k];
+    o[k]=Object.fromEntries(sorted(src).map(([kk,v])=>[kk,+v.toFixed(4)]));
+  }
+  dl(state.file.replace(/\.csv$/i,'')+'_aggregates.json',JSON.stringify(o,null,1),'application/json');
+});
+
+const drop=document.getElementById('drop'), fi=document.getElementById('file');
+document.getElementById('pick').addEventListener('click',()=>fi.click());
+fi.addEventListener('change',e=>{ if(e.target.files[0]) run(e.target.files[0]); });
+['dragenter','dragover'].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('hot');}));
+['dragleave','drop'].forEach(ev=>document.addEventListener(ev,e=>{e.preventDefault();
+  if(ev==='dragleave'&&e.relatedTarget) return; drop.classList.remove('hot');}));
+document.addEventListener('drop',e=>{ const f=e.dataTransfer&&e.dataTransfer.files[0]; if(f) run(f); });
+</script>
+</body>
+</html>

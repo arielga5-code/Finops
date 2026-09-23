@@ -1,5 +1,21 @@
 # Tools
 
+## `ea-export-aggregator.html`
+
+Reduces a multi-gigabyte Azure enrollment export to the few kilobytes of aggregates a
+monthly deck needs, so the raw file never has to move. Streams the CSV in chunks and
+accumulates into totals only — no rows are retained, so memory stays flat and file size
+is not a limit. Verified at 1.2 GB / 3.6M rows in 22 seconds, producing 3.4 KB.
+
+Emits, as CSV or JSON: daily totals, and cost by subscription, service (meter category),
+meter, resource group, **Project tag** and **CostCenter tag**. The last two are read out
+of the `Tags` column, because the enrollment's own `CostCenter` column is empty on every
+line — the tag is the only source. Both JSON tags (`{"Project":"BI"}`) and `k=v;k=v` are
+handled, as is a quoted `Tags` field containing commas, which splits a naive parser.
+
+Use this when the export is too large to attach or upload; use `azure-spend-dashboard.html`
+when you want to explore a month interactively.
+
 ## `azure-spend-dashboard.html`
 
 A single-file dashboard for a monthly Azure usage export. Open it in a browser and
@@ -33,12 +49,18 @@ every panel at once, and the summary can be exported back out as CSV.
 Rows carrying no `CostCenter` are totalled separately and surfaced at the top — that is
 the spend which cannot be charged back to an owner.
 
-### Verifying a change
+It reads the whole file into memory, so for an export beyond roughly half a gigabyte
+use `ea-export-aggregator.html` instead.
+
+## Verifying a change
 
 ```bash
-node tools/test/dashboard-test.js   # needs: npm i playwright
+npm i playwright
+node tools/test/dashboard-test.js
+node tools/test/aggregator-test.js          # SIZE_MB=500 for a closer-to-real run
 ```
 
-It generates a synthetic EA export, loads it through the page, and asserts the rendered
-total equals the generated total, that a filter narrows and clearing restores it, and
-that the console is clean.
+Each generates a synthetic EA export, drives the page with it, and asserts the rendered
+figures equal the generated ones. The aggregator test additionally asserts the Project
+and CostCenter tag cuts are right despite commas inside the quoted `Tags` field, and that
+the exported aggregates stay small enough to attach to a message.
