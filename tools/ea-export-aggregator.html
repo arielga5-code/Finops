@@ -79,6 +79,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:now
         <div id="kpi"></div>
         <div id="cols"></div>
       </div>
+      <p class="note" id="colsUsed" style="margin-top:14px"></p>
       <div id="warn"></div>
       <p style="margin:16px 0 0">
         <button class="primary" id="clip">Copy summary for chat</button>
@@ -114,7 +115,7 @@ const ALIASES = {
   rg:['resourcegroup','resourcegroupname'],
   sub:['subscriptionname','subscriptionguid'],
   region:['resourcelocation','meterregion'],
-  tags:['tags'],
+  tags:['tags','resourcetags','resourcetag','tag'],
   cc:['costcenter'],
   currency:['billingcurrency','currency','currencycode'],
 };
@@ -217,6 +218,8 @@ async function run(file){
           }
         if(map.cost===undefined||map.date===undefined) continue; // skip preamble
         header=cells; idx=map;
+        state.matched={}; state.header=cells.slice();
+        for(const r in map) state.matched[r]=cells[map[r]];
         continue;
       }
       const f=splitLine(line);
@@ -300,7 +303,17 @@ function show(){
     ['Rows skipped (bad date)',state.badDate.toLocaleString()],
   ].map(([k,v])=>`<div class="kv"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
 
+  const m=state.matched||{};
+  const cols=[['date','date'],['cost','cost'],['sub','subscription'],['svc','service'],
+              ['meter','meter'],['rg','resource group'],['tags','tags'],['cc','cost centre']];
+  document.getElementById('colsUsed').innerHTML='<b>Columns matched in this file:</b> ' +
+    cols.map(([k,l])=> m[k]!==undefined
+        ? `${esc(l)} \u2192 <code>${esc(m[k])}</code>`
+        : `<span style="color:var(--warn)">${esc(l)} \u2192 not found</span>`).join(' &nbsp;\u00b7&nbsp; ');
+
   const w=[];
+  if(m.tags===undefined) w.push('<div class="warnbox err">No <code>Tags</code> column was matched, so every row counts as untagged. The Project and CostCenter cuts below are meaningless for this file. Column headers seen: <code>'+esc(state.header.join(', ').slice(0,400))+'</code></div>');
+  else if((A.prj.get('(untagged)')||0)===total) w.push('<div class="warnbox err">The <code>'+esc(m.tags)+'</code> column was found but produced no Project or CostCenter value on any row \u2014 it is empty, or uses a format this tool does not parse.</div>');
   if(state.months.length>1) w.push(`<div class="warnbox">This export spans more than one month (${state.months.join(', ')}). The daily section below lets the months be separated.</div>`);
   if(untagPrj/total>0.1) w.push(`<div class="warnbox">${(100*untagPrj/total).toFixed(1)}% of spend carries no Project tag.</div>`);
   document.getElementById('warn').innerHTML=w.join('');
@@ -358,6 +371,9 @@ function buildSummary(limit){
   L.push(`file: ${state.file}`);
   L.push(`period: ${state.months.join(', ')} | currency: ${state.currency}`);
   L.push(`total: ${n(total)} | rows: ${state.rows} | days: ${A.day.size}`);
+  const m=state.matched||{};
+  L.push(`columns matched: ${Object.keys(m).map(k=>k+'='+m[k]).join(' | ')}`);
+  if(m.tags===undefined) L.push(`WARNING: no Tags column matched - the tag cuts below are meaningless`);
   const sec=(title,m,lim)=>{
     const rows=sorted(m);
     const shown=rows.slice(0,lim);
