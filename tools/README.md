@@ -7,7 +7,14 @@ monthly deck needs, so the raw file never has to move. Streams the CSV in chunks
 accumulates into totals only — no rows are retained, so memory stays flat and file size
 is not a limit. Verified at 1.2 GB / 3.6M rows in 22 seconds, producing 3.4 KB.
 
-Emits, as CSV or JSON: daily totals, and cost by subscription, service (meter category),
+Three ways out, all containing totals only:
+
+- **Copy summary for chat** — a compact form on the clipboard, paste straight into a
+  message. No file has to move, which matters when the raw export is too large to
+  attach and too large for a connector. Capped at 60 KB by trimming the long tails.
+- **Download aggregates (CSV / JSON)** — the full aggregates as a file.
+
+Emits daily totals, and cost by subscription, service (meter category),
 meter, resource group, **Project tag** and **CostCenter tag**. The last two are read out
 of the `Tags` column, because the enrollment's own `CostCenter` column is empty on every
 line — the tag is the only source. Both JSON tags (`{"Project":"BI"}`) and `k=v;k=v` are

@@ -81,10 +81,14 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:now
       </div>
       <div id="warn"></div>
       <p style="margin:16px 0 0">
-        <button class="primary" id="dl">Download aggregates (CSV)</button>
+        <button class="primary" id="clip">Copy summary for chat</button>
+        <button id="dl">Download aggregates (CSV)</button>
         <button id="dlj">Download aggregates (JSON)</button>
+        <span id="clipmsg" class="note" style="margin-inline-start:10px"></span>
       </p>
-      <p class="note">This is the file to send on. It contains totals only &mdash; no resource names, no line items.</p>
+      <p class="note"><b>Copy summary for chat</b> puts a compact version on the clipboard &mdash; paste it straight into a
+      message, no file to move. The two download buttons write the full aggregates to a file instead.
+      All three contain totals only &mdash; no resource names, no line items.</p>
     </div>
     <div class="grid">
       <div class="card"><h2>By subscription</h2><div class="scroll"><table id="tSub"></table></div></div>
@@ -342,6 +346,51 @@ document.getElementById('dlj').addEventListener('click',()=>{
     o[k]=Object.fromEntries(sorted(src).map(([kk,v])=>[kk,+v.toFixed(4)]));
   }
   dl(state.file.replace(/\.csv$/i,'')+'_aggregates.json',JSON.stringify(o,null,1),'application/json');
+});
+
+// A compact form small enough to paste into a chat message: totals plus the top
+// entries per dimension, which is what a monthly deck actually consumes.
+function buildSummary(limit){
+  const {A,total}=state;
+  const L=[];
+  const n=v=>v.toFixed(2);
+  L.push(`AZURE EA EXPORT SUMMARY`);
+  L.push(`file: ${state.file}`);
+  L.push(`period: ${state.months.join(', ')} | currency: ${state.currency}`);
+  L.push(`total: ${n(total)} | rows: ${state.rows} | days: ${A.day.size}`);
+  const sec=(title,m,lim)=>{
+    const rows=sorted(m);
+    const shown=rows.slice(0,lim);
+    const restV=rows.slice(lim).reduce((s,r)=>s+r[1],0);
+    L.push('');
+    L.push(`## ${title} (${rows.length} total)`);
+    shown.forEach(([k,v])=>L.push(`${k}\t${n(v)}\t${(100*v/total).toFixed(2)}%`));
+    if(rows.length>lim) L.push(`(${rows.length-lim} smaller)\t${n(restV)}\t${(100*restV/total).toFixed(2)}%`);
+  };
+  sec('BY DAY', A.day, 31);
+  sec('BY SUBSCRIPTION', A.sub, limit);
+  sec('BY SERVICE', A.svc, limit);
+  sec('BY PROJECT TAG', A.prj, limit);
+  sec('BY COSTCENTER TAG', A.cc, limit);
+  sec('BY RESOURCE GROUP', A.rg, Math.min(limit,30));
+  sec('BY METER', A.meter, limit);
+  return L.join('\n');
+}
+document.getElementById('clip').addEventListener('click', async ()=>{
+  const msg=document.getElementById('clipmsg');
+  let limit=60, text=buildSummary(limit);
+  // Keep it comfortably pasteable; shrink the long tails if needed.
+  while(text.length>60000 && limit>15){ limit=Math.floor(limit*0.6); text=buildSummary(limit); }
+  try{
+    await navigator.clipboard.writeText(text);
+    msg.textContent=`copied ${(text.length/1024).toFixed(1)} KB \u2014 paste it into the chat`;
+  }catch(e){
+    // Clipboard API needs a secure context; fall back to a selectable box.
+    const ta=document.createElement('textarea');
+    ta.value=text; ta.style.cssText='width:100%;height:220px;margin-top:10px';
+    msg.textContent='could not write to the clipboard \u2014 select the text below and copy it:';
+    msg.parentNode.appendChild(ta); ta.focus(); ta.select();
+  }
 });
 
 const drop=document.getElementById('drop'), fi=document.getElementById('file');

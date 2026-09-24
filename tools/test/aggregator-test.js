@@ -59,7 +59,8 @@ function generate(file) {
   const mb = (fs.statSync(file).size / 1048576).toFixed(0);
 
   const browser = await chromium.launch({ executablePath: CHROME });
-  const page = await browser.newPage();
+  const context = await browser.newContext({ permissions: ['clipboard-read', 'clipboard-write'] });
+  const page = await context.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
   page.on('console', (m) => { if (m.type() === 'error') errors.push(m.text()); });
@@ -90,10 +91,19 @@ function generate(file) {
   const kb = fs.readFileSync(await dl.path(), 'utf8').length / 1024;
   if (kb > 512) fails.push(`aggregate export too large: ${kb.toFixed(0)} KB`);
 
+  // The chat summary has to be pasteable, and carry the tag cuts.
+  await page.click('#clip');
+  const summary = await page.evaluate(() => navigator.clipboard.readText()
+    .catch(() => document.querySelector('textarea')?.value || ''));
+  if (!summary) fails.push('chat summary was empty');
+  if (summary.length > 60000) fails.push(`chat summary too large: ${summary.length} chars`);
+  for (const h of ['BY SUBSCRIPTION', 'BY SERVICE', 'BY PROJECT TAG', 'BY COSTCENTER TAG'])
+    if (!summary.includes('## ' + h)) fails.push(`chat summary missing section ${h}`);
+
   if (errors.length) fails.push('console: ' + errors.join(' | '));
   await browser.close();
   fs.rmSync(dir, { recursive: true, force: true });
 
   if (fails.length) { console.error('FAIL\n  ' + fails.slice(0, 15).join('\n  ')); process.exit(1); }
-  console.log(`PASS  ${mb} MB / ${exp.rows.toLocaleString()} rows in ${secs}s -> ${kb.toFixed(1)} KB of aggregates`);
+  console.log(`PASS  ${mb} MB / ${exp.rows.toLocaleString()} rows in ${secs}s -> ${kb.toFixed(1)} KB file, ${(summary.length/1024).toFixed(1)} KB chat summary`);
 })();
