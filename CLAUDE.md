@@ -26,18 +26,21 @@ npm install          # pptxgenjs, once
 node build.js        # -> ../Cloud_FinOps_Harel_FY2026_September.pptx
 ```
 
-`build.js` composes seven section modules on the shared theme and component library in
-`build_core.js`:
+`build.js` composes six section modules on the shared theme and component library in
+`build_core.js`. The main line of argument is 25 slides; everything else is appendix.
 
 | File | Slides |
 |---|---|
 | `sec_open.js` | Title, bottom line, agenda, total spend, run-rate, committed purchases |
-| `sec_ai.js` | AI spend, AI Factory, Bedrock, GitHub/Copilot, governance |
-| `sec_aws.js` | AWS overview, by account, by service, Marketplace |
-| `sec_azure.js` | Azure overview, cost centres, services, coverage, Databricks, GCP |
+| `sec_ai.js` | AI spend, GitHub and Copilot, governance controls |
+| `sec_platforms.js` | AWS overview, Azure overview, compute coverage, Databricks |
 | `sec_value.js` | Savings scorecard, implemented, pipeline |
 | `sec_close.js` | Risks, roadmap (Hebrew), the ask, thank you |
-| `sec_appendix.js` | Cost-centre small multiples, Harel IL, AI Factory, Foundry, North Europe, notes |
+| `sec_appendix.js` | AWS and Azure detail, small multiples, AI Factory, Bedrock, Foundry, GCP, North Europe, notes |
+
+**Detail belongs in the appendix.** The CIO deck carries one message per slide. Anything that
+is a breakdown rather than an argument (by account, by service, by cost centre, per project)
+goes in `sec_appendix.js` and is referenced from the speaker notes of the slide it supports.
 
 ### Conventions that matter
 
@@ -48,11 +51,20 @@ node build.js        # -> ../Cloud_FinOps_Harel_FY2026_September.pptx
 - **Action titles must fit one line** at 28pt across the 12.09" content width, which is
   about 64 characters. `build.js` prints a warning listing any title that will wrap. Treat
   that warning as an error.
+- **Take every frame from `G`**, the geometry table in `build_core.js`: `G.chart` and
+  `G.rail` for a chart with a detail rail, `G.tileY`/`G.tileH` with `tileX(i,n)`/`tileW(n)`
+  for a row of stat tiles, `G.lowChart`/`G.lowPanel` for the band beneath them, and
+  `G.statRail` for stacked tiles beside a chart. Never hand-place a frame that `G` already
+  describes, or slides of the same type will drift apart.
 - **Content lives between `TOP` (1.72") and `BOT` (6.58")**, both exported from
   `build_core.js`. The footer sits at 7.04". Anything drawn below `BOT` collides with the
   footnote, and anything below ~6.95" collides with the footer.
-- **Side-panel rank lists hold 8 rows at `rowH: 0.42`** starting at `TOP + 0.58`, with the
-  summary chip at `TOP + 4.06`. More rows than that overflow the panel.
+- **Side-panel rank lists hold `G.railRows` (8) rows at `G.railRowH`** from `G.railListY`,
+  with the summary chip at `G.railChipY`. More rows than that overflow the rail. In the
+  appendix use the local `railChart()` helper, which applies all of this for you.
+- **Every `addImage` needs an explicit `altText`.** pptxgenjs otherwise writes the absolute
+  source path into the image's `descr` attribute, which is visible to anyone who opens the
+  alt-text panel in PowerPoint.
 - **Use the component library**, not raw shapes: `head`, `note`, `stat`, `panel`, `chip`,
   `bulletRow`, `rankList`, `divider`, `axisBase`, `legendBase`. Chart option builders
   return a fresh object per call because pptxgenjs mutates options in place.
@@ -62,6 +74,11 @@ node build.js        # -> ../Cloud_FinOps_Harel_FY2026_September.pptx
   `sec_close.js`, which wraps Latin runs in directional isolates and non-breaking spaces.
   Any new Hebrew string with embedded Latin must go through `ltr()` or the word order and
   punctuation will scramble.
+- **Write the prose like a person wrote it.** No em dashes or en dashes in body text (an en
+  dash as a minus sign in `–13%` is fine). No three-item lists unless there are genuinely
+  three things, no "not X but Y", no one-line closers that restate the slide, no inflation
+  ("the single biggest", "the only line that matters"). Speaker notes are what the presenter
+  would actually say out loud, not narration about the slide.
 
 ### Refreshing the numbers for a new month
 
@@ -83,9 +100,12 @@ Python deps for the extractors: `lxml`, `Pillow`, `numpy`.
 
 ### Checking the output before shipping
 
-Always do all three. The first render of any change usually has a real layout defect.
+Always do all four. The first render of any change usually has a real layout defect.
 
 ```bash
+# 0. figures — recomputes all 102 quoted numbers from deck_data.json
+node tools/verify_figures.js
+
 # 1. file integrity
 python <pptx-skill>/scripts/office/validate.py ../Cloud_FinOps_Harel_FY2026_September.pptx
 

@@ -3,7 +3,7 @@ const { applyTheme } = require('./apply_theme.js');
 
 const OUT = process.argv[2] ||
   require('path').join(__dirname, '..', 'Cloud_FinOps_Harel_FY2026_September.pptx');
-const SECTIONS = ['./sec_open.js', './sec_ai.js', './sec_aws.js', './sec_azure.js',
+const SECTIONS = ['./sec_open.js', './sec_ai.js', './sec_platforms.js',
                   './sec_value.js', './sec_close.js', './sec_appendix.js'];
 
 (async () => {

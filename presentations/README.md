@@ -4,24 +4,29 @@ A rebuild of `Cloud_FinOps_Harel_September_26.pptx` as a CIO-facing presentation
 
 | File | What it is |
 |---|---|
-| `Cloud_FinOps_Harel_FY2026_September.pptx` | The deck. 41 slides, 16:9, speaker notes on the narrative slides. |
+| `Cloud_FinOps_Harel_FY2026_September.pptx` | The deck. 25 narrative slides plus a 14-slide appendix, 16:9, speaker notes throughout. |
 | `Cloud_FinOps_Harel_FY2026_September.pdf` | Same deck as PDF — a safe fallback for projector/room systems. |
 | `generator/` | Source that builds the deck, so next month is a data refresh rather than a redraw. |
 
 ## What changed from the source deck
 
-**Structure.** The original was 47 slides of chart-per-cost-centre, each titled with what
-it contained (`2026 Consumption By Service Name`). This version is 33 narrative slides plus
-an 8-slide appendix, organised as: bottom line → where the money goes → AI → AWS → Azure →
-savings → risks and asks. Every slide title now states the finding rather than the contents.
+**Structure.** The original was 47 slides of chart-per-cost-centre, each titled with what it
+contained (`2026 Consumption By Service Name`). This version is 25 narrative slides plus a
+14-slide appendix, organised as: bottom line, where the money goes, AI, the two platforms,
+savings, risks and asks. Every slide title states the finding rather than the contents, and
+all account, service and cost-centre detail sits in the appendix so the main line of argument
+stays on one screen each time.
 
 **The headline.** Pulling the AI services out of all three clouds showed the story the
 original deck had but never stated: AI went from **$9K to $102K a month** (11x, now 34% of
 consumption) while everything else **fell 13%** Q1→Q3. That is slides 2, 6 and 9.
 
-**Charts.** Stacked bars of 22–37 series with 7pt legends became top-5-plus-other at 11.5pt,
-plus ranked bar lists where the labels matter more than the shape. Fifteen near-identical
-cost-centre slides became one small-multiples page in the appendix.
+**Charts.** Stacked bars of 22 to 37 series with 7pt legends became top-five-plus-other at
+11.5pt, plus ranked bar lists where the labels matter more than the shape. Fifteen
+near-identical cost-centre slides became one small-multiples page in the appendix.
+
+**Consistency.** Every slide of a given type takes its frame from one geometry table (`G` in
+`build_core.js`), so chart boxes, rails, tiles and chips cannot drift between sections.
 
 **Added.** Executive summary, compute-coverage comparison (AWS 93% vs Azure 54%), a savings
 pipeline cut by action type as well as by business unit, a consolidated risks slide, an
@@ -50,6 +55,18 @@ Consumption figures are unaffected.
 | AI services | $412K YTD · $102K in September |
 | Savings realised / avoided | $268K / $310K |
 | Identified pipeline | $190K |
+
+## Checking the figures
+
+Every number quoted anywhere in the deck is recomputed from `deck_data.json` and compared
+against what the slides claim:
+
+```bash
+cd generator
+node tools/verify_figures.js      # 102 checks; exits with a list of any mismatch
+```
+
+Run it after any data refresh and after any wording change that touches a figure.
 
 ## Rebuilding the deck
 
