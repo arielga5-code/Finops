@@ -275,6 +275,70 @@ function rankList(slide, o) {
   });
 }
 
+/**
+ * Period metric card, adapted from the reference deck: the latest month's
+ * value, how it moved against the month before, and the headline total as it
+ * was reported in the source deck. Gives every chart one number to read.
+ *   o.period   'SEPTEMBER 2026'
+ *   o.value    numeric, latest period
+ *   o.prev     numeric, previous period (omit to hide the delta line)
+ *   o.prevLabel 'August'
+ *   o.reported 'Reported total $1.50M'  (the source deck's own headline)
+ */
+function metricCard(slide, o) {
+  const dark = !!o.dark;
+  const h = o.h || 1.78;
+  panel(slide, { x: o.x, y: o.y, w: o.w, h: h,
+    fill: dark ? P.steel : P.surface, name: 'metric-' + (o.period || '') });
+  slide.addShape('ellipse', { x: o.x + 0.28, y: o.y + 0.26, w: 0.1, h: 0.1,
+    fill: { color: o.accent || P.blue }, line: { type: 'none' }, objectName: 'metric-dot' });
+  slide.addText((o.period || '').toUpperCase(), {
+    x: o.x + 0.48, y: o.y + 0.16, w: o.w - 0.76, h: 0.28, fontSize: 10, bold: true,
+    charSpacing: 1.1, color: dark ? '9FB3C8' : P.muted, fontFace: 'Arial',
+    align: 'left', valign: 'middle', margin: 0, isTextBox: true });
+  slide.addText(o.valueText || ('$' + Math.round(o.value).toLocaleString('en-US')), {
+    x: o.x + 0.28, y: o.y + 0.44, w: o.w - 0.56, h: 0.62, fontSize: o.valueSize || 30,
+    bold: true, color: dark ? 'FFFFFF' : P.navy, fontFace: 'Arial',
+    align: 'left', valign: 'middle', margin: 0, isTextBox: true });
+  if (o.prev !== undefined && o.prev !== null) {
+    const d = o.value - o.prev;
+    const pc = o.prev ? (d / o.prev) * 100 : 0;
+    const up = d >= 0;
+    slide.addText(
+      (up ? '+' : '\u2013') + Math.abs(pc).toFixed(1) + '% vs ' + (o.prevLabel || 'prior month')
+      + '   (' + (up ? '+' : '\u2013') + '$' + Math.abs(Math.round(d)).toLocaleString('en-US') + ')', {
+      x: o.x + 0.28, y: o.y + 1.06, w: o.w - 0.56, h: 0.3, fontSize: 11, bold: true,
+      color: up ? P.gold : P.green, fontFace: 'Arial',
+      align: 'left', valign: 'middle', margin: 0, isTextBox: true });
+  }
+  if (o.reported) {
+    slide.addText(o.reported, {
+      x: o.x + 0.28, y: o.y + h - 0.46, w: o.w - 0.56, h: 0.3, fontSize: 10.5,
+      color: dark ? 'A9BCCF' : P.muted, fontFace: 'Arial',
+      align: 'left', valign: 'middle', margin: 0, isTextBox: true });
+  }
+}
+
+/**
+ * Month-by-month value strip, adapted from the reference deck. Puts the actual
+ * figures above the chart so nobody has to read bar heights.
+ */
+function monthStrip(slide, o) {
+  const n = o.labels.length, cw = o.w / n;
+  panel(slide, { x: o.x, y: o.y, w: o.w, h: 0.62, fill: o.fill || P.surface, name: 'strip' });
+  o.labels.forEach((lab, i) => {
+    slide.addText(lab, {
+      x: o.x + i * cw, y: o.y + 0.05, w: cw, h: 0.24, fontSize: 9.5, bold: true,
+      color: P.muted, fontFace: 'Arial', align: 'center', valign: 'middle',
+      margin: 0, isTextBox: true });
+    slide.addText(o.fmt ? o.fmt(o.values[i]) : k(o.values[i]), {
+      x: o.x + i * cw, y: o.y + 0.28, w: cw, h: 0.28,
+      fontSize: o.fontSize || 11, bold: true,
+      color: i === n - 1 ? P.navy : '41546B', fontFace: 'Arial',
+      align: 'center', valign: 'middle', margin: 0, isTextBox: true });
+  });
+}
+
 // ---------------------------------------------------------------------------
 // chart option builders — fresh object every call (pptxgenjs mutates in place)
 // ---------------------------------------------------------------------------
@@ -331,6 +395,6 @@ function divider(slide, num, title, body, accent) {
 module.exports = {
   pptxgen, fs, SC, DATA, A, THEME, P, SERIES, divider,
   SW, SH, M, CW, TOP, BOT, CH,
-  money, money1, k, pct, sum, topN, LONG_TITLES, TITLE_MAX, ccName,
-  newDeck, head, note, stat, panel, chip, bulletRow, rankList, axisBase, legendBase
+  money, money1, k, pct, sum, topN, ccName, LONG_TITLES, TITLE_MAX, ccName,
+  newDeck, head, note, stat, panel, chip, bulletRow, rankList, metricCard, monthStrip, axisBase, legendBase
 };
