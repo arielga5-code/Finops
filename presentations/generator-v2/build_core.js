@@ -39,6 +39,32 @@ const TOP = 1.72;               // top of content area
 const BOT = 6.58;               // bottom of content area
 const CH = BOT - TOP;           // 5.06 content height
 
+// Shared slide geometry. Every slide of a given type takes its frame from here
+// so positions cannot drift between sections.
+const G = {
+  // chart on the left, rail of supporting detail on the right
+  chart:     { x: M - 0.12, y: TOP - 0.06, w: 7.90, h: 4.50 },
+  rail:      { x: 8.72,     y: TOP - 0.06, w: 3.99, h: 4.50 },
+  railHeadY: TOP + 0.16,
+  railListY: TOP + 0.58,
+  railRowH:  0.42,
+  railRows:  8,            // more than this overflows the rail
+  railChipY: TOP + 4.06,
+  // three headline tiles across the top, chart and panel beneath
+  tileY:     TOP,
+  tileH:     1.62,
+  tileGap:   0.25,
+  subHeadY:  TOP + 1.90,
+  lowChart:  { x: M - 0.12, y: TOP + 2.24, w: 7.50, h: 2.50 },
+  lowPanel:  { x: 8.42,     y: TOP + 1.90, w: 4.29, h: 2.84 },
+  // stacked stat tiles beside a full-height chart
+  statRail:  { x: 8.72, w: 3.99, h: 1.44, pitch: 1.60 },
+  // two side-by-side halves
+  halfW:     (CW - 0.30) / 2
+};
+const tileW = n => (CW - (n - 1) * G.tileGap) / n;
+const tileX = (i, n) => M + i * (tileW(n) + G.tileGap);
+
 // ---------------------------------------------------------------------------
 // formatting
 // ---------------------------------------------------------------------------
@@ -76,10 +102,10 @@ function newDeck() {
   pres.theme = { headFontFace: THEME.headFontFace, bodyFontFace: THEME.bodyFontFace };
   pres.author = 'Cloud Infrastructure, DevOps & Databases';
   pres.company = 'Harel Insurance &amp; Finance';
-  pres.subject = 'Cloud FinOps — FY2026 cost summary';
+  pres.subject = 'Cloud FinOps FY2026 cost summary';
   pres.title = 'Cloud FinOps FY2026';
 
-  const footText = 'Cloud FinOps  ·  FY2026 year to date (January – September 2026)';
+  const footText = 'Cloud FinOps  ·  FY2026 year to date, January to September 2026';
 
   // ---- light content layout ------------------------------------------------
   pres.defineSlideMaster({
@@ -89,7 +115,8 @@ function newDeck() {
       { text: { text: footText, options: {
           x: 1.74, y: 7.04, w: 7.4, h: 0.3, fontSize: 9, color: P.dimText,
           align: 'left', valign: 'middle', margin: 0, isTextBox: true } } },
-      { image: { x: M, y: 7.0, w: 0.94, h: 0.406, path: A + 'harel_dark.png' } },
+      { image: { x: M, y: 7.0, w: 0.94, h: 0.406, path: A + 'harel_dark.png',
+                 altText: 'Harel Insurance and Finance logo' } },
       { text: { text: '', options: {
           x: 11.6, y: 7.04, w: 1.11, h: 0.3, fontSize: 10, color: P.muted,
           align: 'right', valign: 'middle', margin: 0, isTextBox: true } } }
@@ -106,7 +133,8 @@ function newDeck() {
       { text: { text: footText, options: {
           x: 1.74, y: 7.04, w: 7.4, h: 0.3, fontSize: 9, color: '6E8299',
           align: 'left', valign: 'middle', margin: 0, isTextBox: true } } },
-      { image: { x: M, y: 7.0, w: 0.94, h: 0.406, path: A + 'harel_light.png' } }
+      { image: { x: M, y: 7.0, w: 0.94, h: 0.406, path: A + 'harel_light.png',
+                 altText: 'Harel Insurance and Finance logo' } }
     ],
     slideNumber: { x: 12.3, y: 7.04, w: 0.42, h: 0.3, fontSize: 10,
                    color: '6E8299', align: 'right', valign: 'middle', fontFace: 'Arial' }
@@ -117,7 +145,8 @@ function newDeck() {
     title: 'DIVIDER',
     background: { color: P.navy },
     objects: [
-      { image: { x: M, y: 7.0, w: 0.94, h: 0.406, path: A + 'harel_light.png' } }
+      { image: { x: M, y: 7.0, w: 0.94, h: 0.406, path: A + 'harel_light.png',
+                 altText: 'Harel Insurance and Finance logo' } }
     ],
     slideNumber: { x: 12.3, y: 7.04, w: 0.42, h: 0.3, fontSize: 10,
                    color: '6E8299', align: 'right', valign: 'middle', fontFace: 'Arial' }
@@ -277,13 +306,8 @@ function rankList(slide, o) {
 
 /**
  * Period metric card, adapted from the reference deck: the latest month's
- * value, how it moved against the month before, and the headline total as it
- * was reported in the source deck. Gives every chart one number to read.
- *   o.period   'SEPTEMBER 2026'
- *   o.value    numeric, latest period
- *   o.prev     numeric, previous period (omit to hide the delta line)
- *   o.prevLabel 'August'
- *   o.reported 'Reported total $1.50M'  (the source deck's own headline)
+ * value, how it moved against the month before, and the headline total as the
+ * source deck reported it. Gives every chart one number to read.
  */
 function metricCard(slide, o) {
   const dark = !!o.dark;
@@ -301,9 +325,7 @@ function metricCard(slide, o) {
     bold: true, color: dark ? 'FFFFFF' : P.navy, fontFace: 'Arial',
     align: 'left', valign: 'middle', margin: 0, isTextBox: true });
   if (o.prev !== undefined && o.prev !== null) {
-    const d = o.value - o.prev;
-    const pc = o.prev ? (d / o.prev) * 100 : 0;
-    const up = d >= 0;
+    const d = o.value - o.prev, pc = o.prev ? (d / o.prev) * 100 : 0, up = d >= 0;
     slide.addText(
       (up ? '+' : '\u2013') + Math.abs(pc).toFixed(1) + '% vs ' + (o.prevLabel || 'prior month')
       + '   (' + (up ? '+' : '\u2013') + '$' + Math.abs(Math.round(d)).toLocaleString('en-US') + ')', {
@@ -332,12 +354,21 @@ function monthStrip(slide, o) {
       color: P.muted, fontFace: 'Arial', align: 'center', valign: 'middle',
       margin: 0, isTextBox: true });
     slide.addText(o.fmt ? o.fmt(o.values[i]) : k(o.values[i]), {
-      x: o.x + i * cw, y: o.y + 0.28, w: cw, h: 0.28,
-      fontSize: o.fontSize || 11, bold: true,
+      x: o.x + i * cw, y: o.y + 0.28, w: cw, h: 0.28, fontSize: o.fontSize || 11, bold: true,
       color: i === n - 1 ? P.navy : '41546B', fontFace: 'Arial',
       align: 'center', valign: 'middle', margin: 0, isTextBox: true });
   });
 }
+
+// Headline totals exactly as the September source deck labelled them, so every
+// chart can show a visible tie-back to what was published before.
+const REPORTED = {
+  aws:      'As reported in September: $791K',
+  azure:    'As reported in September: $1.50M',
+  awsMkt:   'As reported in September: $1.82M',
+  azureMkt: 'As reported in September: $563K',
+  harelIl:  'As reported in September: $166K'
+};
 
 // ---------------------------------------------------------------------------
 // chart option builders — fresh object every call (pptxgenjs mutates in place)
@@ -394,7 +425,8 @@ function divider(slide, num, title, body, accent) {
 
 module.exports = {
   pptxgen, fs, SC, DATA, A, THEME, P, SERIES, divider,
-  SW, SH, M, CW, TOP, BOT, CH,
-  money, money1, k, pct, sum, topN, ccName, LONG_TITLES, TITLE_MAX, ccName,
-  newDeck, head, note, stat, panel, chip, bulletRow, rankList, metricCard, monthStrip, axisBase, legendBase
+  SW, SH, M, CW, TOP, BOT, CH, G, tileW, tileX,
+  money, money1, k, pct, sum, topN, LONG_TITLES, TITLE_MAX, ccName,
+  newDeck, head, note, stat, panel, chip, bulletRow, rankList,
+  metricCard, monthStrip, REPORTED, axisBase, legendBase
 };
