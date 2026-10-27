@@ -35,6 +35,10 @@
   .fd-card--wide { grid-column: 1 / -1; }
   .fd-card-title { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
   .fd-card-note { margin: 0; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); max-width: 72ch; }
+  .fd-stat { margin: 0; display: flex; align-items: baseline; gap: 0.4rem; flex-wrap: wrap; }
+  .fd-stat-value { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title);
+                   font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .fd-stat-label { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   .fd-source { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 0; }
   .fd-source code { font-size: 0.95em; }
 
@@ -123,20 +127,10 @@
           <span class="fd-tile-value dash-skeleton">—</span>
           <span class="fd-tile-sub dash-skeleton">—</span>
         </div>
-        <div class="fd-tile" id="tile-budget" data-source="budget_status" data-field="used_pct">
-          <span class="fd-tile-label">Of monthly budget</span>
-          <span class="fd-tile-value dash-skeleton">—</span>
-          <span class="fd-tile-sub">against a 50,000 placeholder</span>
-        </div>
         <div class="fd-tile" id="tile-ai-share" data-source="ai_share" data-field="pct">
           <span class="fd-tile-label">AI share of spend</span>
           <span class="fd-tile-value dash-skeleton">—</span>
           <span class="fd-tile-sub">Cognitive Services and ML meters</span>
-        </div>
-        <div class="fd-tile" id="tile-unallocated" data-source="unallocated_share" data-field="pct">
-          <span class="fd-tile-label">Unallocated</span>
-          <span class="fd-tile-value dash-skeleton">—</span>
-          <span class="fd-tile-sub">target under 5%</span>
         </div>
       </div>
     </div>
@@ -149,12 +143,20 @@
         <div class="fd-card">
           <h3 class="fd-card-title">Spend against budget pace</h3>
           <p class="fd-card-note">Cumulative spend through the latest month, against the monthly budget line.</p>
+          <p class="fd-stat" id="stat-budget" data-source="budget_status" data-field="used_pct">
+            <span class="fd-stat-value dash-skeleton">—</span>
+            <span class="fd-stat-label">of the monthly budget used so far</span>
+          </p>
           <div class="fd-chart" id="chart-budget-pace" data-source="daily_cost"></div>
           <p class="fd-source">The budget line is a fixed 50,000, the placeholder from <code>assets/esql/forecast_vs_actual.esql</code>. Replace it with your figure, or move budgets to a lookup index so finance can maintain them without editing queries.</p>
         </div>
         <div class="fd-card">
           <h3 class="fd-card-title">Spend by cost center</h3>
           <p class="fd-card-note">Untagged spend appears as its own <code>unallocated</code> bar rather than dropping out of the group-by.</p>
+          <p class="fd-stat" id="stat-unallocated" data-source="unallocated_share" data-field="pct">
+            <span class="fd-stat-value dash-skeleton">—</span>
+            <span class="fd-stat-label">of spend has no cost center, against a target under 5%</span>
+          </p>
           <div class="fd-chart" id="chart-cost-centers" data-source="daily_cost"></div>
           <p class="fd-source">Needs the tag-promotion pipeline from <code>docs/02-cost-ingestion.md</code>, or a <code>CostCenter</code> column in the export.</p>
         </div>

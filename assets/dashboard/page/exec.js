@@ -135,10 +135,10 @@
       else if (b.verdict === 'at risk') verdictEl.classList.add('fd-warn');
       else if (b.verdict === 'on track') verdictEl.classList.add('fd-ok');
     }
-    FD.setValue('#tile-budget .fd-tile-value', FD.pct(b.used_pct, 0));
+    FD.setValue('#stat-budget .fd-stat-value', FD.pct(b.used_pct, 0));
     FD.setValue('#tile-ai-share .fd-tile-value', FD.pct(s.pct, 1));
-    FD.setValue('#tile-unallocated .fd-tile-value', FD.pct(a.pct, 1));
-    const unallocEl = document.querySelector('#tile-unallocated .fd-tile-value');
+    FD.setValue('#stat-unallocated .fd-stat-value', FD.pct(a.pct, 1));
+    const unallocEl = document.querySelector('#stat-unallocated .fd-stat-value');
     if (unallocEl) {
       unallocEl.classList.remove('fd-ok', 'fd-bad');
       if (a.pct != null) unallocEl.classList.add(a.pct > 0.05 ? 'fd-bad' : 'fd-ok');
