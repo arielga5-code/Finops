@@ -7,9 +7,10 @@ pseudocode, but three things need substituting before you apply them — see
 ## Layout
 
 ```
-esql/     ES|QL queries for dashboard panels and alert rule bodies
-alerts/   Kibana alerting API payloads
-ml/       Anomaly detection job + datafeed configs
+esql/       ES|QL queries for dashboard panels and alert rule bodies
+alerts/     Kibana alerting API payloads
+ml/         Anomaly detection job + datafeed configs
+dashboard/  Source for the three-dashboard FinOps page, and its column contracts
 ```
 
 ## Before you apply

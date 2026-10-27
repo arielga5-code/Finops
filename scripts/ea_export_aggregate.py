@@ -192,7 +192,9 @@ def main():
     def write(name, header, rows):
         path = os.path.join(args.out_dir, name)
         with open(path, "w", newline="", encoding="utf-8") as handle:
-            writer = csv.writer(handle)
+            # LF, not the csv module's default CRLF: a stray \r otherwise rides
+            # along in the last column for strict readers.
+            writer = csv.writer(handle, lineterminator="\n")
             writer.writerow(header)
             writer.writerows(rows)
         size = os.path.getsize(path)
