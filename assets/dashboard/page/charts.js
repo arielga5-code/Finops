@@ -255,6 +255,11 @@
     return true;
   };
 
+  const last_of = (rows, series) => {
+    const pts = rows.filter((r) => r.series === series).sort((a, b) => a.t - b.t);
+    return pts.length ? pts[pts.length - 1].value : null;
+  };
+
   // ---- generic line chart ---------------------------------------------------
   // rows: [{t: Date-able, series, value}]
   FD.lines = (el, rows, opts) => {
@@ -264,7 +269,9 @@
     if (!parsed.length) return FD.chartState(el, 'empty', o.emptyText);
     const series = Array.from(new Set(parsed.map((r) => r.series)));
 
-    const f = FD.frame(el, { height: o.height, margin: { top: 12, right: o.directLabel && series.length <= 4 ? 76 : 16, bottom: 28, left: 48 } });
+    // Direct labels cost 76px of plot width, too much on a phone.
+    const direct = o.directLabel && series.length <= 4 && (el.clientWidth || 0) >= 420;
+    const f = FD.frame(el, { height: o.height, margin: { top: 12, right: direct ? 76 : 16, bottom: 28, left: 48 } });
     const vmax = Math.max(d3.max(parsed, (r) => r.value) || 0, o.yMin || 0, ...o.refs.map((r) => r.value));
     const y = d3.scaleLinear([0, vmax * 1.08 || 1], [f.ih, 0]).nice();
     FD.fitLeft(f, y, o.format);
@@ -282,7 +289,7 @@
       const last = pts[pts.length - 1];
       if (last) {
         f.g.append('circle').attr('class', 'fd-endpoint').attr('cx', x(last.t)).attr('cy', y(last.value)).attr('r', 3.5).attr('fill', color(i));
-        if (o.directLabel && series.length <= 4) {
+        if (direct) {
           f.g
             .append('text')
             .attr('class', 'fd-end-label')
@@ -329,7 +336,11 @@
         tip.hide();
       });
 
-    if (series.length > 1) FD.legend(el, series.map((s, i) => [s, color(i)]));
+    // With end labels on, the legend names the series; without them it carries
+    // the latest value too, since nothing else on the chart does.
+    if (series.length > 1 || !direct) {
+      FD.legend(el, series.map((s, i) => [direct ? s : `${s} ${o.format(last_of(parsed, s))}`, color(i)]));
+    }
     return true;
   };
 
