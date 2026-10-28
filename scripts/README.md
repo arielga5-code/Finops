@@ -30,6 +30,7 @@ python3 scripts/ea_export_aggregate.py Detail_Enrollment_51378402_202608_en.csv 
 | `resource_cost.csv` | month × resource, top N by cost | top resources, month-over-month delta |
 | `ai_cost.csv` | date × resource × meter, AI meters only | AI spend, AI as % of total |
 | `allocation.csv` | date × allocated/unallocated | allocation coverage KPI |
+| `untagged_resources.csv` | month × resource with no project tag, top N by cost | which resources are untagged |
 
 Column names are resolved against the EA legacy, Cost Management export and FOCUS
 spellings, so the same script works whichever export type produced the file. It

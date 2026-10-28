@@ -17,11 +17,15 @@ Outputs in -o:
     resource_cost.csv  month, subscription, resource_group, resource, meter_category, currency, cost   (top -n)
     ai_cost.csv      date, subscription, resource, meter_category, meter_name, currency, cost
     allocation.csv   date, allocation, currency, cost
+    untagged_resources.csv  month, subscription, resource_group, resource, meter_category, cost_center, currency, cost
+                            (spend with no project tag, per resource, top -n by cost)
 """
 
 import argparse
 import csv
+import json
 import os
+import re
 import sys
 from collections import defaultdict
 
@@ -97,6 +101,29 @@ def short_resource(value):
     return value or "(no resource)"
 
 
+def project_tag(tags):
+    """Return the project tag value, or "" when there is none.
+
+    The Tags column is JSON, sometimes without its outer braces, and key casing
+    varies (project, Project). An empty value counts as no tag.
+    """
+    tags = (tags or "").strip()
+    if not tags:
+        return ""
+    text = tags if tags.startswith("{") else "{" + tags + "}"
+    try:
+        parsed = json.loads(text)
+        if isinstance(parsed, dict):
+            for key, value in parsed.items():
+                if str(key).strip().lower() == "project":
+                    return str(value or "").strip()
+            return ""
+    except ValueError:
+        pass
+    match = re.search(r'"project"\s*:\s*"([^"]*)"', tags, re.IGNORECASE)
+    return match.group(1).strip() if match else ""
+
+
 def is_ai(meter_category, meter_name):
     haystack = f"{meter_category} {meter_name}".lower()
     return any(marker in haystack for marker in AI_MARKERS)
@@ -117,6 +144,7 @@ def main():
     resources = defaultdict(float)
     ai = defaultdict(float)
     allocation = defaultdict(float)
+    untagged = defaultdict(float)
 
     rows_read = 0
     rows_costed = 0
@@ -186,6 +214,10 @@ def main():
             if is_ai(meter_category, meter_name):
                 ai[(date, subscription, short_resource(get(row, "resource")), meter_category, meter_name, currency)] += cost
 
+            if not project_tag(tags):
+                untagged[(date[:7], subscription, resource_group, short_resource(get(row, "resource")),
+                          meter_category, cost_center, currency)] += cost
+
             allocated = "allocated" if (cost_center != "unallocated" or tags) else "unallocated"
             allocation[(date, allocated, currency)] += cost
 
@@ -216,6 +248,11 @@ def main():
     write("ai_cost.csv",
           ["date", "subscription", "resource", "meter_category", "meter_name", "currency", "cost"],
           [[d, s, r, mc, mn, cur, round(c, 4)] for (d, s, r, mc, mn, cur), c in sorted(ai.items())])
+
+    worst = sorted(untagged.items(), key=lambda kv: kv[1], reverse=True)[:args.top]
+    write("untagged_resources.csv",
+          ["month", "subscription", "resource_group", "resource", "meter_category", "cost_center", "currency", "cost"],
+          [[m, sub_, rg, r, mc, cc, cur, round(c, 4)] for (m, sub_, rg, r, mc, cc, cur), c in worst])
 
     write("allocation.csv", ["date", "allocation", "currency", "cost"],
           [[d, a, cur, round(c, 4)] for (d, a, cur), c in sorted(allocation.items())])
