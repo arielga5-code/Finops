@@ -51,6 +51,15 @@
   .fd-chart-note--bad { color: var(--color-fg-muted); }
   .fd-dot { width: 0.375rem; height: 0.375rem; border-radius: 50%; background: var(--color-bad); flex: none; }
 
+  .fd-rank-list { min-height: 0; display: flex; flex-direction: column; gap: var(--cds-gap-md); }
+  .fd-rank { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+  .fd-rank-head { display: flex; align-items: baseline; gap: var(--cds-gap-sm); flex-wrap: wrap; }
+  .fd-rank-label { font-size: var(--cds-font-size-body); flex: 1 1 14rem; min-width: 0; overflow-wrap: anywhere; }
+  .fd-rank-vendor { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+  .fd-rank-value { font-variant-numeric: tabular-nums; font-size: var(--cds-font-size-body); margin-left: auto; }
+  .fd-rank-track { height: 8px; border-radius: 4px; background: var(--cds-chart-grid); overflow: hidden; }
+  .fd-rank-fill { height: 100%; border-radius: 4px; }
+  .fd-rank-note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   .fd-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
   .fd-legend-item { display: inline-flex; align-items: center; gap: 0.375rem; }
   .fd-swatch { width: 0.5rem; height: 0.5rem; border-radius: 2px; flex: none; }
@@ -99,35 +108,153 @@
   </div>
 
   <div class="fd-banner" id="fd-status">
-    <p><strong>No data attached yet.</strong> Every panel below is wired to a source and will fill the moment its file has rows — nothing here is a sample or a placeholder number.</p>
+    <p><strong>Spend and telemetry are not attached yet.</strong> The Savings tab is filled from the July 2026 recommendations workbook. The other three tabs are wired to their sources and fill the moment a file has rows. Nothing here is a sample or a placeholder number.</p>
     <p>The cost panels want the output of <code>scripts/ea_export_aggregate.py</code> run against the EA detail export. The token, PTU, cache and error panels want Azure Monitor telemetry, which no cost export contains at any grain — see <code>docs/03-ai-telemetry-ingestion.md</code>.</p>
   </div>
 
   <div class="fd-tabs" role="tablist" aria-label="Dashboards">
-    <button class="fd-tab" role="tab" id="tab-executive" aria-controls="executive" aria-selected="true">Executive</button>
+    <button class="fd-tab" role="tab" id="tab-savings" aria-controls="savings" aria-selected="true">Savings</button>
+    <button class="fd-tab" role="tab" id="tab-executive" aria-controls="executive" aria-selected="false">Executive</button>
     <button class="fd-tab" role="tab" id="tab-engineering" aria-controls="engineering" aria-selected="false">Engineering</button>
     <button class="fd-tab" role="tab" id="tab-operations" aria-controls="operations" aria-selected="false">AI operations</button>
   </div>
 
+  <!-- ===================== D — Savings ===================== -->
+  <section class="fd-page" id="savings" role="tabpanel" aria-labelledby="tab-savings">
+    <div class="fd-section">
+      <div class="fd-section-head">
+        <h2 class="fd-section-title">What could be saved</h2>
+        <p class="fd-section-note">Estimates from the July 2026 recommendations workbook, not measured spend. Savings are annual and in USD.</p>
+      </div>
+      <div class="fd-tiles">
+        <div class="fd-tile" id="tile-sav-total" data-source="savings_summary" data-field="total" data-row="0" data-fetchpriority="high">
+          <span class="fd-tile-label">Azure annual savings identified</span>
+          <span class="fd-tile-value dash-skeleton">—</span>
+          <span class="fd-tile-sub dash-skeleton">—</span>
+        </div>
+        <div class="fd-tile" id="tile-sav-top" data-source="savings_summary" data-field="top_amount" data-row="0" data-fetchpriority="high">
+          <span class="fd-tile-label">Largest opportunity</span>
+          <span class="fd-tile-value dash-skeleton">—</span>
+          <span class="fd-tile-sub dash-skeleton">—</span>
+        </div>
+        <div class="fd-tile" id="tile-sav-res" data-source="reservation_summary" data-field="expiring" data-row="0">
+          <span class="fd-tile-label">Reservations expiring</span>
+          <span class="fd-tile-value dash-skeleton">—</span>
+          <span class="fd-tile-sub dash-skeleton">—</span>
+        </div>
+      </div>
+      <div class="fd-banner">
+        <p><strong>Read the total as an upper bound.</strong> The 1-year reserved instance line is left out because it is an alternative to the 3-year line. The workbook does not say whether the shutdown, rightsizing and reservation lines overlap, so they are not netted out.</p>
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <div class="fd-section-head">
+        <h2 class="fd-section-title">Opportunities, ranked</h2>
+      </div>
+      <div class="fd-card">
+        <h3 class="fd-card-title">Annual savings by opportunity</h3>
+        <p class="fd-card-note">The grey bar is the 1-year reserved instance line, shown for comparison with the 3-year line above it.</p>
+        <div class="fd-chart fd-rank-list" id="list-savings" data-source="savings_opportunities"></div>
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <div class="fd-section-head">
+        <h2 class="fd-section-title">Reservations</h2>
+        <p class="fd-section-note">Utilization under 80% over 30 days is flagged. An exchange can recover the unused share.</p>
+      </div>
+      <div class="fd-card">
+        <div class="fd-table-wrap">
+          <table class="fd-table" id="table-reservations" data-source="reservations" data-row-key="reservation_id">
+            <thead>
+              <tr>
+                <th data-field="name">Reservation</th>
+                <th data-field="status">Status</th>
+                <th data-field="expiration_date">Expires</th>
+                <th data-field="product">Product</th>
+                <th data-field="util_30d" style="text-align:right">30-day use</th>
+                <th data-field="monthly_amortized" style="text-align:right">Monthly</th>
+                <th data-field="potential_exchange_saving" style="text-align:right">Exchange saving</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="fd-table-empty">No rows yet. Fills from <code>reservations.csv</code>.</p>
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <div class="fd-section-head">
+        <h2 class="fd-section-title">Idle disks</h2>
+        <p class="fd-section-note">The disk list in the workbook totals less than the idle-disk lines in its summary, so treat the summary as the headline and this list as the detail that was written down.</p>
+      </div>
+      <div class="fd-card">
+        <div class="fd-table-wrap">
+          <table class="fd-table" id="table-disks" data-source="idle_disks" data-row-key="disk_name">
+            <thead>
+              <tr>
+                <th data-field="disk_name">Disk</th>
+                <th data-field="disk_state">State</th>
+                <th data-field="subscription">Subscription</th>
+                <th data-field="storage_type">Type</th>
+                <th data-field="size_gib" style="text-align:right">GiB</th>
+                <th data-field="monthly_cost" style="text-align:right">Monthly</th>
+                <th data-field="yearly_saving" style="text-align:right">Yearly saving</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="fd-table-empty">No rows yet. Fills from <code>idle_disks.csv</code>.</p>
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <div class="fd-section-head">
+        <h2 class="fd-section-title">App Service plans</h2>
+      </div>
+      <div class="fd-card">
+        <div class="fd-table-wrap">
+          <table class="fd-table" id="table-asp" data-source="app_service_plans" data-row-key="name">
+            <thead>
+              <tr>
+                <th data-field="name">Plan</th>
+                <th data-field="pricing_tier">Tier</th>
+                <th data-field="os">OS</th>
+                <th data-field="monthly_cost" style="text-align:right">Monthly</th>
+                <th data-field="ri_1y_annual_saving" style="text-align:right">RI 1Y saving</th>
+                <th data-field="ri_3y_annual_saving" style="text-align:right">RI 3Y saving</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="fd-table-empty">No rows yet. Fills from <code>app_service_plans.csv</code>.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- ===================== A — Executive / monthly ===================== -->
-  <section class="fd-page" id="executive" role="tabpanel" aria-labelledby="tab-executive">
+  <section class="fd-page" id="executive" role="tabpanel" aria-labelledby="tab-executive" hidden>
     <div class="fd-section">
       <div class="fd-section-head">
         <h2 class="fd-section-title">Where the month stands</h2>
         <p class="fd-section-note">Month-to-date figures for the latest month in the export. Cost data lands on a 24-hour poll on top of Azure's own billing latency, so treat the last day or two as incomplete.</p>
       </div>
       <div class="fd-tiles">
-        <div class="fd-tile" id="tile-mtd" data-source="budget_status" data-field="mtd" data-fetchpriority="high">
+        <div class="fd-tile" id="tile-mtd" data-source="budget_status" data-field="mtd" data-row="0" data-fetchpriority="high">
           <span class="fd-tile-label">Spend month to date</span>
           <span class="fd-tile-value dash-skeleton">—</span>
           <span class="fd-tile-sub dash-skeleton">—</span>
         </div>
-        <div class="fd-tile" id="tile-projected" data-source="budget_status" data-field="projected" data-fetchpriority="high">
+        <div class="fd-tile" id="tile-projected" data-source="budget_status" data-field="projected" data-row="0" data-fetchpriority="high">
           <span class="fd-tile-label">Projected month end</span>
           <span class="fd-tile-value dash-skeleton">—</span>
           <span class="fd-tile-sub dash-skeleton">—</span>
         </div>
-        <div class="fd-tile" id="tile-ai-share" data-source="ai_share" data-field="pct">
+        <div class="fd-tile" id="tile-ai-share" data-source="ai_share" data-field="pct" data-row="0">
           <span class="fd-tile-label">AI share of spend</span>
           <span class="fd-tile-value dash-skeleton">—</span>
           <span class="fd-tile-sub">Cognitive Services and ML meters</span>
@@ -143,7 +270,7 @@
         <div class="fd-card">
           <h3 class="fd-card-title">Spend against budget pace</h3>
           <p class="fd-card-note">Cumulative spend through the latest month, against the monthly budget line.</p>
-          <p class="fd-stat" id="stat-budget" data-source="budget_status" data-field="used_pct">
+          <p class="fd-stat" id="stat-budget" data-source="budget_status" data-field="used_pct" data-row="0">
             <span class="fd-stat-value dash-skeleton">—</span>
             <span class="fd-stat-label">of the monthly budget used so far</span>
           </p>
@@ -153,7 +280,7 @@
         <div class="fd-card">
           <h3 class="fd-card-title">Spend by cost center</h3>
           <p class="fd-card-note">Untagged spend appears as its own <code>unallocated</code> bar rather than dropping out of the group-by.</p>
-          <p class="fd-stat" id="stat-unallocated" data-source="unallocated_share" data-field="pct">
+          <p class="fd-stat" id="stat-unallocated" data-source="unallocated_share" data-field="pct" data-row="0">
             <span class="fd-stat-value dash-skeleton">—</span>
             <span class="fd-stat-label">of spend has no cost center, against a target under 5%</span>
           </p>
@@ -279,7 +406,7 @@
         <h2 class="fd-section-title">Cache and retries</h2>
       </div>
       <div class="fd-tiles">
-        <div class="fd-tile" id="tile-cache" data-source="cache_latest" data-field="rate">
+        <div class="fd-tile" id="tile-cache" data-source="cache_latest" data-field="rate" data-row="0">
           <span class="fd-tile-label">Cache match rate, latest hour</span>
           <span class="fd-tile-value dash-skeleton">—</span>
           <span class="fd-tile-sub dash-skeleton">—</span>
@@ -315,17 +442,17 @@
         <p class="fd-section-note">Everything on this page is telemetry on a 5-minute timegrain. Cost-based alerts run 24–48h behind reality, so this is the page that can catch a runaway workload before it bills.</p>
       </div>
       <div class="fd-tiles">
-        <div class="fd-tile" id="tile-burn" data-source="burn_rate" data-field="recent" data-fetchpriority="high">
+        <div class="fd-tile" id="tile-burn" data-source="burn_rate" data-field="recent" data-row="0" data-fetchpriority="high">
           <span class="fd-tile-label">Tokens, last 6 hours</span>
           <span class="fd-tile-value dash-skeleton">—</span>
           <span class="fd-tile-sub dash-skeleton">—</span>
         </div>
-        <div class="fd-tile" id="tile-throttle" data-source="throttle_rate" data-field="rate" data-fetchpriority="high">
+        <div class="fd-tile" id="tile-throttle" data-source="throttle_rate" data-field="rate" data-row="0" data-fetchpriority="high">
           <span class="fd-tile-label">429 share, latest hour</span>
           <span class="fd-tile-value dash-skeleton">—</span>
           <span class="fd-tile-sub dash-skeleton">—</span>
         </div>
-        <div class="fd-tile" id="tile-anomalies" data-source="anomaly_count" data-field="major">
+        <div class="fd-tile" id="tile-anomalies" data-source="anomaly_count" data-field="major" data-row="0">
           <span class="fd-tile-label">Anomalies scoring 75+</span>
           <span class="fd-tile-value dash-skeleton">—</span>
           <span class="fd-tile-sub dash-skeleton">—</span>
@@ -390,6 +517,7 @@
 <script src="exec.js"></script>
 <script src="eng.js"></script>
 <script src="ops.js"></script>
+<script src="savings.js"></script>
 <script>
   (function () {
     const FD = window.FD;
@@ -438,13 +566,15 @@
       }
       if (banner) banner.hidden = true;
       const budget = dash.data('budget_status');
-      const b = budget.status === 'ok' && budget.data ? budget.data : {};
+      const b = budget.status === 'ok' && Array.isArray(budget.data) && budget.data[0] ? budget.data[0] : {};
       const parts = [];
       if (b.verdict) parts.push(`Projected month end is ${b.verdict}`);
       const share = dash.data('ai_share');
-      if (share.status === 'ok' && share.data && share.data.pct != null) parts.push(`AI is ${FD.pct(share.data.pct, 0)} of spend`);
+      const shareRow = share.status === 'ok' && Array.isArray(share.data) ? share.data[0] : null;
+      if (shareRow && shareRow.pct != null) parts.push(`AI is ${FD.pct(shareRow.pct, 0)} of spend`);
       const alloc = dash.data('unallocated_share');
-      if (alloc.status === 'ok' && alloc.data && alloc.data.pct != null) parts.push(`${FD.pct(alloc.data.pct, 0)} of spend is unallocated`);
+      const allocRow = alloc.status === 'ok' && Array.isArray(alloc.data) ? alloc.data[0] : null;
+      if (allocRow && allocRow.pct != null) parts.push(`${FD.pct(allocRow.pct, 0)} of spend is unallocated`);
       if (failed.length) parts.push(`${failed.length} source${failed.length === 1 ? '' : 's'} did not load`);
       el.textContent = parts.length ? `${parts.join('. ')}.` : 'Three views of Azure spend and AI telemetry, one per audience.';
     };

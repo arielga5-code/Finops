@@ -11,7 +11,7 @@
     inputs: ['tokens_by_deployment'],
     fn: (tokens_by_deployment) => {
       const hours = Array.from(new Set(tokens_by_deployment.map((r) => r.hour))).sort();
-      if (!hours.length) return { recent: null, prior: null, change: null, hours: 0 };
+      if (!hours.length) return [{ recent: null, prior: null, change: null, hours: 0 }];
       const recent = hours.slice(-6);
       const prior = hours.slice(-12, -6);
       const total = (set) =>
@@ -20,7 +20,7 @@
           .reduce((a, r) => a + (Number(r.total_tokens) || Number(r.input_tokens) + Number(r.output_tokens) || 0), 0);
       const a = total(recent);
       const b = total(prior);
-      return { recent: a, prior: b || null, change: b ? (a - b) / b : null, hours: recent.length };
+      return [{ recent: a, prior: b || null, change: b ? (a - b) / b : null, hours: recent.length }];
     },
   });
 
@@ -30,7 +30,7 @@
     inputs: ['openai_errors'],
     fn: (openai_errors) => {
       const hours = Array.from(new Set(openai_errors.map((r) => r.hour))).sort();
-      if (!hours.length) return { rate: null, requests: null, throttled: null };
+      if (!hours.length) return [{ rate: null, requests: null, throttled: null }];
       const latest = hours[hours.length - 1];
       let requests = 0;
       let throttled = 0;
@@ -40,7 +40,7 @@
           requests += Number(r.requests) || 0;
           if (String(r.status_code) === '429') throttled += Number(r.errors) || 0;
         });
-      return { hour: latest, requests, throttled, rate: requests ? throttled / requests : null };
+      return [{ hour: latest, requests, throttled, rate: requests ? throttled / requests : null }];
     },
   });
 
@@ -51,13 +51,13 @@
     fn: (ml_anomalies) => {
       const scored = ml_anomalies.map((r) => Number(r.anomaly_score)).filter((v) => isFinite(v));
       const major = scored.filter((v) => v >= 75);
-      return { total: ml_anomalies.length, major: major.length, max: scored.length ? Math.max.apply(null, scored) : null };
+      return [{ total: ml_anomalies.length, major: major.length, max: scored.length ? Math.max.apply(null, scored) : null }];
     },
   });
 
   FD.pages.operations = () => {
     const burn = dash.data('burn_rate');
-    const b = burn.status === 'ok' && burn.data ? burn.data : {};
+    const b = burn.status === 'ok' && Array.isArray(burn.data) && burn.data[0] ? burn.data[0] : {};
     FD.setValue('#tile-burn .fd-tile-value', FD.num(b.recent));
     FD.setValue('#tile-burn .fd-tile-sub', b.change == null ? 'Waiting for data' : `${FD.signedPct(b.change)} against the 6 hours before`);
     const burnEl = document.querySelector('#tile-burn .fd-tile-sub');
@@ -67,7 +67,7 @@
     }
 
     const throttle = dash.data('throttle_rate');
-    const t = throttle.status === 'ok' && throttle.data ? throttle.data : {};
+    const t = throttle.status === 'ok' && Array.isArray(throttle.data) && throttle.data[0] ? throttle.data[0] : {};
     FD.setValue('#tile-throttle .fd-tile-value', FD.pct(t.rate, 2));
     FD.setValue('#tile-throttle .fd-tile-sub', t.requests ? `${FD.num(t.throttled)} of ${FD.num(t.requests)} requests` : 'Waiting for data');
     const throttleEl = document.querySelector('#tile-throttle .fd-tile-value');
@@ -77,7 +77,7 @@
     }
 
     const anomalies = dash.data('anomaly_count');
-    const an = anomalies.status === 'ok' && anomalies.data ? anomalies.data : {};
+    const an = anomalies.status === 'ok' && Array.isArray(anomalies.data) && anomalies.data[0] ? anomalies.data[0] : {};
     FD.setValue('#tile-anomalies .fd-tile-value', an.major == null ? '—' : FD.num(an.major));
     FD.setValue('#tile-anomalies .fd-tile-sub', an.max == null ? 'Waiting for data' : `highest score ${d3.format('.0f')(an.max)}`);
     const anEl = document.querySelector('#tile-anomalies .fd-tile-value');

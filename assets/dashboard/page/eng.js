@@ -15,11 +15,11 @@
         .map((r) => ({ hour: r.hour, rate: Number(r.reported_cache_rate ?? r.derived_cache_rate) }))
         .filter((r) => isFinite(r.rate))
         .sort((a, b) => (a.hour < b.hour ? -1 : 1));
-      if (!rows.length) return { rate: null, baseline: null, change: null };
+      if (!rows.length) return [{ rate: null, baseline: null, change: null }];
       const latest = rows[rows.length - 1].rate;
       const earlier = rows.slice(0, -1);
       const baseline = earlier.length ? earlier.reduce((a, r) => a + r.rate, 0) / earlier.length : null;
-      return { rate: latest, baseline, change: baseline ? latest - baseline : null };
+      return [{ rate: latest, baseline, change: baseline ? latest - baseline : null }];
     },
   });
 
@@ -126,7 +126,7 @@
     // cache effectiveness
     const cache = FD.read('cache_effectiveness', CACHE_NUM);
     const latest = dash.data('cache_latest');
-    const c = latest.status === 'ok' && latest.data ? latest.data : {};
+    const c = latest.status === 'ok' && Array.isArray(latest.data) && latest.data[0] ? latest.data[0] : {};
     FD.setValue('#tile-cache .fd-tile-value', c.rate == null ? '—' : `${d3.format('.1f')(c.rate)}%`);
     FD.setValue(
       '#tile-cache .fd-tile-sub',

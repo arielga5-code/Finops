@@ -1,8 +1,9 @@
 # Dashboard page
 
-Source for the three-dashboard FinOps page: the Executive, Engineering and AI
+Source for the four-tab FinOps page: the Executive, Engineering and AI
 operations views specified in
-[../../docs/04-dashboards.md](../../docs/04-dashboards.md).
+[../../docs/04-dashboards.md](../../docs/04-dashboards.md), plus a Savings tab
+filled from a recommendations workbook.
 
 This is the page as published, kept here so it is reviewable and diffable. The
 published copy lives in a Claude Artifact and is edited there; treat this
@@ -23,12 +24,13 @@ schema/   the column contract for each of the nine sources
 | `page/exec.js` | dashboard A — Executive / monthly, and its calculations |
 | `page/eng.js` | dashboard B — Engineering / weekly |
 | `page/ops.js` | dashboard C — real-time AI operations |
+| `page/savings.js` | Savings tab — opportunities, reservations, idle disks, App Service plans |
 
 The page runs inside a host that supplies `d3` v7 and a `dash` object for data,
 parameters and theming, so it is not a standalone HTML file and will not render
 by opening it in a browser.
 
-## The nine sources
+## The thirteen sources
 
 `schema/*.csv` carry column headers and no rows. They are the contract between
 whatever produces the data and the page that reads it — the page's scripts and
@@ -45,11 +47,19 @@ its source marks are written against exactly these column names.
 | `cache_effectiveness` | [`../esql/cache_effectiveness.esql`](../esql/cache_effectiveness.esql) |
 | `openai_errors` | Azure Monitor request and error counts per status code |
 | `ml_anomalies` | the jobs in [`../ml/`](../ml/) |
+| `savings_opportunities` | summary sheet of the recommendations workbook |
+| `reservations` | reservation sheet of the same workbook |
+| `idle_disks` | disk sheet of the same workbook (tags omitted) |
+| `app_service_plans` | App Service sheet of the same workbook |
 
 The first four come from a cost export. The rest are Azure Monitor telemetry and
 appear in no cost export at any grain, which is why dashboard C has no cost panel
 and dashboard B is only partly fillable from billing data alone. See
 [../../docs/03-ai-telemetry-ingestion.md](../../docs/03-ai-telemetry-ingestion.md).
+
+The last four hold estimates from a recommendations workbook, not measured spend,
+and are committed here as headers only because their rows are resource and
+subscription names.
 
 ## Before you apply
 
@@ -62,7 +72,12 @@ and dashboard B is only partly fillable from billing data alone. See
 2. **Currency is read from the data, not assumed.** Every panel takes it from the
    first row's `currency` column. Mixed-currency estates need filtering to one
    currency first, or the totals are meaningless.
-3. **The top-resources change column needs two months** in `resource_cost` before
+3. **The Savings total is an upper bound.** It counts the 3-year reserved
+   instance line and leaves out the 1-year line, because they are alternatives.
+   The workbook does not say whether the shutdown, rightsizing and reservation
+   lines overlap, so they are not netted out. The idle-disk list in the workbook
+   also totals less than the idle-disk lines in its own summary.
+4. **The top-resources change column needs two months** in `resource_cost` before
    it computes anything.
 
 ## Conventions the page follows

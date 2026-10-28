@@ -17,7 +17,7 @@
     inputs: ['daily_cost'],
     fn: (daily_cost) => {
       const rows = daily_cost.map((r) => ({ date: r.date, cost: Number(r.cost) || 0 }));
-      if (!rows.length) return { mtd: null, projected: null, used_pct: null, projected_pct: null, days: 0, verdict: null };
+      if (!rows.length) return [{ mtd: null, projected: null, used_pct: null, projected_pct: null, days: 0, verdict: null }];
       const month = rows.map((r) => String(r.date).slice(0, 7)).sort().pop();
       const inMonth = rows.filter((r) => String(r.date).slice(0, 7) === month);
       const days = new Set(inMonth.map((r) => r.date)).size;
@@ -25,7 +25,7 @@
       const daysInMonth = new Date(Date.UTC(+month.slice(0, 4), +month.slice(5, 7), 0)).getUTCDate();
       const projected = days ? (mtd / days) * daysInMonth : null;
       const budget = 50000;
-      return {
+      return [{
         month,
         days,
         mtd,
@@ -33,7 +33,7 @@
         used_pct: mtd / budget,
         projected_pct: projected == null ? null : projected / budget,
         verdict: projected == null ? null : projected > budget ? 'over budget' : projected > budget * 0.9 ? 'at risk' : 'on track',
-      };
+      }];
     },
   });
 
@@ -44,7 +44,7 @@
     fn: (ai_cost, daily_cost) => {
       const ai = ai_cost.reduce((a, r) => a + (Number(r.cost) || 0), 0);
       const total = daily_cost.reduce((a, r) => a + (Number(r.cost) || 0), 0);
-      return { ai, total, pct: total ? ai / total : null };
+      return [{ ai, total, pct: total ? ai / total : null }];
     },
   });
 
@@ -60,7 +60,7 @@
         total += cost;
         if (r.allocation === 'unallocated') unallocated += cost;
       });
-      return { unallocated, total, pct: total ? unallocated / total : null };
+      return [{ unallocated, total, pct: total ? unallocated / total : null }];
     },
   });
 
@@ -117,11 +117,11 @@
     const daily = FD.read('daily_cost', DAILY_NUM);
     const cur = currencyOf(daily.rows);
     const budget = dash.data('budget_status');
-    const b = budget.status === 'ok' && budget.data ? budget.data : {};
+    const b = budget.status === 'ok' && Array.isArray(budget.data) && budget.data[0] ? budget.data[0] : {};
     const share = dash.data('ai_share');
-    const s = share.status === 'ok' && share.data ? share.data : {};
+    const s = share.status === 'ok' && Array.isArray(share.data) && share.data[0] ? share.data[0] : {};
     const alloc = dash.data('unallocated_share');
-    const a = alloc.status === 'ok' && alloc.data ? alloc.data : {};
+    const a = alloc.status === 'ok' && Array.isArray(alloc.data) && alloc.data[0] ? alloc.data[0] : {};
 
     // tiles
     FD.setValue('#tile-mtd .fd-tile-value', FD.money(b.mtd, cur));
