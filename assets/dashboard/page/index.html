@@ -103,21 +103,155 @@
 
 <div class="fd">
   <div class="fd-head">
-    <h1 class="fd-title">Azure AI cost control</h1>
-    <p class="fd-takeaway" id="fd-takeaway">Three views of Azure spend and AI telemetry, one per audience.</p>
+    <h1 class="fd-title">Azure cost, May to July 2026</h1>
+    <p class="fd-takeaway" id="fd-takeaway">Waiting for data.</p>
   </div>
 
-  <div class="fd-banner" id="fd-status">
-    <p><strong>Spend and telemetry are not attached yet.</strong> The Savings tab is filled from the July 2026 recommendations workbook. The other three tabs are wired to their sources and fill the moment a file has rows. Nothing here is a sample or a placeholder number.</p>
-    <p>The cost panels want the output of <code>scripts/ea_export_aggregate.py</code> run against the EA detail export. The token, PTU, cache and error panels want Azure Monitor telemetry, which no cost export contains at any grain — see <code>docs/03-ai-telemetry-ingestion.md</code>.</p>
+  <div class="fd-tabs" role="tablist" aria-label="Sections">
+    <button class="fd-tab" role="tab" id="tab-overview" aria-controls="overview" aria-selected="true">Overview</button>
+    <button class="fd-tab" role="tab" id="tab-where" aria-controls="where" aria-selected="false">Where it goes</button>
+    <button class="fd-tab" role="tab" id="tab-ai" aria-controls="ai" aria-selected="false">AI</button>
+    <button class="fd-tab" role="tab" id="tab-savings" aria-controls="savings" aria-selected="false">Savings</button>
   </div>
 
-  <div class="fd-tabs" role="tablist" aria-label="Dashboards">
-    <button class="fd-tab" role="tab" id="tab-savings" aria-controls="savings" aria-selected="true">Savings</button>
-    <button class="fd-tab" role="tab" id="tab-executive" aria-controls="executive" aria-selected="false">Executive</button>
-    <button class="fd-tab" role="tab" id="tab-engineering" aria-controls="engineering" aria-selected="false">Engineering</button>
-    <button class="fd-tab" role="tab" id="tab-operations" aria-controls="operations" aria-selected="false">AI operations</button>
-  </div>
+  <!-- ===================== Overview ===================== -->
+  <section class="fd-page" id="overview" role="tabpanel" aria-labelledby="tab-overview">
+    <div class="fd-section">
+      <div class="fd-section-head">
+        <h2 class="fd-section-title">Three months of spend</h2>
+        <p class="fd-section-note">Azure enterprise enrollment 51378402, 32 subscriptions, in USD. Invoiced totals exclude the Commvault annual prepayment.</p>
+      </div>
+      <div class="fd-tiles">
+        <div class="fd-tile" id="tile-inv-total" data-source="headline" data-field="total" data-row="0" data-fetchpriority="high">
+          <span class="fd-tile-label">Invoiced, three months</span>
+          <span class="fd-tile-value dash-skeleton">—</span>
+          <span class="fd-tile-sub dash-skeleton">—</span>
+        </div>
+        <div class="fd-tile" id="tile-inv-jul" data-source="headline" data-field="jul" data-row="0" data-fetchpriority="high">
+          <span class="fd-tile-label">Invoiced in July</span>
+          <span class="fd-tile-value dash-skeleton">—</span>
+          <span class="fd-tile-sub dash-skeleton">—</span>
+        </div>
+        <div class="fd-tile" id="tile-ai-total" data-source="headline" data-field="ai_total" data-row="0">
+          <span class="fd-tile-label">AI and data platforms</span>
+          <span class="fd-tile-value dash-skeleton">—</span>
+          <span class="fd-tile-sub dash-skeleton">—</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <div class="fd-grid">
+        <div class="fd-card">
+          <h3 class="fd-card-title">Invoiced by month</h3>
+          <p class="fd-card-note">What Azure Cost Management invoiced. The run rate rises every month rather than spiking once.</p>
+          <div class="fd-chart" id="chart-invoiced" data-source="invoiced_months"></div>
+        </div>
+        <div class="fd-card">
+          <h3 class="fd-card-title">Spend with no project tag</h3>
+          <p class="fd-card-note">The untagged share of consumption cost. This is the allocation gap growing.</p>
+          <div class="fd-chart" id="chart-untagged" data-source="untagged_share"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <div class="fd-section-head">
+        <h2 class="fd-section-title">Two totals that do not match</h2>
+        <p class="fd-section-note">The invoiced total and the breakdown tables measure different things. Breakdowns are consumption cost, so they run higher. Every breakdown on this page uses the larger basis and is labelled as such.</p>
+      </div>
+      <div class="fd-card">
+        <div class="fd-table-wrap">
+          <table class="fd-table" id="table-reconciliation" data-source="reconciliation" data-row-key="item">
+            <thead>
+              <tr>
+                <th data-field="item">Line</th>
+                <th data-field="amount" style="text-align:right">Amount</th>
+                <th data-field="note">What it is</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="fd-table-empty">No rows yet.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== Where it goes ===================== -->
+  <section class="fd-page" id="where" role="tabpanel" aria-labelledby="tab-where" hidden>
+    <div class="fd-section">
+      <div class="fd-section-head">
+        <h2 class="fd-section-title">Where the spend belongs</h2>
+        <p class="fd-section-note">Consumption cost over May to July, so these add up to more than the invoiced total. Bars share one scale within each list.</p>
+      </div>
+      <div class="fd-grid">
+        <div class="fd-card">
+          <h3 class="fd-card-title">By subscription</h3>
+          <div class="fd-chart fd-rank-list" id="rank-subscription" data-source="by_subscription"></div>
+        </div>
+        <div class="fd-card">
+          <h3 class="fd-card-title">By service</h3>
+          <div class="fd-chart fd-rank-list" id="rank-service" data-source="by_service"></div>
+        </div>
+        <div class="fd-card">
+          <h3 class="fd-card-title">By cost centre</h3>
+          <p class="fd-card-note">Untagged spend is shown in red rather than dropped.</p>
+          <div class="fd-chart fd-rank-list" id="rank-cost-centre" data-source="by_cost_centre"></div>
+        </div>
+        <div class="fd-card">
+          <h3 class="fd-card-title">By project</h3>
+          <div class="fd-chart fd-rank-list" id="rank-project" data-source="by_project"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <div class="fd-section-head">
+        <h2 class="fd-section-title">What changed</h2>
+        <p class="fd-section-note">Meter categories ranked by change from May to July. Decreases are grey.</p>
+      </div>
+      <div class="fd-card">
+        <div class="fd-chart fd-rank-list" id="rank-movers" data-source="meter_movers"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== AI ===================== -->
+  <section class="fd-page" id="ai" role="tabpanel" aria-labelledby="tab-ai" hidden>
+    <div class="fd-section">
+      <div class="fd-section-head">
+        <h2 class="fd-section-title">AI and data platform spend</h2>
+      </div>
+      <div class="fd-grid">
+        <div class="fd-card fd-card--wide">
+          <h3 class="fd-card-title">By platform and month</h3>
+          <p class="fd-card-note">Databricks is consumption against a prepaid balance, not new cash cost.</p>
+          <div class="fd-chart" id="chart-ai-platforms" data-source="ai_platforms"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <div class="fd-section-head">
+        <h2 class="fd-section-title">Largest AI cost drivers</h2>
+        <p class="fd-section-note">Three months of consumption. Grey means it draws down a prepaid balance and does not reach the invoice.</p>
+      </div>
+      <div class="fd-card">
+        <div class="fd-chart fd-rank-list" id="rank-ai-drivers" data-source="ai_drivers"></div>
+      </div>
+    </div>
+
+    <div class="fd-section">
+      <div class="fd-section-head">
+        <h2 class="fd-section-title">Inside AIFactory</h2>
+        <p class="fd-section-note">Infrastructure against AI, by meter category.</p>
+      </div>
+      <div class="fd-card">
+        <div class="fd-chart fd-rank-list" id="rank-aifactory" data-source="aifactory"></div>
+      </div>
+    </div>
+  </section>
 
   <!-- ===================== D — Savings ===================== -->
   <section class="fd-page" id="savings" role="tabpanel" aria-labelledby="tab-savings">
@@ -235,288 +369,10 @@
       </div>
     </div>
   </section>
-
-  <!-- ===================== A — Executive / monthly ===================== -->
-  <section class="fd-page" id="executive" role="tabpanel" aria-labelledby="tab-executive" hidden>
-    <div class="fd-section">
-      <div class="fd-section-head">
-        <h2 class="fd-section-title">Where the month stands</h2>
-        <p class="fd-section-note">Month-to-date figures for the latest month in the export. Cost data lands on a 24-hour poll on top of Azure's own billing latency, so treat the last day or two as incomplete.</p>
-      </div>
-      <div class="fd-tiles">
-        <div class="fd-tile" id="tile-mtd" data-source="budget_status" data-field="mtd" data-row="0" data-fetchpriority="high">
-          <span class="fd-tile-label">Spend month to date</span>
-          <span class="fd-tile-value dash-skeleton">—</span>
-          <span class="fd-tile-sub dash-skeleton">—</span>
-        </div>
-        <div class="fd-tile" id="tile-projected" data-source="budget_status" data-field="projected" data-row="0" data-fetchpriority="high">
-          <span class="fd-tile-label">Projected month end</span>
-          <span class="fd-tile-value dash-skeleton">—</span>
-          <span class="fd-tile-sub dash-skeleton">—</span>
-        </div>
-        <div class="fd-tile" id="tile-ai-share" data-source="ai_share" data-field="pct" data-row="0">
-          <span class="fd-tile-label">AI share of spend</span>
-          <span class="fd-tile-value dash-skeleton">—</span>
-          <span class="fd-tile-sub">Cognitive Services and ML meters</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="fd-section">
-      <div class="fd-section-head">
-        <h2 class="fd-section-title">Budget and allocation</h2>
-      </div>
-      <div class="fd-grid">
-        <div class="fd-card">
-          <h3 class="fd-card-title">Spend against budget pace</h3>
-          <p class="fd-card-note">Cumulative spend through the latest month, against the monthly budget line.</p>
-          <p class="fd-stat" id="stat-budget" data-source="budget_status" data-field="used_pct" data-row="0">
-            <span class="fd-stat-value dash-skeleton">—</span>
-            <span class="fd-stat-label">of the monthly budget used so far</span>
-          </p>
-          <div class="fd-chart" id="chart-budget-pace" data-source="daily_cost"></div>
-          <p class="fd-source">The budget line is a fixed 50,000, the placeholder from <code>assets/esql/forecast_vs_actual.esql</code>. Replace it with your figure, or move budgets to a lookup index so finance can maintain them without editing queries.</p>
-        </div>
-        <div class="fd-card">
-          <h3 class="fd-card-title">Spend by cost center</h3>
-          <p class="fd-card-note">Untagged spend appears as its own <code>unallocated</code> bar rather than dropping out of the group-by.</p>
-          <p class="fd-stat" id="stat-unallocated" data-source="unallocated_share" data-field="pct" data-row="0">
-            <span class="fd-stat-value dash-skeleton">—</span>
-            <span class="fd-stat-label">of spend has no cost center, against a target under 5%</span>
-          </p>
-          <div class="fd-chart" id="chart-cost-centers" data-source="daily_cost"></div>
-          <p class="fd-source">Needs the tag-promotion pipeline from <code>docs/02-cost-ingestion.md</code>, or a <code>CostCenter</code> column in the export.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="fd-section">
-      <div class="fd-section-head">
-        <h2 class="fd-section-title">Unit economics</h2>
-        <p class="fd-section-note">Rising AI spend can simply mean the product is working. Rising cost per million tokens is always a regression: model mix drifted expensive, caching broke, or context bloated.</p>
-      </div>
-      <div class="fd-grid">
-        <div class="fd-card fd-card--wide">
-          <h3 class="fd-card-title">Cost per million tokens</h3>
-          <p class="fd-card-note">Daily AI spend over daily tokens. Read the trend, not the absolute value.</p>
-          <div class="fd-chart" id="chart-unit-economics" data-source="cost_per_mtok"></div>
-          <p class="fd-source">Spans both planes, so it needs the cost and telemetry sides together — the metric in <code>assets/esql/cost_per_million_tokens.esql</code>.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="fd-section">
-      <div class="fd-section-head">
-        <h2 class="fd-section-title">Top resources</h2>
-      </div>
-      <div class="fd-card">
-        <h3 class="fd-card-title">Ten costliest resources, with month change</h3>
-        <p class="fd-card-note">The change column needs two months in the export to compute.</p>
-        <div class="fd-table-wrap">
-          <table class="fd-table" id="table-top-resources" data-source="top_resources" data-row-key="resource">
-            <thead>
-              <tr>
-                <th data-field="resource">Resource</th>
-                <th data-field="resource_group">Resource group</th>
-                <th data-field="subscription">Subscription</th>
-                <th data-field="latest" style="text-align:right">Latest month</th>
-                <th data-field="delta" style="text-align:right">Change</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <p class="fd-table-empty">No rows yet. Fills from <code>resource_cost.csv</code>.</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== B — Engineering / weekly ===================== -->
-  <section class="fd-page" id="engineering" role="tabpanel" aria-labelledby="tab-engineering" hidden>
-    <div class="fd-section">
-      <div class="fd-section-head">
-        <h2 class="fd-section-title">Where the money goes</h2>
-        <p class="fd-section-note">Bucketed on the date the usage occurred, not the date it was polled. Get that wrong and a late poll smears yesterday's spend into today.</p>
-      </div>
-      <div class="fd-grid">
-        <div class="fd-card fd-card--wide">
-          <h3 class="fd-card-title">Daily spend by resource group</h3>
-          <p class="fd-card-note">Top seven groups by spend; the tail folds into Other rather than generating more hues.</p>
-          <div class="fd-chart" id="chart-rg-spend" data-source="daily_cost"></div>
-          <p class="fd-source"><code>assets/esql/daily_cost_by_resource_group.esql</code></p>
-        </div>
-        <div class="fd-card fd-card--wide">
-          <h3 class="fd-card-title">Spend by meter category</h3>
-          <p class="fd-card-note">Meter category is the closest the cost export gets to resource type.</p>
-          <div class="fd-chart" id="chart-category-spend" data-source="daily_cost"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="fd-section">
-      <div class="fd-section-head">
-        <h2 class="fd-section-title">Token volume</h2>
-      </div>
-      <div class="fd-grid">
-        <div class="fd-card fd-card--wide">
-          <h3 class="fd-card-title">Input against output tokens</h3>
-          <p class="fd-card-note">Two series, never one. Output bills at several times input on most models, so a flat total can hide a climbing bill.</p>
-          <div class="fd-chart" id="chart-token-split" data-source="tokens_by_deployment"></div>
-          <p class="fd-source"><code>assets/esql/tokens_by_deployment.esql</code> · Azure Monitor, 5-minute timegrain</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="fd-section">
-      <div class="fd-section-head">
-        <h2 class="fd-section-title">Provisioned capacity</h2>
-        <p class="fd-section-note">Above 90% throttling is coming. Below 50% sustained you are paying for idle reserved capacity. Between them PTU is doing its job.</p>
-      </div>
-      <div class="fd-grid">
-        <div class="fd-card fd-card--wide">
-          <h3 class="fd-card-title">PTU utilization band</h3>
-          <p class="fd-card-note">Average utilization per provisioned deployment, with both lines drawn.</p>
-          <div class="fd-chart" id="chart-ptu-band" data-source="ptu_utilization"></div>
-          <p class="fd-source"><code>assets/esql/ptu_utilization.esql</code></p>
-        </div>
-        <div class="fd-card fd-card--wide">
-          <h3 class="fd-card-title">Utilization verdict per deployment</h3>
-          <p class="fd-card-note">The verdict comes from the query, not from this page.</p>
-          <div class="fd-table-wrap">
-            <table class="fd-table" id="table-ptu" data-source="ptu_utilization" data-row-key="resource,hour">
-              <thead>
-                <tr>
-                  <th data-field="resource">Deployment</th>
-                  <th data-field="hour">Hour</th>
-                  <th data-field="avg_util" style="text-align:right">Average</th>
-                  <th data-field="max_util" style="text-align:right">Peak</th>
-                  <th data-field="verdict">Verdict</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-          <p class="fd-table-empty">No rows yet. Fills from <code>ptu_utilization.csv</code>.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="fd-section">
-      <div class="fd-section-head">
-        <h2 class="fd-section-title">Cache and retries</h2>
-      </div>
-      <div class="fd-tiles">
-        <div class="fd-tile" id="tile-cache" data-source="cache_latest" data-field="rate" data-row="0">
-          <span class="fd-tile-label">Cache match rate, latest hour</span>
-          <span class="fd-tile-value dash-skeleton">—</span>
-          <span class="fd-tile-sub dash-skeleton">—</span>
-        </div>
-      </div>
-      <div class="fd-grid">
-        <div class="fd-card fd-card--wide">
-          <h3 class="fd-card-title">Prompt cache match rate</h3>
-          <p class="fd-card-note">Read a step down as a cost regression. It almost always traces to a deploy that put a timestamp, session id or user name near the start of a system prompt, invalidating the cacheable prefix.</p>
-          <div class="fd-chart" id="chart-cache" data-source="cache_effectiveness"></div>
-          <p class="fd-source"><code>assets/esql/cache_effectiveness.esql</code></p>
-        </div>
-        <div class="fd-card">
-          <h3 class="fd-card-title">Error rate</h3>
-          <p class="fd-card-note">Retry storms are billable.</p>
-          <div class="fd-chart fd-chart--short" id="chart-error-rate" data-source="openai_errors"></div>
-        </div>
-        <div class="fd-card">
-          <h3 class="fd-card-title">AI spend per day</h3>
-          <p class="fd-card-note">Read beside the error rate on the same dates.</p>
-          <div class="fd-chart fd-chart--short" id="chart-ai-spend-daily" data-source="ai_cost"></div>
-          <p class="fd-source">Two measures on different scales get two charts on a shared time axis, not one chart with two y-scales.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===================== C — Real-time AI operations ===================== -->
-  <section class="fd-page" id="operations" role="tabpanel" aria-labelledby="tab-operations" hidden>
-    <div class="fd-section">
-      <div class="fd-section-head">
-        <h2 class="fd-section-title">Right now</h2>
-        <p class="fd-section-note">Everything on this page is telemetry on a 5-minute timegrain. Cost-based alerts run 24–48h behind reality, so this is the page that can catch a runaway workload before it bills.</p>
-      </div>
-      <div class="fd-tiles">
-        <div class="fd-tile" id="tile-burn" data-source="burn_rate" data-field="recent" data-row="0" data-fetchpriority="high">
-          <span class="fd-tile-label">Tokens, last 6 hours</span>
-          <span class="fd-tile-value dash-skeleton">—</span>
-          <span class="fd-tile-sub dash-skeleton">—</span>
-        </div>
-        <div class="fd-tile" id="tile-throttle" data-source="throttle_rate" data-field="rate" data-row="0" data-fetchpriority="high">
-          <span class="fd-tile-label">429 share, latest hour</span>
-          <span class="fd-tile-value dash-skeleton">—</span>
-          <span class="fd-tile-sub dash-skeleton">—</span>
-        </div>
-        <div class="fd-tile" id="tile-anomalies" data-source="anomaly_count" data-field="major" data-row="0">
-          <span class="fd-tile-label">Anomalies scoring 75+</span>
-          <span class="fd-tile-value dash-skeleton">—</span>
-          <span class="fd-tile-sub dash-skeleton">—</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="fd-section">
-      <div class="fd-section-head">
-        <h2 class="fd-section-title">Burn and capacity</h2>
-      </div>
-      <div class="fd-grid">
-        <div class="fd-card fd-card--wide">
-          <h3 class="fd-card-title">Token burn per deployment</h3>
-          <p class="fd-card-note">Last twelve hours in the file, one line per deployment, labelled at its end.</p>
-          <div class="fd-chart" id="chart-burn" data-source="tokens_by_deployment"></div>
-          <p class="fd-source">Pairs with the token-burn rule in <code>assets/alerts/01-token-burn-rate.json</code>.</p>
-        </div>
-        <div class="fd-card fd-card--wide">
-          <h3 class="fd-card-title">PTU utilization, live</h3>
-          <div class="fd-chart" id="chart-ptu-live" data-source="ptu_utilization"></div>
-          <p class="fd-source">Pairs with <code>assets/alerts/02-ptu-saturation.json</code>.</p>
-        </div>
-        <div class="fd-card fd-card--wide">
-          <h3 class="fd-card-title">429 and quota errors</h3>
-          <p class="fd-card-note">A retry storm bills twice: once for the retries, once for the tokens they spend.</p>
-          <div class="fd-chart" id="chart-throttle" data-source="openai_errors"></div>
-          <p class="fd-source">Pairs with <code>assets/alerts/03-retry-storm.json</code>.</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="fd-section">
-      <div class="fd-section-head">
-        <h2 class="fd-section-title">Anomaly detection</h2>
-      </div>
-      <div class="fd-card">
-        <h3 class="fd-card-title">Active anomaly records</h3>
-        <p class="fd-card-note">Records from the jobs in <code>assets/ml/</code>, highest score first. Machine learning needs a Platinum or Enterprise subscription.</p>
-        <div class="fd-table-wrap">
-          <table class="fd-table" id="table-anomalies" data-source="ml_anomalies" data-row-key="time,job_id">
-            <thead>
-              <tr>
-                <th data-field="time">Time</th>
-                <th data-field="job_id">Job</th>
-                <th data-field="resource">Deployment</th>
-                <th data-field="actual" style="text-align:right">Actual</th>
-                <th data-field="typical" style="text-align:right">Typical</th>
-                <th data-field="anomaly_score" style="text-align:right">Score</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-        <p class="fd-table-empty">No rows yet. Fills from <code>ml_anomalies.csv</code>.</p>
-      </div>
-    </div>
-  </section>
 </div>
 
 <script src="charts.js"></script>
-<script src="exec.js"></script>
-<script src="eng.js"></script>
-<script src="ops.js"></script>
+<script src="report.js"></script>
 <script src="savings.js"></script>
 <script>
   (function () {
@@ -525,13 +381,8 @@
     const panels = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls')));
 
     const show = (id, viaLink) => {
-      tabs.forEach((tab) => {
-        const on = tab.getAttribute('aria-controls') === id;
-        tab.setAttribute('aria-selected', on ? 'true' : 'false');
-      });
-      panels.forEach((panel) => {
-        panel.hidden = panel.id !== id;
-      });
+      tabs.forEach((tab) => tab.setAttribute('aria-selected', tab.getAttribute('aria-controls') === id ? 'true' : 'false'));
+      panels.forEach((panel) => { panel.hidden = panel.id !== id; });
       if (!viaLink) dash.setLink(id);
       draw();
     };
@@ -549,34 +400,18 @@
       });
     });
 
-    // One headline sentence, so the page says what it wants you to notice.
     const takeaway = () => {
       const el = document.getElementById('fd-takeaway');
-      const banner = document.getElementById('fd-status');
-      const ids = ['daily_cost', 'resource_cost', 'ai_cost', 'allocation', 'tokens_by_deployment', 'ptu_utilization', 'cache_effectiveness', 'openai_errors', 'ml_anomalies'];
-      const states = ids.map((id) => dash.data(id));
-      const loading = states.some((s) => s.status === 'loading');
-      if (loading) return;
-      const withRows = ids.filter((id, i) => states[i].status === 'ok' && Array.isArray(states[i].data) && states[i].data.length > 0);
-      const failed = ids.filter((id, i) => states[i].status === 'error' || states[i].status === 'connect');
-      if (!withRows.length) {
-        el.textContent = 'Three views of Azure spend and AI telemetry, one per audience. No source has rows yet, so every panel is showing what it will fill with.';
-        if (banner) banner.hidden = false;
-        return;
-      }
-      if (banner) banner.hidden = true;
-      const budget = dash.data('budget_status');
-      const b = budget.status === 'ok' && Array.isArray(budget.data) && budget.data[0] ? budget.data[0] : {};
+      const h = dash.data('headline');
+      const u = dash.data('untagged_share');
+      if (h.status === 'loading' || u.status === 'loading') return;
+      const r = h.status === 'ok' && Array.isArray(h.data) && h.data[0] ? h.data[0] : null;
+      const rows = u.status === 'ok' && Array.isArray(u.data) ? u.data : [];
+      const jul = rows.filter((x) => x.month === 'Jul')[0];
       const parts = [];
-      if (b.verdict) parts.push(`Projected month end is ${b.verdict}`);
-      const share = dash.data('ai_share');
-      const shareRow = share.status === 'ok' && Array.isArray(share.data) ? share.data[0] : null;
-      if (shareRow && shareRow.pct != null) parts.push(`AI is ${FD.pct(shareRow.pct, 0)} of spend`);
-      const alloc = dash.data('unallocated_share');
-      const allocRow = alloc.status === 'ok' && Array.isArray(alloc.data) ? alloc.data[0] : null;
-      if (allocRow && allocRow.pct != null) parts.push(`${FD.pct(allocRow.pct, 0)} of spend is unallocated`);
-      if (failed.length) parts.push(`${failed.length} source${failed.length === 1 ? '' : 's'} did not load`);
-      el.textContent = parts.length ? `${parts.join('. ')}.` : 'Three views of Azure spend and AI telemetry, one per audience.';
+      if (r) parts.push(`Invoiced spend rose ${FD.signedPct(r.may_to_jul).replace('+', '')} from ${FD.money(r.may, 'USD')} in May to ${FD.money(r.jul, 'USD')} in July`);
+      if (jul && jul.share != null) parts.push(`${FD.pct(jul.share, 0)} of July consumption has no project tag`);
+      el.textContent = parts.length ? `${parts.join('. ')}.` : 'Waiting for data.';
     };
 
     const draw = () => {
