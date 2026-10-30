@@ -9,3 +9,8 @@ date_observed,zone,source,neighborhood,street,house_no,rooms,sqm,floor,price_ils
 2026-10-30,core,homely-mls,רחובות המדע,,,5,,5,8500,yes,yes,active,medium,"FIRST comp with parking AND machsan both confirmed; also mamad, elevator, balcony. Closest like-for-like to the subject unit"
 2026-10-30,core,sinay-nehasim,רחובות המדע,דניאל כהנמן,,5,125,,,yes,yes,stale,low,Amenity match (machsan + parking + sun balcony) but agency page is ~687 days old and quotes no price
 2026-10-30,ring,sinay-nehasim,שעריים,ה' באייר,,5,125,2,,yes,unknown,stale,low,"~687-day-old agency page, no price quoted"
+2026-10-30,ring,madlan,שכונת אפרים,משה פרידמן,35,5,146,,7800,unknown,unknown,active,low,"Recovered from the cancelled scheduled run; Madlan snippet, not independently re-verified"
+2026-10-30,ring,madlan,נווה יהודה,דרך יבנה,,5,125,4,8500,unknown,unknown,active,low,"Recovered from the cancelled scheduled run; Madlan snippet, not independently re-verified"
+2026-10-30,ring,madlan,רחובות החדשה,בנימין יצחק,,5,122,3,7500,unknown,unknown,active,low,"Recovered from the cancelled scheduled run; Madlan snippet, not independently re-verified"
+2026-10-30,ring,madlan,שכונת אפרים,,,5,217,,9000,unknown,unknown,excluded,low,"217sqm, not size-comparable to a 5-room unit; kept for the record only"
+2026-10-30,ring,madlan,שכונת אפרים,,,5,290,,10600,unknown,unknown,excluded,low,"290sqm penthouse, not size-comparable; kept for the record only"

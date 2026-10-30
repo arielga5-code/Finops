@@ -60,3 +60,28 @@ Steps: https://code.claude.com/docs/en/cloud-environments#network-access
 Once allowed, `gw.yad2.co.il/realestate-feed/rent/search` is Yad2's own JSON
 feed and is a far better target than the HTML. Chromium and Playwright are
 already installed in the image if the feed needs a real browser session.
+
+## Known failure mode: push 403 on scheduled runs
+
+Sessions fired by the scheduled task start with **no repository in their
+authorized set** (they come up tagged `config:no-git-repo`). The clone over
+public HTTPS succeeds, the searches run and the report regenerates — then
+`git push` fails:
+
+```
+403: arielga5-code/Finops is not in this session's authorized
+repository set, so the proxy will not inject a credential for it
+```
+
+The commit is left local and dies with the container. Two manual test runs hit
+this; the first presented as a silent hang at the push step.
+
+The task prompt now works around it by calling
+`mcp__claude-code-remote__add_repo` (owner `arielga5-code`, repo `Finops`,
+access `push`) as its first action, before cloning, and by pushing as soon as
+the files change rather than at the end of the run. It also verifies the commit
+reached origin with `git log --oneline origin/<branch> -1` and reports the SHA.
+
+The cleaner fix, if it is available in the environment's settings, is to add
+the repository to the scheduled task's own **sources**, so every fired session
+starts with it authorized and no workaround is needed.
