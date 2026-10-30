@@ -1,0 +1,8 @@
+date_observed,zone,source,neighborhood,street,house_no,rooms,sqm,floor,price_ils,parking,storage,status,confidence,notes
+2026-10-30,core,madlan,רחובות המדע,פרופ' אפרים קציר,16,5,150,2,8700,unknown,unknown,active,medium,"Largest sqm in the core set; aggregator snippet, undated"
+2026-10-30,core,yad2,רחובות המדע,פרופ' אפרים קציר,15,5,,,8300,unknown,unknown,active,low,"Price from search snippet; needs confirmation on listing page"
+2026-10-30,core,yad2,רחובות המדע,פרופ' אפרים קציר,17,5,,,8600,unknown,unknown,active,low,"Price from search snippet; needs confirmation on listing page"
+2026-10-30,core,yad2,רחובות המדע,פרופ' אפרים קציר,26,5,135,,9500,unknown,unknown,active,medium,"Top of the core range"
+2026-10-30,core,adtiny,רחובות המדע,פרופ' אפרים קציר,24,5,130,7,6600,unknown,unknown,stale,low,"Undated aggregator page, far below every other core comp - excluded from stats pending confirmation"
+2026-10-30,ring,yad2,שכונת אפרים,,,5,130,5,8000,unknown,unknown,active,low,"Penthouse, adjacent neighborhood"
+2026-10-30,ring,yad2,שעריים,עזרא,32,5,127,2,8000,yes,unknown,active,medium,"Parking confirmed in listing; weaker location than Rehovot HaMada"

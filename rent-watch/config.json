@@ -1,0 +1,43 @@
+{
+  "subject_property": {
+    "label": "My unit (rented out)",
+    "neighborhood": "רחובות המדע",
+    "street": "פרופ' אפרים קציר",
+    "rooms": 5,
+    "parking": true,
+    "storage": true,
+    "current_rent_ils": 7300,
+    "renewal_month": "August",
+    "notes": "Baseline to compare against. Target: reset to market at renewal."
+  },
+  "search": {
+    "city": "רחובות",
+    "yad2_city_id": 8400,
+    "yad2_area": 12,
+    "yad2_top_area": 41,
+    "core_neighborhood": { "name": "רחובות המדע", "yad2_neighborhood_id": 1234 },
+    "ring_neighborhoods": [
+      { "name": "שכונת אפרים", "yad2_neighborhood_id": 1207 },
+      { "name": "רחובות החדשה" },
+      { "name": "קריית משה" },
+      { "name": "נווה יהודה" }
+    ],
+    "core_streets": [
+      "פרופ' אפרים קציר",
+      "פרופ' יובל נאמן",
+      "פרופ' אהרן צחנובר"
+    ],
+    "criteria": {
+      "rooms_min": 5,
+      "rooms_max": 5.5,
+      "deal_type": "rent",
+      "must_have": ["parking", "storage"],
+      "price_sanity_min_ils": 6000,
+      "price_sanity_max_ils": 14000
+    }
+  },
+  "stats": {
+    "exclude_status": ["stale", "excluded"],
+    "ring_weight_note": "Ring listings are tracked but reported separately; they are not mixed into the core median."
+  }
+}
