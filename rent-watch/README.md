@@ -12,19 +12,29 @@ rent review: an owned unit there is let at **₪7,300**, and the renewal is in
 
 | | Median asking rent | vs ₪7,300 |
 |---|---:|---:|
-| Core — Rehovot HaMada / Efraim Katzir (4 listings) | **₪8,650** | **+₪1,350 (+18.5%)** |
+| Core — Rehovot HaMada / Efraim Katzir (5 listings) | **₪8,600** | **+₪1,300 (+17.8%)** |
 | Ring — adjacent neighborhoods (2 listings) | ₪8,000 | +₪700 (+9.6%) |
 
-Range in the core set: ₪8,300 – ₪9,500, about ₪64/sqm.
+Range in the core set: ₪8,300 – ₪9,500, about ₪65/sqm.
+
+The single most useful comp so far is a 5-room unit in the neighborhood at
+**₪8,500, floor 5, with parking *and* machsan both confirmed**, plus mamad,
+elevator and balcony. That is the closest like-for-like to the subject unit
+found to date, and it sits ₪1,200 above the current rent.
+
+For contrast, Realta puts the *average* rent across all sizes in Rehovot HaMada
+at ₪7,650 — which is roughly where a 5-room unit at ₪7,300 would sit if it were
+an average-sized apartment. It is not; it is at the top of the size range, and
+the 5-room comps cluster ₪8,300–₪8,700.
 
 City context, for the direction of travel: average Rehovot rent across all
 sizes was ₪4,691 in January 2026 (CBS, +4.6% y/y) and ₪4,870 by May 2026
 (+5.4%), and nationally 5–6 room apartments rose faster than the 3.6% overall
 Q1 2026 rise. Large units are where the increases are concentrated.
 
-**Treat the ₪8,650 as directional, not evidence.** See
-[Confidence](#confidence) — it is built from search snippets, and none of the
-four core comps has parking and storage confirmed yet.
+Inventory is thin: Madlan showed 2 rentals in the neighborhood and Realta 5,
+across all sizes. A median over five 5-room comps is a real signal, but it is
+five listings, not a market survey.
 
 ## Layout
 
