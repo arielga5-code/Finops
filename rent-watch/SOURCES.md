@@ -76,12 +76,26 @@ repository set, so the proxy will not inject a credential for it
 The commit is left local and dies with the container. Two manual test runs hit
 this; the first presented as a silent hang at the push step.
 
-The task prompt now works around it by calling
-`mcp__claude-code-remote__add_repo` (owner `arielga5-code`, repo `Finops`,
-access `push`) as its first action, before cloning, and by pushing as soon as
-the files change rather than at the end of the run. It also verifies the commit
-reached origin with `git log --oneline origin/<branch> -1` and reports the SHA.
+An `add_repo` workaround was tried and **does not work.** The session record
+lists `mcp__claude-code-remote__add_repo` under `turn_handoff.tools`, which
+looks like the tool is available, but a fired session cannot actually call it:
 
-The cleaner fix, if it is available in the environment's settings, is to add
-the repository to the scheduled task's own **sources**, so every fired session
-starts with it authorized and no workaround is needed.
+```
+ToolSearch "select:mcp__claude-code-remote__add_repo"
+  -> No matching deferred tools found
+```
+
+A dedicated push-verification run (2026-10-30) failed at that first step and
+pushed nothing. So the `turn_handoff` list is not a reliable statement of what
+a fired session can call, and the workaround is dead.
+
+**The only real fix is configuration**, not prompting: the repository has to be
+in the scheduled task's own **sources**, or in the environment's
+**Repositories**, so fired sessions start with it authorized. Neither is
+settable from inside a session — `create_trigger` and `update_trigger` expose
+no `sources` field — so it is a UI action for the account owner.
+
+Until that is done, a fired run cannot persist anything. The task prompt
+therefore falls back to reporting its findings in the run summary and push
+notification, so the week's numbers still reach the owner even though the CSV
+cannot be updated.
