@@ -22,7 +22,7 @@ These carry the Yad2 IDs confirmed from search results: Rehovot is **city 8400**
 URL back into this table — amenities are often only in the free-text
 description, so the field filters alone under-report.
 
-## Why the daily job uses web search, not a scraper
+## Why the weekly job uses web search, not a scraper
 
 This repo's cloud environment runs behind an allowlist egress proxy. Every
 rental host is denied at the `CONNECT` stage:
@@ -36,7 +36,7 @@ connect_rejected  www.homeless.co.il:443 gateway answered 403 to CONNECT
 
 `curl`, Playwright and `WebFetch` all fail the same way — `WebFetch` returns
 `getaddrinfo ENOTFOUND`. Only `WebSearch`, which runs server-side rather than
-from the container, reaches these sites today. So the daily job is built on
+from the container, reaches these sites today. So the weekly job is built on
 search, and every price it records is a **search-snippet price** carrying a
 confidence flag, not a figure read off a listing page.
 

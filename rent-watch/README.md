@@ -1,6 +1,6 @@
 # Rent Watch — Rehovot HaMada, 5 rooms
 
-A daily price watch on 5-room rentals in **Rehovot HaMada** (רחובות המדע),
+A weekly price watch on 5-room rentals in **Rehovot HaMada** (רחובות המדע),
 centred on **Prof. Efraim Katzir St**, with a ring of adjacent neighborhoods
 tracked separately.
 
@@ -31,10 +31,18 @@ four core comps has parking and storage confirmed yet.
 | Path | What it is |
 |---|---|
 | `config.json` | The search spec: neighborhood and street list, criteria, the ₪7,300 baseline |
-| `data/observations.csv` | Append-only log. One row per listing per day observed |
+| `data/observations.csv` | Append-only log. One row per listing per week observed |
 | `scripts/report.py` | Turns the log into a dated report, or a trend across dates |
 | `reports/` | Generated reports, one file per date |
 | `SOURCES.md` | Verified live search URLs, and why this uses search instead of a scraper |
+
+## Cadence
+
+Runs automatically **every Sunday at 08:43 Israel time**, as a scheduled task
+that searches, appends to the log, regenerates the report, commits, and sends a
+short summary. Weekly is the right interval here: listings on one street do not
+turn over daily, and the renewal is months out, so a weekly point still gives
+tens of observations before August without re-reading the same snippets.
 
 ## Running it
 
@@ -83,7 +91,7 @@ tenant yet:
 3. Snippets carry no posting date, so some listings may already be let. A
    ₪6,600 comp at Katzir 24 was held out for exactly this reason — it sits far
    below every other comp and its page is undated.
-4. Four listings is a thin sample. The value of running this daily is turning
+4. Four listings is a thin sample. The value of running this weekly is turning
    four into forty, and asking prices into a distribution.
 
 What raises confidence fastest is allowing the rental domains through the
@@ -97,5 +105,5 @@ value that a vacancy month erases. On the numbers so far, the gap to market is
 roughly ₪1,350/month — but a 18.5% increase in one step is the kind of move
 that makes a good tenant leave. Closing part of the gap, with the comps to
 justify it, is usually the better trade. By August this log should contain
-months of data rather than one day's snapshot, which is the whole point of
-running it daily.
+months of data rather than one week's snapshot, which is the whole point of
+running it on a schedule.
