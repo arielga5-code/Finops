@@ -8,33 +8,38 @@ The point is not to find an apartment. It is to build a defensible number for a
 rent review: an owned unit there is let at **₪7,300**, and the renewal is in
 **August**.
 
-## Where it stands today (2026-10-30)
+## Where it stands today (2026-11-08)
 
 | | Median asking rent | vs ₪7,300 |
 |---|---:|---:|
-| Core — Rehovot HaMada / Efraim Katzir (5 listings) | **₪8,600** | **+₪1,300 (+17.8%)** |
-| Ring — adjacent neighborhoods (2 listings) | ₪8,000 | +₪700 (+9.6%) |
+| Core — Rehovot HaMada, live listings (3) | **₪9,500** | **+₪2,200 (+30.1%)** |
+| Ring — adjacent neighborhoods (4) | ₪7,625 | +₪325 (+4.5%) |
 
-Range in the core set: ₪8,300 – ₪9,500, about ₪65/sqm.
+**Week 3 changed the picture, because the data source changed.** Until now every
+price came from search snippets. The rental domains were allowed through the
+network policy on 2026-11-08, so the Realta neighbourhood page — a daily
+aggregate of Yad2, Madlan, OnMap, Homeless, Komo and Facebook — was read
+directly, rendered, with per-listing update dates.
 
-The single most useful comp so far is a 5-room unit in the neighborhood at
-**₪8,500, floor 5, with parking *and* machsan both confirmed**, plus mamad,
-elevator and balcony. That is the closest like-for-like to the subject unit
-found to date, and it sits ₪1,200 above the current rent.
+The live 5-room listings in Rehovot HaMada are ₪8,500 (124sqm, floor 1/17,
+updated 28 Sept), ₪9,500 (floor 2/12, updated 20 days ago) and ₪12,000 (161sqm,
+floor 8/9, updated 13 days ago). Realta puts the neighbourhood average across
+all sizes at **₪9,900** — not the ₪7,650 that search snippets reported in weeks
+1 and 3, which was stale.
 
-For contrast, Realta puts the *average* rent across all sizes in Rehovot HaMada
-at ₪7,650 — which is roughly where a 5-room unit at ₪7,300 would sit if it were
-an average-sized apartment. It is not; it is at the top of the size range, and
-the 5-room comps cluster ₪8,300–₪8,700.
+**None of the Katzir 15 / 17 / 24 / 26 listings appear in the live aggregate.**
+Those were the source of the earlier ₪8,300–₪8,600 cluster and of the ₪6,500
+low outlier. They are now recorded as superseded: stale cached aggregator
+content, not the live market. The snippet-based medians were therefore
+systematically **low**.
 
-City context, for the direction of travel: average Rehovot rent across all
-sizes was ₪4,691 in January 2026 (CBS, +4.6% y/y) and ₪4,870 by May 2026
-(+5.4%), and nationally 5–6 room apartments rose faster than the 3.6% overall
-Q1 2026 rise. Large units are where the increases are concentrated.
+On ₪/sqm the live comps run 68.5–74.5. A 130sqm unit at that rate implies
+roughly **₪8,900–₪9,700**.
 
-Inventory is thin: Madlan showed 2 rentals in the neighborhood and Realta 5,
-across all sizes. A median over five 5-room comps is a real signal, but it is
-five listings, not a market survey.
+City context: renewing tenants' rents rose about 2.6% year on year while new
+tenants paid about 6% more (CBS); the January 2026 CPI put annual rent growth
+at 3.2% with rental supply down 8%. Renewals move far more slowly than asking
+rents.
 
 ## Layout
 
