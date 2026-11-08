@@ -24,3 +24,14 @@ date_observed,zone,source,neighborhood,street,house_no,rooms,sqm,floor,price_ils
 2026-11-01,ring,yad2,נווה יהודה,"דרך אצ""ל",10,5,100,1,7000,unknown,unknown,active,low,"New this week; only 100sqm, small for 5 rooms"
 2026-11-01,ring,yad2,נווה יהודה,דרך יבנה,67,5,243,9,17000,unknown,unknown,excluded,low,"243sqm penthouse - not size-comparable, and above the price sanity band"
 2026-11-01,ring,yad2,שכונת אפרים,עמיאל רוז'נסקי,19,5,130,,5750,unknown,unknown,excluded,low,Listing from 2020 - not a 2026 price
+2026-11-08,core,yad2,רחובות המדע,פרופ' אפרים קציר,15,5,150,8,8600,unknown,unknown,active,medium,"8,600 again, now with 150sqm/floor 8. Week 2 had 8,000/130sqm at the same number, so no.15 is unstable across snippets - likely two different units in the building"
+2026-11-08,core,yad2,רחובות המדע,פרופ' אפרים קציר,26,5,135,2,9500,unknown,unknown,active,medium,"Now identified as a SUBLET (סאבלט) - a different product from a standard lease, so weaker evidence for a renewal despite being top of range"
+2026-11-08,core,adtiny,רחובות המדע,פרופ' אפרים קציר,24,5,130,7,6500,yes,yes,active,low,"STATUS CHANGED from stale: ad now states immediate entry. 2 underground parking + machsan + mamad. Third week at 6,500-6,600, so persistent, not a typo. Counted this week"
+2026-11-08,core,realta,רחובות המדע,,,5,124,1,8500,unknown,unknown,active,low,"Realta listing, mamad, no parking/storage detail. Realta also puts the neighbourhood all-sizes average at 7,650"
+2026-11-08,core,adtiny,רחובות המדע,פרופ' אפרים קציר,17,5,146,8,7500,yes,yes,excluded,low,"Ad states occupancy 15.01.2023 - outdated. Amenities match the subject unit, which is why it is kept in the record"
+2026-11-08,ring,yad2,שכונת אפרים,עמיאל רוז'נסקי,,5,130,5,8000,unknown,unknown,active,low,"Third week at 8,000 - stable"
+2026-11-08,ring,yad2,נווה יהודה,יהושע חנקין,1,5,125,6,7250,unknown,unknown,active,low,Unchanged from week 2
+2026-11-08,ring,yad2,נווה יהודה,"דרך אצ""ל",10,5,100,1,7000,unknown,unknown,active,low,Unchanged from week 2; 100sqm is small for 5 rooms
+2026-11-08,ring,anglo-saxon,רחובות צפון-מערב,דרך יבנה,,5,125,,8500,unknown,unknown,active,low,"New this week, Anglo-Saxon listing"
+2026-11-08,ring,yad2,נווה יהודה,דרך יבנה,67,5,243,9,17000,unknown,unknown,excluded,low,"243sqm penthouse, not size-comparable"
+2026-11-08,ring,anglo-saxon,קריית משה,ששת הימים,,5,100,,6800,unknown,unknown,excluded,low,Room count not stated in the source - cannot confirm it is a 5-room unit
