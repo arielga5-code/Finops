@@ -99,3 +99,31 @@ Until that is done, a fired run cannot persist anything. The task prompt
 therefore falls back to reporting its findings in the run summary and push
 notification, so the week's numbers still reach the owner even though the CSV
 cannot be updated.
+
+## Resolved 2026-11-08: the rental domains are now allowed
+
+A personal environment, `finops-rent-watch`, was created for this repository
+with these hosts allowed: `www.yad2.co.il`, `gw.yad2.co.il`,
+`www.madlan.co.il`, `www.homeless.co.il`, `realta.co.il`, `www.adtiny.com`.
+The Default environment was left alone, since it is shared by every other
+repository.
+
+What works now, and what does not:
+
+| Channel | Status |
+|---|---|
+| `curl` from the container | **works** — yad2, realta, adtiny all return 200 |
+| Chromium / Playwright | **works** — renders JS listing pages |
+| `www.madlan.co.il` | reachable, but returns its own 403 bot block |
+| `WebFetch` | still fails with `ENOTFOUND` — it uses a separate allowlist that this change did not affect |
+
+So the working method is `curl` for static pages and Playwright for
+JS-rendered ones, parsed locally. Do not rely on `WebFetch` for these hosts.
+
+**Why this mattered more than expected.** The first read of a live page showed
+the neighbourhood average at ₪9,900, against ₪7,650 in search snippets, and
+showed that the Katzir listings driving the earlier medians do not appear in
+the live aggregate at all. Snippet data was not merely thin — it was biased
+low by stale cached ads. Prefer a rendered read over a snippet whenever both
+are available, and keep the `confidence` flag honest about which one a row
+came from.
