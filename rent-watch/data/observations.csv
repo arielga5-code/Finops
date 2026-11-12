@@ -39,3 +39,8 @@ date_observed,zone,source,neighborhood,street,house_no,rooms,sqm,floor,price_ils
 2026-11-08,core,realta-live,רחובות המדע,פרופ' אברהם הרשקו,,5,,2,9500,unknown,unknown,active,medium,"LIVE: 5 rooms, floor 2/12, mamad, updated 20 days ago. Likely the real source of the 9,500 that earlier weeks attributed to Katzir 26"
 2026-11-08,core,realta-live,רחובות המדע,פרופ' אפרים קציר,,4,98,4,7500,unknown,unknown,excluded,medium,"LIVE but 4 rooms, not 5 - context only, updated 9 days ago"
 2026-11-08,core,realta-live,רחובות המדע,פרופ' אהרן צ'חנובר,,4,161,8,12000,unknown,unknown,excluded,medium,"LIVE but 4 rooms - context only, mamad, updated 18 days ago"
+2026-11-12,core,realta-live,רחובות המדע,,,5,161,8,12000,unknown,unknown,active,medium,"Unchanged. Updated 17 days ago (was 13 four days ago) - still listed, not let, no price cut"
+2026-11-12,core,realta-live,רחובות המדע,פרופ' אברהם הרשקו,5,5,,2,9500,unknown,unknown,active,medium,Unchanged. Updated 24 days ago. Building identified as Hershko 5 by the page's building index
+2026-11-12,core,realta-live,רחובות המדע,פרופ' אפרים קציר,,5,124,1,8500,unknown,unknown,active,medium,Unchanged. Still shows 'updated 28 Sept' - roughly 45 days on market at this ask
+2026-11-12,core,realta-live,רחובות המדע,פרופ' אפרים קציר,,4,98,4,7500,unknown,unknown,excluded,medium,4 rooms - context only. Updated 13 days ago
+2026-11-12,core,realta-live,רחובות המדע,פרופ' אהרן צ'חנובר,11,4,161,8,12000,unknown,unknown,excluded,medium,4 rooms - context only. Updated 22 days ago
